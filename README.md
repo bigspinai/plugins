@@ -1,6 +1,11 @@
 # steeze
 
-A Claude Code plugin that analyzes your local session history and renders a personal "practice mirror" — your archetype, your signature moves, and how you compare against a measured baseline of 4,846 real sessions from 172 engineers. Runs entirely on your machine. No API key required. No data leaves your laptop.
+A Claude Code plugin that analyzes your local session history and renders a personal "practice mirror" — your archetype, your signature moves, and how you compare against a measured baseline of 4,846 real sessions from 172 Claude Code users. This runs entirely on your machine, with no API key required. No data ever leaves your laptop.
+
+## How to set this up
+Open Claude Code and start a new session.
+Paste in each slash command, one at a time.
+Once it finishes running, you will receive an html report that will open automatically.
 
 ```
 /plugin marketplace add bigspinai/steeze
