@@ -1,0 +1,8 @@
+archetype,prevalence_pct,pr_yield_pct,decisive_pct,bootstrap_stability_pct,iteration_count_median,edit_iteration_count_median,tests_attempted_median,diff_reviewed_median,modal_session_shape,primary_score_p25,primary_score_p50,primary_score_p75,primary_score_max
+The Pair Programmer,13.3,17.8,75.0,72.9,22.5,8.8,0.38,0.44,Marathon Workshop,3.38,4.50,5.12,6.50
+The Patcher,15.8,4.8,73.7,60.2,3.6,2.1,0.18,0.16,One-shot,1.00,1.50,2.50,3.00
+The Manager,36.7,12.2,95.5,81.9,4.8,2.0,0.24,0.16,Blueprint,2.00,2.50,3.50,4.50
+The Reality Tester,13.3,15.5,100.0,76.2,7.4,2.8,0.12,0.25,Workshop,3.50,4.50,6.00,7.00
+The Spec-First Architect,5.0,24.0,100.0,82.9,2.5,1.2,0.17,0.00,One-shot,1.25,2.25,2.50,3.00
+The Streamliner,2.5,44.4,100.0,74.6,5.7,2.2,0.00,0.33,Unassigned,1.00,1.00,1.00,1.00
+The Generalist,13.3,16.1,0.0,50.1,4.5,2.1,0.31,0.06,One-shot,0.00,0.00,0.00,0.00

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>The {{ view.title.archetype_name }} {{ view.title.modifier }} — Practice Mirror</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EFECE3;
+    --card: #FFFFFF;
+    --surface: #E5E2D7;
+    --ink: #0F1A12;
+    --ink-soft: #1F2E24;
+    --text-2: #4A554F;
+    --muted: #7A8581;
+    --rule: rgba(0, 0, 0, 0.08);
+    --rule-strong: rgba(0, 0, 0, 0.16);
+    --accent: #3F784E;
+    --accent-soft: #5FAB72;
+    --you-bar: #0F1A12;
+    --cohort-bar: #BFB6A6;
+
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --serif: 'Source Serif 4', Georgia, 'Iowan Old Style', serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  body {
+    padding: 36px 18px 64px;
+  }
+  .page { max-width: 600px; margin: 0 auto; }
+
+  /* ---------- Hero card (the screenshot moment) ---------- */
+  .hero {
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-radius: 14px;
+    padding: 32px 28px 28px;
+    margin-bottom: 28px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 22px;
+  }
+  h1.title {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  h1.title em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .hero-meta svg { flex-shrink: 0; }
+  .hero-meta .badge-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .hero-meta .badge-detail {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 2px;
+  }
+
+  .shadow-block {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .shadow-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .shadow-name {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .shadow-tag {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    margin-top: 3px;
+  }
+
+  /* ---------- Section heads ---------- */
+  .section-head {
+    margin: 48px 0 20px;
+    text-align: center;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  h2.section-title {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+  }
+  h2.section-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .section-lede {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--text-2);
+    margin-top: 6px;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---------- Traits ---------- */
+  .traits {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .trait {
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .trait-name {
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .trait-name em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .trait-desc {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-top: 4px;
+    margin-bottom: 16px;
+  }
+  .bars {
+    display: grid;
+    grid-template-columns: 50px 1fr 40px;
+    gap: 10px;
+    align-items: center;
+    row-gap: 7px;
+  }
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .bar-row.you .bar-label { color: var(--ink); font-weight: 600; }
+  .bar-track {
+    height: 5px;
+    background: var(--surface);
+    border-radius: 2.5px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2.5px;
+    background: var(--you-bar);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: grow 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  .bar-fill.cohort { background: var(--cohort-bar); animation-delay: 0.1s; }
+  .bar-fill.contrast { background: var(--ink-soft); opacity: 0.7; }
+  @keyframes grow { to { transform: scaleX(1); } }
+  .bar-num {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-2);
+    text-align: right;
+  }
+  .bar-row.you .bar-num { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Pullquote ---------- */
+  .pullquote {
+    margin: 36px 0 20px;
+    padding: 32px 28px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    position: relative;
+  }
+  .pullquote q {
+    quotes: "\201C" "\201D";
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .pullquote cite {
+    display: block;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  /* ---------- Recognition lines ---------- */
+  .recognize {
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px 24px;
+  }
+  .recognize-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .rline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 10px;
+    padding-left: 18px;
+    position: relative;
+  }
+  .rline:before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-style: normal;
+  }
+  .rline:last-child { margin-bottom: 0; }
+
+  /* ---------- Outcome ---------- */
+  .outcome {
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-radius: 10px;
+    padding: 24px 24px;
+  }
+  .outcome h3 {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .outcome h3 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .outcome p {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+  .gauge { display: flex; flex-direction: column; gap: 8px; }
+  .gauge-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 50px;
+    gap: 12px;
+    align-items: center;
+  }
+  .gauge-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .gauge-row.primary .gauge-label { color: var(--ink); font-weight: 600; }
+  .gauge-track {
+    height: 6px;
+    background: var(--surface);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%; border-radius: 3px;
+    background: var(--cohort-bar);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: grow 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
+  }
+  .gauge-fill.primary { background: var(--accent); }
+  .gauge-value {
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-2);
+    text-align: right;
+  }
+  .gauge-row.primary .gauge-value { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Landscape (2x2) — lives inside the hero card ---------- */
+  .landscape-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
+    margin-top: 22px;
+  }
+  .landscape-svg .quad-rect {
+    fill: var(--paper);
+    stroke: var(--rule-strong);
+    stroke-width: 0.5;
+  }
+  .landscape-svg .axis-mid {
+    stroke: var(--rule-strong);
+    stroke-width: 0.5;
+    stroke-dasharray: 2 4;
+  }
+  .landscape-svg .axis-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--ink-soft);
+    font-weight: 500;
+  }
+  .landscape-svg .arch-dot {
+    fill: var(--text-2);
+    fill-opacity: 1;
+  }
+  .landscape-svg .arch-dot.user-anchor {
+    fill: var(--ink);
+    fill-opacity: 1;
+  }
+  .landscape-svg .arch-dot.shadow {
+    fill: var(--card);
+    stroke: var(--ink-soft);
+    stroke-width: 1.6;
+    stroke-dasharray: 3 2;
+    fill-opacity: 1;
+  }
+  .landscape-svg .arch-label {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    fill: var(--ink-soft);
+  }
+  .landscape-svg .arch-label.muted {
+    fill: var(--text-2);
+    font-weight: 400;
+  }
+  .landscape-svg .arch-label.shadow {
+    fill: var(--muted);
+    font-style: italic;
+    font-family: var(--serif);
+  }
+  .landscape-svg .arch-label.user-primary {
+    fill: var(--ink);
+    font-weight: 600;
+  }
+  .landscape-svg .you-dot {
+    fill: var(--accent);
+    stroke: var(--card);
+    stroke-width: 3;
+  }
+  .landscape-svg .you-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-opacity: 0.45;
+  }
+  .landscape-svg .you-ring-outer {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    stroke-opacity: 0.18;
+  }
+  .landscape-svg .you-label {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    fill: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Moves ---------- */
+  .moves {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .move {
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .move-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .move h4 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .move p {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .move p + p { margin-top: 8px; }
+  .move-effect {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 12px;
+  }
+  .move code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ---------- Reflection prompts ---------- */
+  .reflection {
+    margin-top: 36px;
+  }
+  .reflection-title {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .reflection-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .reflection-list {
+    list-style: none;
+    counter-reset: r;
+  }
+  .reflection-list li {
+    counter-increment: r;
+    position: relative;
+    padding: 14px 0 14px 36px;
+    border-bottom: 0.5px solid var(--rule);
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .reflection-list li:last-child { border-bottom: none; }
+  .reflection-list li:before {
+    content: counter(r, lower-roman) ".";
+    position: absolute;
+    left: 8px;
+    top: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* ---------- Colophon ---------- */
+  .colophon {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 0.5px solid var(--rule);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .colophon-foot {
+    margin-top: 10px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    text-transform: none;
+    letter-spacing: 0;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 600px) {
+    .compass-wrap { grid-template-columns: 1fr; gap: 20px; }
+    .gauge-row { grid-template-columns: 110px 1fr 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <div class="eyebrow">Your Claude Code archetype</div>
+    <h1 class="title">The <em>{{ view.title.archetype_name }}</em> {{ view.title.modifier }}</h1>
+    <p class="tagline">{{ view.tagline }}</p>
+
+    {% if view.shadow %}
+    <div class="shadow-block">
+      <div class="shadow-label">Your shadow</div>
+      <div class="shadow-name">{{ view.shadow.name }}</div>
+      <div class="shadow-tag">{{ view.shadow.tagline }}</div>
+    </div>
+    {% endif %}
+
+    {% if landscape %}
+    <svg class="landscape-svg" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg">
+      {# Margins leave room for the rotated Y label on the left and the
+         X label below. No top label needed. #}
+      {% set ml = 60 %}{% set mr = 28 %}{% set mt = 28 %}{% set mb = 56 %}
+      {% set pw = 600 - ml - mr %}
+      {% set ph = 420 - mt - mb %}
+      {% set cx = ml + pw / 2 %}
+      {% set cy = mt + ph / 2 %}
+
+      {# Quadrant rectangle #}
+      <rect class="quad-rect" x="{{ ml }}" y="{{ mt }}" width="{{ pw }}" height="{{ ph }}" rx="6"/>
+
+      {# Mid-axis dashed crosshairs #}
+      <line class="axis-mid" x1="{{ ml }}" y1="{{ cy }}" x2="{{ ml + pw }}" y2="{{ cy }}"/>
+      <line class="axis-mid" x1="{{ cx }}" y1="{{ mt }}" x2="{{ cx }}" y2="{{ mt + ph }}"/>
+
+      {# Y-axis label rotated -90, centered on the left edge of the chart;
+         X-axis label centered below the chart. #}
+      <text class="axis-text" x="{{ ml - 28 }}" y="{{ cy }}" text-anchor="middle" transform="rotate(-90, {{ ml - 28 }}, {{ cy }})">More iteration →</text>
+      <text class="axis-text" x="{{ cx }}" y="{{ mt + ph + 36 }}" text-anchor="middle">More structure →</text>
+
+      {# Archetype dots — visible ones only #}
+      {% for a in landscape.archetypes if a.is_visible %}
+        {% set px = cx + a.x * (pw / 2 - 36) %}
+        {% set py = cy - a.y * (ph / 2 - 36) %}
+        {% if a.is_shadow %}
+          {% set radius = 9 %}
+        {% elif a.is_user_primary %}
+          {% set radius = 7 %}
+        {% else %}
+          {% set radius = 6 %}
+        {% endif %}
+        <circle class="arch-dot {% if a.is_user_primary %}user-anchor{% endif %} {% if a.is_shadow %}shadow{% endif %}" cx="{{ px|round(1) }}" cy="{{ py|round(1) }}" r="{{ radius }}"/>
+
+        {# Label placement: outside the chart edge if archetype is at a corner; nudged below the dot #}
+        {% if a.x > 0.55 %}
+          {% set lx = px - 14 %}{% set anchor = "end" %}
+        {% elif a.x < -0.55 %}
+          {% set lx = px + 14 %}{% set anchor = "start" %}
+        {% else %}
+          {% set lx = px %}{% set anchor = "middle" %}
+        {% endif %}
+        {% if a.y > 0.05 %}
+          {% set ly = py - 14 %}
+        {% else %}
+          {% set ly = py + 22 %}
+        {% endif %}
+        {% set label_class = "user-primary" if a.is_user_primary else ("shadow" if a.is_shadow else "muted") %}
+        <text class="arch-label {{ label_class }}" x="{{ lx|round(1) }}" y="{{ ly|round(1) }}" text-anchor="{{ anchor }}">{{ a.short_name }}</text>
+      {% endfor %}
+
+      {# YOU marker — drawn last so it sits on top. Concentric ring +
+         dot so it remains visually distinct even when overlapping the
+         user's primary archetype anchor. #}
+      {% set ux = cx + landscape.you.x * (pw / 2 - 36) %}
+      {% set uy = cy - landscape.you.y * (ph / 2 - 36) %}
+      <circle class="you-ring-outer" cx="{{ ux|round(1) }}" cy="{{ uy|round(1) }}" r="32"/>
+      <circle class="you-ring" cx="{{ ux|round(1) }}" cy="{{ uy|round(1) }}" r="22"/>
+      <circle class="you-dot" cx="{{ ux|round(1) }}" cy="{{ uy|round(1) }}" r="11"/>
+      <text class="you-label" x="{{ ux|round(1) }}" y="{{ (uy - 38)|round(1) }}" text-anchor="middle">YOU</text>
+    </svg>
+    {% endif %}
+  </section>
+
+  <!-- ============== Pullquote (transition between hero and Section I) ============== -->
+  <div class="pullquote">
+    <q>{{ view.section_identity.pullquote.text }}</q>
+    {% if view.section_identity.pullquote.attribution %}
+    <cite>— {{ view.section_identity.pullquote.attribution }}</cite>
+    {% endif %}
+  </div>
+
+  <!-- ============== Recognition lines (color on the pullquote) ============== -->
+  {% if view.section_identity.recognition_lines %}
+  <div class="recognize">
+    <div class="recognize-title">You'll know this is you if…</div>
+    {% for line in view.section_identity.recognition_lines %}
+    <div class="rline">{{ line }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ============== — I — IDENTITY ============== -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">— {{ view.section_identity.section_label }} —</div>
+      <h2 class="section-title">{{ view.section_identity.heading|emify }}</h2>
+      {% if view.section_identity.lede %}
+      <p class="section-lede">{{ view.section_identity.lede }}</p>
+      {% endif %}
+    </div>
+
+    <div class="traits">
+      {% for trait in view.section_identity.traits_view %}
+      <div class="trait">
+        <div class="trait-name"><em>{{ trait.name_em }}</em></div>
+        <div class="trait-desc">{{ trait.characterization }}</div>
+        <div class="bars">
+          <div class="bar-row you" style="display: contents;">
+            <div class="bar-label">You</div>
+            <div class="bar-track"><div class="bar-fill {% if trait.kind == 'contrast' %}contrast{% endif %}" style="width: {{ trait.you_pct|bar_pct }}%"></div></div>
+            <div class="bar-num">{{ trait.you_pct|round|int }}%</div>
+          </div>
+          {% if trait.cohort_pct is not none %}
+          <div class="bar-row cohort" style="display: contents;">
+            <div class="bar-label">Cohort</div>
+            <div class="bar-track"><div class="bar-fill cohort" style="width: {{ trait.cohort_pct|bar_pct }}%"></div></div>
+            <div class="bar-num">{{ trait.cohort_pct|round|int }}%</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ============== — II — OUTCOME ============== -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">— {{ view.section_outcome.section_label }} —</div>
+      <h2 class="section-title">{{ view.section_outcome.heading|emify }}</h2>
+      {% if view.section_outcome.lede %}
+      <p class="section-lede">{{ view.section_outcome.lede }}</p>
+      {% endif %}
+    </div>
+
+    <div class="outcome">
+      <h3>{{ view.section_outcome.headline|emify }}</h3>
+      <p>{{ view.section_outcome.body }}</p>
+      <div class="gauge">
+        <div class="gauge-row primary">
+          <div class="gauge-label">{{ view.section_outcome.primary_view.label }}</div>
+          <div class="gauge-track"><div class="gauge-fill primary" style="width: {{ view.section_outcome.primary_view.value_raw|bar_pct }}%"></div></div>
+          <div class="gauge-value">{{ view.section_outcome.primary_view.value_str }}</div>
+        </div>
+        {% for c in view.section_outcome.comparison_views %}
+        <div class="gauge-row cohort">
+          <div class="gauge-label">{{ c.label }}</div>
+          <div class="gauge-track"><div class="gauge-fill" style="width: {{ c.value_raw|bar_pct }}%"></div></div>
+          <div class="gauge-value">{{ c.value_str }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== — III — MOVES ============== -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">— {{ view.section_moves.section_label }} —</div>
+      <h2 class="section-title">{{ view.section_moves.heading|emify }}</h2>
+      {% if view.section_moves.lede %}
+      <p class="section-lede">{{ view.section_moves.lede }}</p>
+      {% endif %}
+    </div>
+
+    <div class="moves">
+      {% for move in view.section_moves.moves %}
+      <div class="move">
+        <div class="move-tag">From {{ move.from_archetype }}</div>
+        <h4>{{ move.verb_phrase }}</h4>
+        <p>{{ move.body_lead }}</p>
+        <p>{{ move.body_action|safe }}</p>
+        {% if move.effect_size_note %}
+        <div class="move-effect">{{ move.effect_size_note }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if view.reflection_prompts %}
+  <!-- ============== REFLECTION ============== -->
+  <section class="reflection">
+    <div class="reflection-title">Three questions to <em>carry</em> into your next session</div>
+    <ol class="reflection-list">
+      {% for p in view.reflection_prompts %}
+      <li>{{ p }}</li>
+      {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
+
+  <!-- ============== COLOPHON ============== -->
+  <div class="colophon">
+    Practice Mirror{% if view.colophon.n_sessions %} · {{ view.colophon.n_sessions }} sessions{% endif %}{% if view.colophon.earliest and view.colophon.latest %} · {{ view.colophon.earliest }} – {{ view.colophon.latest }}{% endif %}
+  </div>
+  {% if view.colophon.footnote %}
+  <p class="colophon-foot">{{ view.colophon.footnote }}</p>
+  {% endif %}
+
+</div>
+</body>
+</html>

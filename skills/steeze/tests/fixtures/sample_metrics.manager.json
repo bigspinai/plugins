@@ -1,0 +1,95 @@
+{
+  "schema_version": "2.3",
+  "n_sessions_tagged": 47,
+  "n_sessions_total": 50,
+  "structural": {
+    "pr_rate_pct": 18.0,
+    "date_range": {
+      "earliest": "2026-02-15",
+      "latest": "2026-04-28"
+    }
+  },
+  "interaction_style": {
+    "percentages": {
+      "delegative": 22.0,
+      "directive": 68.0,
+      "collaborative": 10.0
+    }
+  },
+  "user_archetype": {
+    "available": true,
+    "primary": "The Manager",
+    "primary_score": 4.0,
+    "secondary": "The Reality Tester",
+    "secondary_score": 1.5,
+    "margin": 2.5,
+    "decisive": true,
+    "confidence": "high",
+    "fingerprint_sharpness": "sharp",
+    "all_scores": {
+      "The Pair Programmer": 0.5,
+      "The Patcher": 0.0,
+      "The Manager": 4.0,
+      "The Reality Tester": 1.5,
+      "The Spec-First Architect": 0.0,
+      "The Streamliner": 0.0
+    },
+    "user_signal_rates": {
+      "decomposition": 0.67,
+      "context_loading_directive": 0.42,
+      "subagent_explicitly_delegated": 0.31,
+      "safety_constraint_set": 0.21,
+      "pointed_to_specific_issue": 0.45
+    },
+    "user_det_medians": {
+      "iteration_count": 6.0,
+      "edit_iteration_count": 2.5
+    },
+    "shadow": {
+      "name": "The Patcher",
+      "axis": "structure vs. reactive"
+    },
+    "baseline": {
+      "reflection_prompts": [
+        "Pick a recent session where you felt the agent ran with the brief well. Would the result have changed if you'd added one mid-flight verification step?",
+        "Of your last five sessions, which one most needed less structure — and which one most needed more?",
+        "When the agent's plan came back close-but-not-right, did you correct it mid-flight, or did the careful setup carry too much weight in your call?"
+      ]
+    },
+    "within_archetype_positioning": {
+      "signals": [
+        {
+          "signal": "decomposition",
+          "signal_kind": "interpretive",
+          "your_value": 0.67,
+          "cohort_p25": 0.45,
+          "cohort_p50": 0.58,
+          "cohort_p75": 0.68,
+          "cohort_mean": 0.57,
+          "n_users": 35,
+          "position": "above_median"
+        },
+        {
+          "signal": "context_loading_directive",
+          "signal_kind": "interpretive",
+          "your_value": 0.42,
+          "cohort_p25": 0.30,
+          "cohort_p50": 0.40,
+          "cohort_p75": 0.52,
+          "cohort_mean": 0.41,
+          "n_users": 35,
+          "position": "above_median"
+        }
+      ],
+      "categoricals": {
+        "interaction_style": {
+          "buckets": [
+            { "bucket": "delegative", "your_pct": 22.0, "cohort_pct": 57.0, "delta_pct": -35.0 },
+            { "bucket": "directive", "your_pct": 68.0, "cohort_pct": 35.0, "delta_pct": 33.0 },
+            { "bucket": "collaborative", "your_pct": 10.0, "cohort_pct": 8.0, "delta_pct": 2.0 }
+          ]
+        }
+      }
+    }
+  }
+}

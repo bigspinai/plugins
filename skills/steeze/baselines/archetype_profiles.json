@@ -1,0 +1,575 @@
+{
+  "schema_version": "2.0",
+  "generated_on": "2026-05-01",
+  "generated_from": "SWE-chat multi-session users (≥3 sessions each)",
+  "total_users_classified": 120,
+  "population_pr_yield_pct": 17.4,
+  "archetypes": [
+    {
+      "name": "The Pair Programmer",
+      "tagline": "Long, deep sessions. Steers reasoning, reframes goals, verifies.",
+      "scene": "Your sessions are long — 22 prompts median, 8 edits per session — and you're in the loop the whole time. You direct *how* the agent reasons, you reframe the goal mid-flight when reality shows you something new, you add constraints that emerged from the work itself. You actually run tests and read diffs. The agent isn't an executor; it's a partner you're shaping the work with.",
+      "blind_spot": "Sustained engagement makes you the best at hard problems, but it scales poorly across many independent tasks. When you apply this mode to a small task, you over-invest. When you apply it to a large task, you ship.",
+      "framing_note": "",
+      "prevalence_pct": 13.3,
+      "pr_yield_pct": 17.8,
+      "decisive_pct": 75.0,
+      "bootstrap_stability_pct": 72.9,
+      "modal_session_shape": "Marathon Workshop",
+      "iteration_count_median": 22.5,
+      "edit_iteration_count_median": 8.8,
+      "tests_attempted_median": 0.38,
+      "diff_reviewed_median": 0.44,
+      "top_distinctive_signals": [
+        {
+          "signal": "change_request_specific",
+          "cohort_pct": 63.9,
+          "pop_pct": 27.4,
+          "delta_pp": 36.5
+        },
+        {
+          "signal": "external_reality_disclosure",
+          "cohort_pct": 59.4,
+          "pop_pct": 24.5,
+          "delta_pp": 34.9
+        },
+        {
+          "signal": "intent_reframe",
+          "cohort_pct": 55.6,
+          "pop_pct": 20.8,
+          "delta_pp": 34.8
+        },
+        {
+          "signal": "constraint_added_later",
+          "cohort_pct": 62.5,
+          "pop_pct": 28.2,
+          "delta_pp": 34.3
+        },
+        {
+          "signal": "post_implementation_correction",
+          "cohort_pct": 57.7,
+          "pop_pct": 23.9,
+          "delta_pp": 33.7
+        },
+        {
+          "signal": "edge_case_failure_observed",
+          "cohort_pct": 53.9,
+          "pop_pct": 20.4,
+          "delta_pp": 33.5
+        }
+      ],
+      "shadow_archetype": "The Spec-First Architect",
+      "shadow_axis": "where engagement happens (intake vs. mid-flight)",
+      "signature_moves": [
+        {
+          "name": "Reframe the goal mid-flight",
+          "signal": "intent_reframe",
+          "description": "When reality surfaces something you didn't expect, restate the goal in materially different terms. Don't keep grinding on the original ask."
+        },
+        {
+          "name": "Steer how the agent reasons",
+          "signal": "meta_behavioral_steering",
+          "description": "Tell the agent how to think — 'stop assuming, ask first', 'use ultrathink', 'back up and re-plan.'"
+        },
+        {
+          "name": "Add the constraint that just emerged",
+          "signal": "constraint_added_later",
+          "description": "When you discover a constraint mid-flight, state it explicitly. Don't carry it in your head."
+        },
+        {
+          "name": "Verify before you accept",
+          "signal": "tests_attempted",
+          "description": "Run the tests yourself before declaring the work done. Read the diff before committing."
+        },
+        {
+          "name": "Surface the post-impl correction",
+          "signal": "post_implementation_correction",
+          "description": "When seeing the implementation surfaces a new concern, raise it immediately as a correction."
+        }
+      ],
+      "reflection_prompts": [
+        "Which of your sessions warranted this depth of engagement, and which were over-investments for the task at hand?",
+        "When you reframe the goal mid-flight, are you discovering something the agent missed — or are you working around a brief that was wrong from the start?",
+        "Sustained engagement is your edge. What would happen if you delegated one large session entirely and reviewed only the artifact?"
+      ],
+      "borrow_from": [
+        {
+          "from": "The Streamliner",
+          "rationale": "Borrow the 'know when to stop' move. Your depth is your edge on hard problems but a tax on small ones. For routine tasks, try the cleaner, shorter ask."
+        },
+        {
+          "from": "The Manager",
+          "rationale": "Borrow delegation for parallelization. Your deep engagement scales poorly across many tasks; spawning sub-agents and delegating workflow steps frees you to engage where it matters."
+        }
+      ]
+    },
+    {
+      "name": "The Patcher",
+      "tagline": "Spotting bugs and patching via re-asking. Friction signal visible.",
+      "scene": "When something goes wrong, you ask the agent to fix it — sometimes vaguely ('this still isn't working'), sometimes by pasting the same error a second time after the first fix didn't take. You're not an inactive user; you're trying things. The visible signature in your sessions is the patching loop more than the diagnosing one.",
+      "blind_spot": "Re-asking with the same context tends to get the same answer. The pattern has a loop-detection signal — if the same error pastes twice, the fix isn't going to come from a third paste.",
+      "framing_note": "The Patcher's PR-yield is 18.6% — slightly ABOVE population. These users are not failing overall. The death-spiral signature is visible enough to flag, but the framing must reflect that they ship at normal rates. Describe the friction pattern; don't imply the user is failing.",
+      "prevalence_pct": 15.8,
+      "pr_yield_pct": 4.8,
+      "decisive_pct": 73.7,
+      "bootstrap_stability_pct": 60.2,
+      "modal_session_shape": "One-shot",
+      "iteration_count_median": 3.6,
+      "edit_iteration_count_median": 2.1,
+      "tests_attempted_median": 0.18,
+      "diff_reviewed_median": 0.16,
+      "top_distinctive_signals": [
+        {
+          "signal": "fix_request_without_specifics",
+          "cohort_pct": 16.1,
+          "pop_pct": 6.1,
+          "delta_pp": 10.0
+        },
+        {
+          "signal": "accept_verbatim_no_question",
+          "cohort_pct": 13.6,
+          "pop_pct": 9.1,
+          "delta_pp": 4.4
+        },
+        {
+          "signal": "change_request_vague",
+          "cohort_pct": 6.0,
+          "pop_pct": 3.0,
+          "delta_pp": 2.9
+        },
+        {
+          "signal": "error_repaste",
+          "cohort_pct": 3.6,
+          "pop_pct": 1.2,
+          "delta_pp": 2.4
+        }
+      ],
+      "shadow_archetype": "The Manager",
+      "shadow_axis": "ceremony vs. reactive",
+      "signature_moves": [
+        {
+          "name": "Diagnose before re-asking",
+          "signal": "pointed_to_specific_issue",
+          "description": "When the first fix doesn't take, name what's specifically still wrong instead of pasting the same error again."
+        },
+        {
+          "name": "Break the loop early",
+          "signal": "intent_reframe",
+          "description": "If you've pasted the same error twice, the third paste won't fix it. Step back, simplify, or restart the session with fresh context."
+        },
+        {
+          "name": "Ask for the diagnosis, not the fix",
+          "signal": "asked_why_choice",
+          "description": "Sometimes 'why is this happening?' gets you further than 'fix it.' Make the agent explain the failure first."
+        }
+      ],
+      "reflection_prompts": [
+        "When the same error pastes twice, what's actually changing between the two asks? If nothing's changing, what would?",
+        "Pick one recent friction-y session. If you'd taken five minutes to diagnose before re-asking, would the loop have ended sooner?",
+        "Are there sessions where the agent's first response had the diagnosis embedded, and you skipped past it on the way to a fix?"
+      ],
+      "borrow_from": [
+        {
+          "from": "The Reality Tester",
+          "rationale": "Borrow specificity. When you point at *what* specifically isn't working — line, identifier, actual symptom — the loop tends to close. Vague re-asks tend to produce vague re-fixes."
+        },
+        {
+          "from": "The Manager",
+          "rationale": "Borrow upfront context-loading. Patcher sessions often start short and accumulate fixes; starting with more orientation up front (read this folder, cite this convention) tends to shorten the patch loop."
+        }
+      ]
+    },
+    {
+      "name": "The Manager",
+      "tagline": "Sets up the work, cites conventions, delegates carefully, stays engaged.",
+      "scene": "You open a session by pointing the agent at the right files, citing your team's conventions, often spinning up a subagent for discrete sub-tasks. You set safety constraints. The agent is a competent engineer you're managing — you set expectations clearly, then let them work, but you're not absent.",
+      "blind_spot": "The 'set up well, then delegate' posture works when the plan is right; when the plan misses something, the ceremony makes mid-flight correction harder. Watch for sessions where you set things up carefully but accept output without engaging deeply.",
+      "framing_note": "",
+      "prevalence_pct": 36.7,
+      "pr_yield_pct": 12.2,
+      "decisive_pct": 95.5,
+      "bootstrap_stability_pct": 81.9,
+      "modal_session_shape": "Blueprint",
+      "iteration_count_median": 4.8,
+      "edit_iteration_count_median": 2.0,
+      "tests_attempted_median": 0.24,
+      "diff_reviewed_median": 0.16,
+      "top_distinctive_signals": [
+        {
+          "signal": "decomposition",
+          "cohort_pct": 56.3,
+          "pop_pct": 42.1,
+          "delta_pp": 14.1
+        },
+        {
+          "signal": "context_loading_directive",
+          "cohort_pct": 49.8,
+          "pop_pct": 37.1,
+          "delta_pp": 12.7
+        },
+        {
+          "signal": "test_or_spec_provided",
+          "cohort_pct": 27.9,
+          "pop_pct": 20.0,
+          "delta_pp": 7.9
+        },
+        {
+          "signal": "subagent_explicitly_delegated",
+          "cohort_pct": 15.9,
+          "pop_pct": 8.7,
+          "delta_pp": 7.2
+        },
+        {
+          "signal": "problem_statement_explicit",
+          "cohort_pct": 73.7,
+          "pop_pct": 66.8,
+          "delta_pp": 6.9
+        },
+        {
+          "signal": "safety_constraint_set",
+          "cohort_pct": 15.2,
+          "pop_pct": 10.2,
+          "delta_pp": 5.0
+        }
+      ],
+      "shadow_archetype": "The Patcher",
+      "shadow_axis": "ceremony vs. reactive",
+      "signature_moves": [
+        {
+          "name": "Cite the convention",
+          "signal": "cited_team_convention",
+          "description": "Tell the agent which doc, style guide, RFC, or team convention governs the work — by name."
+        },
+        {
+          "name": "Spawn a sub-agent for orientation",
+          "signal": "subagent_explicitly_delegated",
+          "description": "Delegate the 'understand this codebase area' work to a separate agent before asking for changes."
+        },
+        {
+          "name": "Set safety boundaries",
+          "signal": "safety_constraint_set",
+          "description": "State what the agent can't touch, modify, or run before it starts — the rails come first."
+        },
+        {
+          "name": "Decompose before delegating",
+          "signal": "decomposition",
+          "description": "Break the task into named steps in your opening prompt; let the agent execute the plan."
+        },
+        {
+          "name": "Approve the plan explicitly",
+          "signal": "plan_approved",
+          "description": "When the agent proposes a plan, give a deliberate yes — not silent acceptance."
+        }
+      ],
+      "reflection_prompts": [
+        "Pick a recent session where you felt the agent ran with the brief well. Would the result have changed if you'd added one mid-flight verification step?",
+        "Of your last five sessions, which one most needed less ceremony — and which one most needed more?",
+        "When the agent's plan came back close-but-not-right, did you correct it mid-flight, or did the careful setup carry too much weight in your call?"
+      ],
+      "borrow_from": [
+        {
+          "from": "The Reality Tester",
+          "rationale": "Add deeper verification to your delegation. Your ceremony is strong; what you're least likely to do is run the code and read the diff before accepting. That's the move that takes Manager-shaped sessions from 'shipped a plan' to 'shipped a plan that works.'"
+        },
+        {
+          "from": "The Pair Programmer",
+          "rationale": "Borrow the 'reframe mid-flight' move. Your Manager posture sometimes carries the original plan further than it deserves. Be willing to restate the goal when the work surfaces something new."
+        }
+      ]
+    },
+    {
+      "name": "The Reality Tester",
+      "tagline": "Reads the draft, points at issues, runs the code, surfaces failures.",
+      "scene": "When the agent produces something, you don't accept it — you read it. You point at specific lines, you run the code yourself, you surface edge cases you noticed. You ask 'why this choice?' before you accept a design call. The agent's output is a draft, not a deliverable.",
+      "blind_spot": "Your verification is a real asset, but it can be heavy on functional correctness and lighter on systemic or design issues. The agent's first move sometimes anchors the design in a way you don't catch until it ships.",
+      "framing_note": "This is the highest-shipping archetype in research (22.7% PR-yield vs 17.4% population). Lead with that as a positive finding.",
+      "prevalence_pct": 13.3,
+      "pr_yield_pct": 15.5,
+      "decisive_pct": 100.0,
+      "bootstrap_stability_pct": 76.2,
+      "modal_session_shape": "Workshop",
+      "iteration_count_median": 7.4,
+      "edit_iteration_count_median": 2.8,
+      "tests_attempted_median": 0.12,
+      "diff_reviewed_median": 0.25,
+      "top_distinctive_signals": [
+        {
+          "signal": "ran_and_reported",
+          "cohort_pct": 31.7,
+          "pop_pct": 17.8,
+          "delta_pp": 13.9
+        },
+        {
+          "signal": "pointed_to_specific_issue",
+          "cohort_pct": 37.6,
+          "pop_pct": 26.7,
+          "delta_pp": 10.9
+        },
+        {
+          "signal": "edge_case_failure_observed",
+          "cohort_pct": 30.2,
+          "pop_pct": 20.4,
+          "delta_pp": 9.8
+        },
+        {
+          "signal": "asked_why_choice",
+          "cohort_pct": 17.9,
+          "pop_pct": 9.9,
+          "delta_pp": 8.0
+        },
+        {
+          "signal": "asked_about_tradeoffs",
+          "cohort_pct": 13.9,
+          "pop_pct": 8.1,
+          "delta_pp": 5.8
+        },
+        {
+          "signal": "external_reality_disclosure",
+          "cohort_pct": 30.0,
+          "pop_pct": 24.5,
+          "delta_pp": 5.5
+        }
+      ],
+      "shadow_archetype": "The Streamliner",
+      "shadow_axis": "verification depth",
+      "signature_moves": [
+        {
+          "name": "Point at the line, not the function",
+          "signal": "pointed_to_specific_issue",
+          "description": "When you push back, name the specific line, identifier, or behavior — not 'this doesn't work.'"
+        },
+        {
+          "name": "Run it yourself",
+          "signal": "ran_and_reported",
+          "description": "Execute the code and report the actual output back to the agent. Don't assume it works."
+        },
+        {
+          "name": "Surface the edge case while reading",
+          "signal": "in_review_edge_case_surface",
+          "description": "When you're reviewing the code, name a case the agent didn't handle. Out loud, in the chat."
+        },
+        {
+          "name": "Ask why this choice",
+          "signal": "asked_why_choice",
+          "description": "When the agent makes a design call, ask for the rationale before accepting it."
+        },
+        {
+          "name": "Iterate the change request",
+          "signal": "change_request_specific",
+          "description": "Specific, anchored requests: 'in process(), rename X to Y' — not 'fix the function.'"
+        }
+      ],
+      "reflection_prompts": [
+        "Which type of issue do you catch most reliably — functional bugs, design choices, or systemic concerns? Which slips past?",
+        "When was the last time you accepted the agent's first move because the surface looked clean? What might have been hiding underneath?",
+        "Your verification habit is a real asset. Are there sessions where it costs you — where you over-audit small work?"
+      ],
+      "borrow_from": [
+        {
+          "from": "The Manager",
+          "rationale": "Borrow more deliberate setup. You're great at auditing the agent's output, but more careful scoping at intake — citing conventions, setting boundaries — would reduce the audit load."
+        },
+        {
+          "from": "The Pair Programmer",
+          "rationale": "Borrow the deeper engagement on hard tasks. Your verification arc is sharp; coupling it with mid-flight goal reframing on long sessions is what produces Marathon Workshop sessions, the highest-shipping shape in research."
+        }
+      ]
+    },
+    {
+      "name": "The Spec-First Architect",
+      "tagline": "Front-loads decomposition + spec/tests at intake, then accepts.",
+      "scene": "You open the session by writing a small RFC into turn 1 — decomposition, problem statement, occasionally tests or existing code. The agent produces output. You accept it. Session ends. The work is in the brief, not the iteration.",
+      "blind_spot": "The first turn is treated as a contract; the data says it should be treated as a hypothesis. The single most actionable lever is verification — running tests and reviewing diffs after the agent produces, instead of accepting based on how good your spec looked.",
+      "framing_note": "This archetype has the LOWEST PR-yield in research (1.8% vs 17.4% population) — the user-level Blueprint trap. The report framing must be careful: describe the trade-off honestly without insulting the user. The spec-writing skill is real and valuable in some contexts (small, well-bounded tasks); the data shows the trade-off when it's the dominant mode. Lead with curiosity, not judgment.",
+      "prevalence_pct": 5.0,
+      "pr_yield_pct": 24.0,
+      "decisive_pct": 100.0,
+      "bootstrap_stability_pct": 82.9,
+      "modal_session_shape": "One-shot",
+      "iteration_count_median": 2.5,
+      "edit_iteration_count_median": 1.2,
+      "tests_attempted_median": 0.17,
+      "diff_reviewed_median": 0.0,
+      "top_distinctive_signals": [
+        {
+          "signal": "test_or_spec_provided",
+          "cohort_pct": 36.8,
+          "pop_pct": 20.0,
+          "delta_pp": 16.8
+        },
+        {
+          "signal": "accept_verbatim_no_question",
+          "cohort_pct": 13.9,
+          "pop_pct": 9.1,
+          "delta_pp": 4.8
+        },
+        {
+          "signal": "change_request_vague",
+          "cohort_pct": 7.5,
+          "pop_pct": 3.0,
+          "delta_pp": 4.4
+        },
+        {
+          "signal": "existing_code_shared",
+          "cohort_pct": 11.1,
+          "pop_pct": 6.8,
+          "delta_pp": 4.2
+        }
+      ],
+      "shadow_archetype": "The Pair Programmer",
+      "shadow_axis": "where engagement happens (intake vs. mid-flight)",
+      "signature_moves": [
+        {
+          "name": "Front-load decomposition",
+          "signal": "decomposition",
+          "description": "Break the task into named sub-steps in turn 1."
+        },
+        {
+          "name": "Provide tests or examples",
+          "signal": "test_or_spec_provided",
+          "description": "Paste concrete I/O examples or a small test suite as part of the brief."
+        },
+        {
+          "name": "Share the existing code",
+          "signal": "existing_code_shared",
+          "description": "Show the agent the code you're starting from, not just describe it."
+        },
+        {
+          "name": "Articulate the goal in plain language",
+          "signal": "problem_statement_explicit",
+          "description": "Frame the user-facing intent + scope, not just the code request."
+        }
+      ],
+      "reflection_prompts": [
+        "Pick a recent session where the spec felt complete and the agent's output was 'fine.' Did you check that the parts you didn't spec actually worked?",
+        "If you'd run the agent's first answer once before declaring the session done, what fraction of your past sessions would have changed?",
+        "When the brief is detailed and structured, what's left for the agent to add? What does *its* judgement add that yours can't anticipate?"
+      ],
+      "borrow_from": [
+        {
+          "from": "The Reality Tester",
+          "rationale": "Borrow the verification arc — running tests, reading diffs. Your spec is detailed; what's missing is the check that the agent's output actually does what the spec said. This is the single highest-leverage borrow in the data: Reality Testers ship at 22.7% vs Spec-First Architects at 1.8%."
+        },
+        {
+          "from": "The Pair Programmer",
+          "rationale": "Borrow mid-flight engagement. The Spec-First trade-off (lowest PR-yield in the corpus) is that the brief decides everything; the Pair Programmer's iteration is what catches the things the brief missed. Treat your first turn as a hypothesis, not a contract."
+        }
+      ]
+    },
+    {
+      "name": "The Streamliner",
+      "tagline": "Clean ask, accept, move on. Workflow delegation without ceremony.",
+      "scene": "Your sessions are short and clean. You delegate the workflow step (commit, PR, push), accept the output, and move on. No elaborate setup, no plan-mode, no sub-agents. The agent is a vending machine and you're not stocking it.",
+      "blind_spot": "Zero verification — no tests run, no diffs reviewed — is the most consequential signal. You can't tell when the agent is wrong because you don't check. The single highest-leverage change is one verification step per non-trivial session.",
+      "framing_note": "",
+      "prevalence_pct": 2.5,
+      "pr_yield_pct": 44.4,
+      "decisive_pct": 100.0,
+      "bootstrap_stability_pct": 74.6,
+      "modal_session_shape": "Unassigned",
+      "iteration_count_median": 5.7,
+      "edit_iteration_count_median": 2.2,
+      "tests_attempted_median": 0.0,
+      "diff_reviewed_median": 0.33,
+      "top_distinctive_signals": [
+        {
+          "signal": "workflow_step_delegation",
+          "cohort_pct": 63.2,
+          "pop_pct": 50.1,
+          "delta_pp": 13.1
+        },
+        {
+          "signal": "plan_approved",
+          "cohort_pct": 15.3,
+          "pop_pct": 7.1,
+          "delta_pp": 8.2
+        }
+      ],
+      "shadow_archetype": "The Reality Tester",
+      "shadow_axis": "verification depth",
+      "signature_moves": [
+        {
+          "name": "Delegate the workflow steps",
+          "signal": "workflow_step_delegation",
+          "description": "Hand off commit, PR, push, rebase — let the agent close the loop."
+        },
+        {
+          "name": "Frame the ask cleanly",
+          "signal": "problem_statement_explicit",
+          "description": "Short, complete asks. Don't over-explain; don't under-specify."
+        },
+        {
+          "name": "Accept and move on",
+          "signal": "accept_verbatim_no_question",
+          "description": "When the agent's first move is right, take it and proceed. Speed is a feature."
+        }
+      ],
+      "reflection_prompts": [
+        "Most of your sessions don't ask for tests or diff review. Which kinds of tasks should they?",
+        "When you accept an agent's output without checking, what's the bet you're making — that it's right, or that the cost of a wrong answer is low? Are you right about the second part?",
+        "Pick one non-trivial session this week. Try one verification step at the end and notice what changes."
+      ],
+      "borrow_from": [
+        {
+          "from": "The Reality Tester",
+          "rationale": "Borrow one verification step per non-trivial session. Zero tests run + zero diffs reviewed is the most consequential gap in your fingerprint; even one check per session is the highest-leverage change available."
+        },
+        {
+          "from": "The Manager",
+          "rationale": "Borrow one piece of upfront setup when the task is non-trivial. Cite the convention, set a constraint, point at the right file — small investments that prevent the streamlined session from missing something the agent didn't know to ask."
+        }
+      ]
+    },
+    {
+      "name": "The Generalist",
+      "tagline": "No single archetype dominates — your practice flexes.",
+      "scene": "Your sessions don't share a strong common thread. You do some Manager-shaped sessions, some Reality-Tester moments, occasional Streamliner-clean asks. Different tasks, different shapes — you adapt.",
+      "blind_spot": "Adaptive practice is hard to teach yourself from. There's no dominant pattern to reflect on; the across-session view is more useful than the in-session one. Re-running this report monthly and watching for *motion* (which archetype is gaining share) tells you more than any single snapshot.",
+      "framing_note": "Generalist is a positive label, not a fallback. Probably the healthiest shape in aggregate — you're not forcing one mode onto every task.",
+      "prevalence_pct": 13.3,
+      "pr_yield_pct": 16.1,
+      "decisive_pct": 0.0,
+      "bootstrap_stability_pct": 50.1,
+      "modal_session_shape": "One-shot",
+      "iteration_count_median": 4.5,
+      "edit_iteration_count_median": 2.1,
+      "tests_attempted_median": 0.31,
+      "diff_reviewed_median": 0.06,
+      "top_distinctive_signals": [],
+      "shadow_archetype": null,
+      "shadow_axis": "rigidity in any single mode",
+      "signature_moves": [
+        {
+          "name": "Match the mode to the task",
+          "signal": "",
+          "description": "Notice which archetype-mode the task is asking for, then adopt it. Small task → Streamliner; complex task → Pair Programmer; unfamiliar codebase → Manager."
+        },
+        {
+          "name": "Run the across-session view",
+          "signal": "",
+          "description": "Re-read this report monthly and watch for *motion* — which archetype is gaining share? That tells you more than any one snapshot."
+        },
+        {
+          "name": "Borrow your least-used mode",
+          "signal": "",
+          "description": "Pick the archetype your sessions resemble *least* and try one session in that mode. The mismatch is the lesson."
+        }
+      ],
+      "reflection_prompts": [
+        "Across your last ten sessions, which archetype-mode showed up most? Which least? Was that the right distribution given the tasks?",
+        "Pick the archetype your sessions resemble *least*. Try one session in that mode this week. What does the constraint teach you?",
+        "What's the failure mode you're most likely to fall into when you're tired or rushed — which archetype's bad habits do you default to?"
+      ],
+      "borrow_from": [
+        {
+          "from": "(your least-used archetype)",
+          "rationale": "Look at your archetype scores across all 7. Pick the one you score lowest on and try one session in that mode this week. The mismatch between your default and that mode is the lesson."
+        },
+        {
+          "from": "The Reality Tester",
+          "rationale": "Of all the archetype borrows, this is the one with the highest research-validated effect on shipping (+5pp PR-yield over baseline). Worth trying regardless of which mode you're in."
+        }
+      ]
+    }
+  ]
+}

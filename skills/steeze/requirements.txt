@@ -1,0 +1,6 @@
+# Steeze runtime dependencies (subagent-only path).
+#
+# Pinned floors only; uv/pip pick a compatible recent version.
+# See plan: /Users/mleung/.claude/plans/shimmering-finding-moon.md
+jinja2>=3.1
+jsonschema>=4.0

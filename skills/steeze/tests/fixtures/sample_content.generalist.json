@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "comment_for_reviewers": "Generalist edge-case fixture. The shadow refs resolve to empty strings — the renderer suppresses the shadow block when name resolves empty. Traits use signal-kind data; cohort bars are absent because within-archetype positioning is unavailable for Generalist (by design).",
+
+  "title": {
+    "archetype_name": "Generalist",
+    "modifier": "Who Flexes"
+  },
+  "tagline": "No single signature — your practice flexes between modes.",
+
+  "shadow": {
+    "name_ref": "user_archetype.shadow.name",
+    "tagline": "Your practice doesn't have one fixed shadow. The flex is the shape.",
+    "axis_ref": "user_archetype.shadow.axis"
+  },
+
+  "section_identity": {
+    "section_label": "I",
+    "heading": "Your *fingerprint* — by its absence",
+    "lede": "No single archetype dominates. That's the read.",
+
+    "traits": [
+      {
+        "kind": "high",
+        "name_em": "Decomposition",
+        "characterization": "Numbered, stepped-out plans before the agent moves — when the task calls for it.",
+        "data": { "kind": "signal", "signal": "decomposition" }
+      },
+      {
+        "kind": "high",
+        "name_em": "External reality",
+        "characterization": "You bring observed behavior, error logs, real outputs into the conversation.",
+        "data": { "kind": "signal", "signal": "external_reality_disclosure" }
+      },
+      {
+        "kind": "high",
+        "name_em": "Running it",
+        "characterization": "When the agent finishes, sometimes you don't just read — you run.",
+        "data": { "kind": "signal", "signal": "ran_and_reported" }
+      }
+    ],
+
+    "pullquote": {
+      "text": "You're not committing to one mode. The across-session view is your practice.",
+      "attribution": "The shape of your sessions"
+    },
+
+    "recognition_lines": [
+      "Your last three sessions don't look like each other — and that's deliberate.",
+      "You can name which archetype each session was, in retrospect.",
+      "Asked which mode you're in, you say it depends — and you mean it."
+    ]
+  },
+
+  "section_outcome": {
+    "section_label": "II",
+    "heading": "The *outcome* signal",
+    "lede": "Different modes ship at different rates. Which mode you reached for matters more than your overall average.",
+
+    "headline": "You ship — but the across-session distribution tells more than this number.",
+    "body": "Without one dominant archetype, the per-mode question is the better one: when you reached for the Manager mode, did the careful setup pay off? When you reached for Streamliner, did clean-and-quick land?",
+
+    "primary_value": {
+      "label": "You",
+      "value_ref": "structural.pr_rate_pct",
+      "format": "percent_1_decimal",
+      "kind": "primary"
+    },
+    "comparison_values": [
+      {
+        "label": "Reality Tester",
+        "value_static": 22.7,
+        "format": "percent_1_decimal",
+        "kind": "cohort"
+      },
+      {
+        "label": "Population avg",
+        "value_static": 17.4,
+        "format": "percent_1_decimal",
+        "kind": "cohort"
+      }
+    ]
+  },
+
+  "section_moves": {
+    "section_label": "III",
+    "heading": "Two *moves* to try this month",
+    "lede": "Pick a borrow — let it tilt your sessions for a week.",
+
+    "moves": [
+      {
+        "from_archetype": "The Reality Tester",
+        "verb_phrase": "Open `git diff` before you accept.",
+        "body_lead": "Reality Testers ship at the highest rate of any archetype, and the borrow generalizes across whichever mode you're in.",
+        "body_action": "Pick three of next week's sessions. Before you accept the agent's output, pull up `git diff` and read it line by line. Notice the spots where you'd ask a follow-up — that's the move.",
+        "effect_size_signal": "diff_reviewed",
+        "effect_size_note": "verification arc correlates with +13–17pp on shipping"
+      },
+      {
+        "from_archetype": "The Manager",
+        "verb_phrase": "Name the doc or RFC in your opening prompt.",
+        "body_lead": "Without a dominant default, you re-derive setup each session. Citing the convention up front is the Manager's anchor — it tilts the agent toward your team's shape from turn one.",
+        "body_action": "Pick one opener and use it for a week: cite the relevant doc, RFC, or style guide *by name* in your first prompt. Notice if the rest of the session shape stabilizes.",
+        "effect_size_signal": "cited_team_convention",
+        "effect_size_note": "+8.5pp on PR yield among high-citers"
+      }
+    ]
+  },
+
+  "compass": {
+    "include": true,
+    "user_archetype_ref": "user_archetype.primary",
+    "user_sharpness_ref": "user_archetype.fingerprint_sharpness",
+    "shadow_archetype_ref": "user_archetype.shadow.name",
+    "all_scores_ref": "user_archetype.all_scores"
+  },
+
+  "reflection_prompts_ref": "user_archetype.baseline.reflection_prompts",
+
+  "colophon": {
+    "n_sessions_ref": "n_sessions_tagged",
+    "date_earliest_ref": "structural.date_range.earliest",
+    "date_latest_ref": "structural.date_range.latest",
+    "footnote": "Generalist is a positive label, not a fallback. Re-run monthly to watch for motion."
+  }
+}

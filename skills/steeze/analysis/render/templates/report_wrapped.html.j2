@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>The {{ view.title.archetype_name }} — Coding Archetype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --paper: #EFECE3;
+    --card: #FFFFFF;
+    --ink: #0F1A12;
+    --ink-soft: #1F2E24;
+    --text-2: #4A554F;
+    --muted: #7A8581;
+    --rule: rgba(15, 26, 18, 0.12);
+    --accent: #3F784E;
+    --accent-soft: #5FAB72;
+
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --serif: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+    height: 100%;
+  }
+  body {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 100vh;
+  }
+  /* Subtle grain — lives above content, blends to feel like paper texture on light slides and gentle film grain on dark ones. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.16 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  }
+
+  .slide {
+    min-height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 56px 32px;
+    position: relative;
+  }
+  .slide-inner { max-width: 880px; margin: 0 auto; width: 100%; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-soft);
+    margin-bottom: 28px;
+  }
+  .scroll-cue {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    opacity: 0.7;
+  }
+  .scroll-cue::after {
+    content: " ↓";
+    display: inline-block;
+    margin-left: 6px;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ============== Slide 0: Build-up ============== */
+  .buildup {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .buildup .eyebrow { color: var(--accent-soft); }
+  .buildup .buildup-h {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+    max-width: 720px;
+  }
+  .buildup-stats {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 720px;
+  }
+  .buildup-stat .num {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(56px, 8.5vw, 104px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--accent-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .buildup-stat .lbl {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 14px;
+    line-height: 1.4;
+  }
+  .buildup-sub {
+    margin-top: 56px;
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.6vw, 22px);
+    line-height: 1.4;
+    color: var(--paper);
+    opacity: 0.75;
+    max-width: 540px;
+  }
+  @media (max-width: 640px) {
+    .buildup-stats { grid-template-columns: 1fr; gap: 28px; }
+  }
+
+  /* ============== Slide 1: Reveal ============== */
+  .reveal {
+    background: var(--ink);
+  }
+  .reveal h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(56px, 9vw, 120px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--paper);
+  }
+  .reveal h1 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-soft);
+  }
+  .reveal .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(20px, 2.4vw, 30px);
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 28px;
+    max-width: 720px;
+  }
+  .reveal .blurb {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: clamp(16px, 1.4vw, 19px);
+    line-height: 1.55;
+    color: var(--paper);
+    opacity: 0.72;
+    margin-top: 22px;
+    max-width: 620px;
+  }
+  .reveal .badge-row {
+    margin-top: 44px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .reveal .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    color: var(--paper);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .reveal .pill.shadow {
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--muted);
+    font-style: italic;
+    font-family: var(--serif);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+  }
+
+  /* ============== Slide 2: Where you stand ============== */
+  .stand {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .stand .eyebrow { color: var(--accent); }
+  .stand h2 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--ink);
+    max-width: 720px;
+  }
+  .stand h2 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .stand .lede {
+    font-family: var(--serif);
+    font-size: clamp(17px, 1.6vw, 22px);
+    color: var(--ink-soft);
+    margin-top: 14px;
+    max-width: 580px;
+    line-height: 1.5;
+  }
+  .compare-line {
+    margin-top: 22px;
+    padding: 16px 20px;
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.4vw, 18px);
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 620px;
+    border-radius: 0 6px 6px 0;
+  }
+  .compare-line strong {
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  /* ============== 2x2 archetype matrix (replaces the old SVG map) ============== */
+  .matrix-frame {
+    margin-top: 22px;
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    grid-template-rows: 1fr 28px;
+    gap: 8px;
+  }
+  .matrix-axis-y {
+    grid-column: 1; grid-row: 1;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    align-self: center;
+    justify-self: center;
+  }
+  .matrix-axis-x {
+    grid-column: 2; grid-row: 2;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .matrix {
+    grid-column: 2; grid-row: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 0.5px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+  .cell {
+    background: transparent;
+    position: relative;
+    perspective: 1200px;
+    cursor: pointer;
+    min-height: 0;
+  }
+  .cell-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.05, 0.2, 1);
+  }
+  .cell.is-flipped .cell-inner {
+    transform: rotateY(180deg);
+  }
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--card);
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+  }
+  .face.back {
+    transform: rotateY(180deg);
+    background: var(--card);
+    justify-content: center;
+    padding: 22px 22px 32px;
+  }
+  .face.back .back-name {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .face.back .back-blurb {
+    font-family: var(--serif);
+    font-size: clamp(13px, 1.05vw, 15px);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .face.back .back-hint {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cell.is-user .face.front {
+    background: var(--ink);
+  }
+  .cell.is-user .face.front .cell-name { color: var(--paper); }
+  .cell.is-user .face.front .you-tag { color: var(--accent-soft); }
+  .cell.is-user .face.front .cell-chips li {
+    color: var(--paper);
+    opacity: 0.82;
+  }
+  .cell.is-user .face.front .cell-dot {
+    background: var(--accent-soft);
+    box-shadow:
+      0 0 0 5px rgba(95, 171, 114, 0.18),
+      0 0 0 10px rgba(95, 171, 114, 0.06);
+  }
+  .cell.is-shadow .face.front .cell-name { color: var(--muted); }
+  .cell.is-shadow .face.front .cell-chips li { color: var(--muted); opacity: 0.85; }
+  .flip-hint {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.55;
+    transition: opacity 0.2s, color 0.2s;
+    pointer-events: none;
+  }
+  .cell:hover .flip-hint { opacity: 1; color: var(--accent); }
+  .stand .map-hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-top: 22px;
+    margin-bottom: 8px;
+  }
+  .cell-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .cell-name {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .cell.is-user .cell-name { color: var(--paper); font-weight: 700; }
+  .you-tag {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .you-tag em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text-2);
+    letter-spacing: 0;
+  }
+  .shadow-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .cell-chips {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+  }
+  .cell-chips li {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--text-2);
+  }
+  .cell.is-user .cell-chips li { color: var(--ink-soft); }
+  .cell-dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-2);
+    bottom: 14px;
+    right: 14px;
+  }
+  .cell.is-user .cell-dot {
+    width: 13px;
+    height: 13px;
+    background: var(--accent);
+    box-shadow:
+      0 0 0 5px rgba(63, 120, 78, 0.16),
+      0 0 0 10px rgba(63, 120, 78, 0.06);
+  }
+  .cell.is-shadow .cell-dot {
+    background: transparent;
+    border: 1.4px dashed var(--ink-soft);
+    width: 9px;
+    height: 9px;
+  }
+  .stand .map-caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  /* ============== Slide 3: Methodology ============== */
+  .method {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .method .eyebrow { color: var(--accent); }
+  .method h2 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--ink);
+    max-width: 700px;
+  }
+  .method h2 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .method-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(15px, 1.4vw, 19px);
+    color: var(--ink-soft);
+    margin-top: 14px;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+  .method-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+  }
+  .method-stat .num {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(36px, 4vw, 52px);
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+  }
+  .method-stat .lbl {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 8px;
+  }
+  .method-list {
+    margin-top: 32px;
+    max-width: 700px;
+    list-style: none;
+    counter-reset: step;
+  }
+  .method-list li {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    padding-left: 38px;
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .method-list li strong {
+    font-family: var(--sans);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .method-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ============== Slide 4: What to do ============== */
+  .moves {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .moves .eyebrow { color: var(--accent-soft); }
+  .moves h2 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--paper);
+    max-width: 720px;
+  }
+  .moves h2 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-soft);
+  }
+  .moves .moves-lede {
+    font-family: var(--serif);
+    font-size: clamp(17px, 1.6vw, 22px);
+    color: var(--paper);
+    opacity: 0.7;
+    margin-top: 14px;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  .move-card {
+    margin-top: 28px;
+    padding: 26px 28px;
+    border: 0.5px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+  }
+  .move-card .from {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent-soft);
+    margin-bottom: 12px;
+  }
+  .move-card .verb {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(24px, 2.6vw, 32px);
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    line-height: 1.18;
+    margin-top: 4px;
+  }
+  .move-card .verb code {
+    font-family: var(--mono);
+    background: rgba(255, 255, 255, 0.10);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.78em;
+    font-weight: 500;
+    vertical-align: baseline;
+  }
+  .move-card .action {
+    font-family: var(--sans);
+    font-size: clamp(15.5px, 1.4vw, 17px);
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--paper);
+    opacity: 0.92;
+    margin-top: 16px;
+  }
+  .move-card .action em { font-style: italic; color: var(--accent-soft); }
+  .move-card .action code {
+    font-family: var(--mono);
+    background: rgba(255, 255, 255, 0.10);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: var(--paper);
+  }
+  .moves-followup {
+    margin-top: 26px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent-soft);
+    text-align: center;
+  }
+
+  /* ============== Slide 5: Share ============== */
+  .share-slide {
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+  }
+  .share-slide .eyebrow {
+    color: var(--accent-soft);
+    text-align: center;
+    margin: 0 auto 28px;
+  }
+  .share-slide h2 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--paper);
+    margin: 0 auto;
+    max-width: 680px;
+  }
+  .share-slide h2 em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-soft);
+  }
+  /* The shareable card: a tight visual mini-summary */
+  .share-card {
+    margin: 36px auto 0;
+    width: min(92%, 480px);
+    aspect-ratio: 4 / 5;
+    background: #0F1A12;
+    border: 0.5px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 36px 32px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 28px 64px rgba(0, 0, 0, 0.4);
+  }
+  .share-card .desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 16px;
+    max-width: 360px;
+  }
+  .share-card .stat-row {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+  .share-card .stat-row span::before {
+    content: "→ ";
+    color: var(--accent-soft);
+  }
+  .share-card .eyebrow {
+    color: var(--accent-soft);
+    text-align: left;
+    margin: 0 0 14px;
+    font-size: 10px;
+  }
+  .share-card .name {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(34px, 5vw, 48px);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--paper);
+  }
+  .share-card .name em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-soft);
+  }
+  .share-card .tag {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 14px;
+  }
+  .share-card .footer {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .share-buttons {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .share-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.30);
+  }
+  .share-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--paper);
+  }
+  .share-btn.primary:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-soft);
+    color: var(--ink);
+  }
+  .share-toast {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-soft);
+    min-height: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .share-toast.is-on { opacity: 1; }
+  .share-slide .footnote {
+    margin-top: 36px;
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.5vw, 21px);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--paper);
+    opacity: 0.88;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 640px) {
+    .slide { padding: 40px 22px; }
+    .reveal h1 { font-size: clamp(48px, 13vw, 80px); }
+    .stand h2, .method h2, .moves h2, .share-slide h2 { font-size: clamp(28px, 8vw, 40px); }
+  }
+
+  @media print {
+    @page { size: 8.5in 11in; margin: 0; }
+    html, body {
+      height: auto;
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+    body::after { display: none !important; }
+    .slide {
+      height: auto;
+      min-height: 100vh;
+      page-break-after: always;
+      break-after: page;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .slide:last-of-type {
+      page-break-after: auto;
+      break-after: auto;
+    }
+    .scroll-cue,
+    .flip-hint,
+    .map-hint,
+    .share-buttons,
+    .share-toast { display: none !important; }
+    .cell-inner { transform: none !important; }
+    .face.back { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  {# Plain-English archetype labels for the move card "From" line. The archetype name itself stays internal. #}
+  {% set arch_one_liners = {
+    "The Manager": "engineers who plan first",
+    "The Reality Tester": "engineers who run the code first",
+    "The Pair Programmer": "engineers who think with the agent",
+    "The Patcher": "engineers who react fast",
+    "The Streamliner": "engineers who move fast",
+    "The Spec-First Architect": "engineers who spec everything before running",
+    "The Generalist": "engineers who shift styles to match the task"
+  } %}
+  {# Strip archetype names from authored prose so phrases like "Reality Tester loop" → "loop". Wrapped in `autoescape false` so the result is raw text — downstream `|emify` does the single HTML-escape pass. #}
+  {% macro depersonify(text) -%}
+  {%- autoescape false -%}
+  {{- text
+     | replace("Reality Tester ", "")
+     | replace("Pair Programmer ", "")
+     | replace("Spec-First Architect ", "")
+     | replace("Streamliner ", "")
+     | replace("Manager ", "")
+     | replace("Patcher ", "")
+     | replace("Generalist ", "")
+  -}}
+  {%- endautoescape -%}
+  {%- endmacro %}
+  {# Per-archetype thesis line — short, second-person, obviously ties to the archetype name. #}
+  {% set you_taglines = {
+    "The Manager": "You plan first. You ship after the diff says yes.",
+    "The Reality Tester": "You run the code first. Reality is your editor.",
+    "The Pair Programmer": "You think out loud — with the agent in the loop.",
+    "The Patcher": "You react. You re-ask. You hope it sticks.",
+    "The Streamliner": "You move fast. Few words wasted.",
+    "The Spec-First Architect": "The brief is the artifact. Code follows.",
+    "The Generalist": "You shift styles to match the task."
+  } %}
+  {# Signal ID → noun-form label for big stat blocks (e.g. "31 numbered plans"). #}
+  {% set signal_nouns = {
+    "decomposition": "plans drafted",
+    "context_loading_directive": "context briefings",
+    "pointed_to_specific_issue": "pinpointed failures",
+    "subagent_explicitly_delegated": "subagent calls",
+    "safety_constraint_set": "safety rails",
+    "diff_reviewed": "diff reads",
+    "test_first": "tests first",
+    "ran_code": "code runs",
+    "meta_behavioral_steering": "goal restatements",
+    "interaction_style:delegative": "delegated sessions",
+    "interaction_style:directive": "directed sessions",
+    "interaction_style:collaborative": "back-and-forths"
+  } %}
+  {# Signal ID → plain-English action phrase, used in the slide-1 pills. #}
+  {% set signal_phrases = {
+    "decomposition": "Wrote a numbered plan",
+    "context_loading_directive": "Loaded context first",
+    "pointed_to_specific_issue": "Pointed at a specific failure",
+    "subagent_explicitly_delegated": "Delegated to subagents",
+    "safety_constraint_set": "Set safety rails",
+    "diff_reviewed": "Read the diff",
+    "test_first": "Wrote a test first",
+    "ran_code": "Ran the code",
+    "meta_behavioral_steering": "Restated the goal mid-flow",
+    "interaction_style:delegative": "Worked delegatively",
+    "interaction_style:directive": "Steered directly",
+    "interaction_style:collaborative": "Worked back-and-forth",
+    "engagement_depth:deep_dive": "Settled into deep sessions",
+    "task_type:feature": "Built features",
+    "task_type:bug": "Hunted bugs"
+  } %}
+  {# Two voices: `you_blurbs` is for slide 1 (it's about the reader), `blurbs` is for slide 2 hover (the reader is exploring other archetypes). #}
+  {# Snackable, witty per-archetype lines for the share card. Short, punchy, slightly self-aware — built to read as a tweet. #}
+  {% set share_blurbs = {
+    "The Manager": "Plans first, audits the diff, ships when it passes inspection. Trust is earned by reading.",
+    "The Reality Tester": "Skips the plan, runs the code, fixes what breaks. Treats execution like a critic.",
+    "The Pair Programmer": "Code emerges through chat. Small turns, lots of 'wait, what about…' moments.",
+    "The Patcher": "Sees broken output, types vague re-ask, hopes it sticks. Reactive minimalism with crossed fingers.",
+    "The Streamliner": "Pair Programmer with less ceremony. Talks to the agent like a coworker who already gets it.",
+    "The Spec-First Architect": "Specifies everything before a single line runs. The brief is the artifact, code is just downstream.",
+    "The Generalist": "Shifts styles to match the task. Could be anyone, depending on the day."
+  } %}
+  {% set you_blurbs = {
+    "The Manager": "You break work into numbered plans before any code runs. You review diffs carefully, watch the agent execute, and trust structure over speed. For you, the audit is the work.",
+    "The Reality Tester": "You run the code first and let reality push back. You iterate fast on what breaks, treating execution as the source of truth.",
+    "The Pair Programmer": "You stay conversational and tight — many small turns with the agent, evolving in real time. Your code emerges through back-and-forth, not specification.",
+    "The Patcher": "You see broken output, type a vague re-ask, and hope the next attempt sticks. Reactive, minimal effort; rarely structured upfront.",
+    "The Streamliner": "You're a leaner Pair Programmer. Fewer ceremonies, more momentum. You talk to the agent like a colleague who already gets it.",
+    "The Spec-First Architect": "You take long planning passes before any code runs. Your briefs are detailed; iteration is rare. The artifact is the spec.",
+    "The Generalist": "You mix signals from all four corners. No dominant pattern — you balance structure and iteration depending on the task."
+  } %}
+  {% set blurbs = {
+    "The Manager": "Breaks work into numbered plans before any code runs. Reviews diffs carefully, watches the agent execute, and trusts structure over speed. The audit is the work.",
+    "The Reality Tester": "Runs the code first and lets reality push back. Iterates fast on what breaks, treating execution as the source of truth.",
+    "The Pair Programmer": "Conversational and tight — many small turns with the agent, evolving in real time. Code emerges through back-and-forth, not specification.",
+    "The Patcher": "Sees broken output, types a vague re-ask, hopes the next attempt sticks. Reactive minimal effort; rarely structured upfront.",
+    "The Streamliner": "A leaner Pair Programmer. Fewer ceremonies, more momentum. Talks to the agent like a colleague who already gets it.",
+    "The Spec-First Architect": "Long planning passes before any code runs. Briefs are detailed; iteration is rare. The artifact is the spec.",
+    "The Generalist": "Mixes signals from all four corners. No dominant pattern — balanced across structure and iteration depending on the task."
+  } %}
+  {% set primary_name = "The " + view.title.archetype_name %}
+
+  <!-- ============== Slide 0: BUILD-UP — earn the reveal with specific facts ============== -->
+  <section class="slide buildup">
+    <div class="slide-inner">
+      <div class="eyebrow">A peek at your last 30 days</div>
+      <h2 class="buildup-h">Here's what we noticed.</h2>
+
+      <div class="buildup-stats">
+        <div class="buildup-stat">
+          <div class="num" data-count-up>{{ view.colophon.n_sessions }}</div>
+          <div class="lbl">coding sessions</div>
+        </div>
+        {% set total = view.colophon.n_sessions %}
+        {% set traits_view = view.section_identity.traits_view or [] %}
+        {% set traits_raw  = view.section_identity.traits or [] %}
+        {% set shown = namespace(n=0) %}
+        {% for i in range(traits_view|length) %}
+          {% set t = traits_view[i] %}
+          {% set raw = traits_raw[i] if i < traits_raw|length else None %}
+          {% if t.kind == 'high' and shown.n < 2 and raw %}
+            {% if raw.data.kind == 'signal' %}
+              {% set sig = raw.data.signal %}
+            {% else %}
+              {% set sig = raw.data.field ~ ':' ~ raw.data.bucket %}
+            {% endif %}
+            {% set noun = signal_nouns.get(sig, t.name_em|replace('*', '')|lower) %}
+            {% set count = ((t.you_pct / 100) * total)|round|int %}
+            <div class="buildup-stat">
+              <div class="num" data-count-up>{{ count }}</div>
+              <div class="lbl">{{ noun }}</div>
+            </div>
+            {% set shown.n = shown.n + 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <p class="buildup-sub">It all contributes to an archetype. Here's yours.</p>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+
+  <!-- ============== Slide 1: REVEAL ============== -->
+  <section class="slide reveal">
+    <div class="slide-inner">
+      <div class="eyebrow">Your Claude Code archetype</div>
+      <h1>The <em>{{ view.title.archetype_name }}</em></h1>
+      <p class="tagline">{{ you_taglines.get(primary_name, view.tagline) }}</p>
+      <p class="blurb">{{ you_blurbs.get(primary_name, "A way of working with Claude Code that emerges across your sessions.") }}</p>
+      <div class="badge-row">
+        <span class="pill">{{ view.colophon.n_sessions }} of your sessions analyzed</span>
+      </div>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+
+  <!-- ============== Slide 2: WHERE YOU STAND ============== -->
+  {% if landscape %}
+  <section class="slide stand">
+    <div class="slide-inner">
+      <div class="eyebrow">Where you stand</div>
+      {% set sharp = (landscape.sharpness or '')|lower %}
+      {% set primary_short = (landscape.primary or 'Manager')|replace('The ', '') %}
+      {% if sharp == 'sharp' %}
+      <h2>You stick to <em>one mode</em>.</h2>
+      <p class="lede">Most engineers drift between styles depending on the task. You don't — your habits cluster sharply in one corner.</p>
+      {% elif sharp == 'borderline' %}
+      <h2>You work in <em>two modes</em>.</h2>
+      <p class="lede">Some sessions look like {{ primary_short }}. Others look like {{ (landscape.secondary or '')|replace('The ', '') }}. You shift between them on a given day.</p>
+      {% else %}
+      <h2>You move with <em>the pack</em>.</h2>
+      <p class="lede">Your habits sit near the middle of the {{ primary_short }} group — flexible, balanced, hard to pin to one corner.</p>
+      {% endif %}
+
+      {# Comparison line: user vs typical-archetype on the strongest signal. Single most viral framing in year-in-review reports. #}
+      {% set t1 = traits_view[0] if traits_view else None %}
+      {% set raw1 = traits_raw[0] if traits_raw else None %}
+      {% if t1 and t1.cohort_pct and raw1 %}
+        {% if raw1.data.kind == 'signal' %}
+          {% set sig1 = raw1.data.signal %}
+        {% else %}
+          {% set sig1 = raw1.data.field ~ ':' ~ raw1.data.bucket %}
+        {% endif %}
+        {% set phrase1 = signal_phrases.get(sig1, t1.name_em|replace('*', ''))|lower %}
+      <p class="compare-line">
+        You {{ phrase1 }} in
+        <strong>{{ t1.you_pct|round|int }}%</strong> of your sessions.
+        Most {{ primary_short }}s hit <strong>{{ t1.cohort_pct|round|int }}%</strong>.
+      </p>
+      {% endif %}
+
+      {# Map a primary or variant archetype to one of the 4 cells. Variants and the user's archetype highlight their parent primary's cell. #}
+      {% set primary = landscape.primary or "" %}
+      {% set shadow = landscape.shadow or "" %}
+      {% set arch_to_cell = {
+        "The Manager": "manager",
+        "The Spec-First Architect": "manager",
+        "The Reality Tester": "reality",
+        "The Pair Programmer": "pair",
+        "The Streamliner": "pair",
+        "The Patcher": "patcher"
+      } %}
+      {% set user_cell = arch_to_cell.get(primary, "") %}
+      {% set shadow_cell = arch_to_cell.get(shadow, "") %}
+
+      <div class="map-hint">Tap any cell to flip and learn about that archetype</div>
+      <div class="matrix-frame">
+        <div class="matrix-axis-y">More iteration ↑</div>
+        <div class="matrix">
+          {% macro cell(key, name, chips) -%}
+          <div class="cell{% if user_cell == key %} is-user{% endif %}{% if shadow_cell == key and user_cell != key %} is-shadow{% endif %}" data-arch="{{ name }}" tabindex="0" role="button" aria-label="Flip to read about {{ name }}">
+            <div class="cell-inner">
+              <div class="face front">
+                <div class="cell-head">
+                  <span class="cell-name">{{ name|replace('The ', '') }}</span>
+                  {% if user_cell == key %}
+                  <span class="you-tag">★ You{% if primary != ('The ' + name|replace('The ', '')) and primary %} <em>· {{ primary|replace('The ', '') }}</em>{% endif %}</span>
+                  {% elif shadow_cell == key %}
+                  <span class="shadow-tag">Shadow</span>
+                  {% else %}
+                  <span class="flip-hint">Flip ↻</span>
+                  {% endif %}
+                </div>
+                <ul class="cell-chips">
+                  {% for c in chips %}<li>"{{ c }}"</li>{% endfor %}
+                </ul>
+                <div class="cell-dot"></div>
+              </div>
+              <div class="face back">
+                <div class="back-name">{{ name }}</div>
+                <div class="back-blurb">{{ blurbs.get(name, '') }}</div>
+                <div class="back-hint">Tap to flip back</div>
+              </div>
+            </div>
+          </div>
+          {%- endmacro %}
+
+          {{ cell("pair",     "The Pair Programmer", ["many small turns", "code by chat"]) }}
+          {{ cell("reality",  "The Reality Tester",  ["ran the code first", "fixed what broke"]) }}
+          {{ cell("patcher",  "The Patcher",         ["vague re-ask", "hope it sticks"]) }}
+          {{ cell("manager",  "The Manager",         ["wrote a numbered plan", "read the diff"]) }}
+        </div>
+        <div class="matrix-axis-x">More structure →</div>
+      </div>
+
+      <div class="map-caption">{{ view.colophon.n_sessions }} of your sessions analyzed</div>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+  {% endif %}
+
+  <!-- ============== Slide 3: METHODOLOGY ============== -->
+  <section class="slide method">
+    <div class="slide-inner">
+      <div class="eyebrow">Methodology</div>
+      <h2>Where these numbers came from.</h2>
+      <p class="method-sub">The whole analysis ran on your machine. We compared your sessions against a baseline of 172 engineers and 4,846 real Claude Code sessions — no data left your laptop.</p>
+
+      <div class="method-grid">
+        <div class="method-stat">
+          <div class="num">~36</div>
+          <div class="lbl">Behavioral signals tagged per session</div>
+        </div>
+        <div class="method-stat">
+          <div class="num">7</div>
+          <div class="lbl">Archetypes scored from those signals</div>
+        </div>
+        <div class="method-stat">
+          <div class="num">{{ view.colophon.n_sessions }}</div>
+          <div class="lbl">Of your sessions in this analysis</div>
+        </div>
+      </div>
+
+      <ol class="method-list">
+        <li>Your local Claude Code history was tagged for things like: did you write a plan, did you run the tests, did you check output before moving on, did you split work into steps.</li>
+        <li>Those signal rates were compared to seven archetype profiles built from the 172-engineer baseline.</li>
+        <li>You were placed at a weighted center on the structure × iteration map — the same map you saw on slide 2.</li>
+        <li>Everything ran locally on your machine. No transcripts left your laptop.</li>
+      </ol>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+
+  <!-- ============== Slide 4: WHAT TO DO ============== -->
+  {% if view.section_moves and view.section_moves.moves %}
+  <section class="slide moves">
+    <div class="slide-inner">
+      <div class="eyebrow">What to do with this</div>
+      <h2>Two experiments to run this month.</h2>
+
+      {% for m in view.section_moves.moves %}
+      <div class="move-card">
+        <div class="from">From {{ arch_one_liners.get(m.from_archetype, m.from_archetype) }}</div>
+        <div class="verb">{{ m.verb_phrase|emify }}</div>
+        <div class="action">{{ depersonify(m.body_action)|emify }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+  {% endif %}
+
+  <!-- ============== Slide 5: SHARE ============== -->
+  <section class="slide share-slide">
+    <div class="slide-inner">
+      <div class="eyebrow">Share your archetype</div>
+      <h2>Share your coding <em>archetype</em>.</h2>
+
+      <div class="share-card" id="share-card">
+        <div>
+          <div class="eyebrow">My Claude Code archetype</div>
+          <div class="name">The <em>{{ view.title.archetype_name }}</em></div>
+          <div class="tag">{{ you_taglines.get(primary_name, view.tagline) }}</div>
+          <div class="desc">{{ share_blurbs.get(primary_name, blurbs.get(primary_name, '')) }}</div>
+          <div class="stat-row">
+            {% set traits_view = view.section_identity.traits_view or [] %}
+            {% set traits_raw  = view.section_identity.traits or [] %}
+            {% set shown = namespace(n=0) %}
+            {% for i in range(traits_view|length) %}
+              {% set t = traits_view[i] %}
+              {% set raw = traits_raw[i] if i < traits_raw|length else None %}
+              {% if t.kind == 'high' and shown.n < 2 and raw %}
+                {% if raw.data.kind == 'signal' %}
+                  {% set sig = raw.data.signal %}
+                {% else %}
+                  {% set sig = raw.data.field ~ ':' ~ raw.data.bucket %}
+                {% endif %}
+                {% set phrase = signal_phrases.get(sig, t.name_em|replace('*', '')) %}
+                {% set total = view.colophon.n_sessions %}
+                {% set count = ((t.you_pct / 100) * total)|round|int %}
+                <span>{{ phrase }} · {{ count }}/{{ total }}</span>
+                {% set shown.n = shown.n + 1 %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="footer">
+          <span>Coding Archetype</span>
+          <span>{{ view.colophon.n_sessions }} sessions</span>
+        </div>
+      </div>
+
+      <div class="share-buttons">
+        <button class="share-btn primary" id="share-card-btn">Share card</button>
+        <button class="share-btn" id="share-copy">Copy text</button>
+      </div>
+      <div class="share-toast" id="share-toast"></div>
+
+      <p class="footnote">Want to see what your coding archetype is?<br>Run the Coding Archetype test yourself.</p>
+    </div>
+  </section>
+
+  <script>
+    // ===== Count-up animation on numbers entering viewport =====
+    (function () {
+      const counters = document.querySelectorAll('[data-count-up]');
+      if (!counters.length || !('IntersectionObserver' in window)) return;
+      counters.forEach(el => {
+        el.dataset.target = el.textContent.trim();
+        el.textContent = '0';
+      });
+      function animateCount(el) {
+        const target = parseInt(el.dataset.target, 10);
+        if (Number.isNaN(target)) return;
+        const duration = 1100;
+        const start = performance.now();
+        function step(now) {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(eased * target).toLocaleString();
+          if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      counters.forEach(c => obs.observe(c));
+    })();
+
+    // ===== Matrix: flip cells on click/tap =====
+    (function () {
+      const cells = document.querySelectorAll('.matrix .cell');
+      cells.forEach(cell => {
+        const toggle = (e) => {
+          e.preventDefault();
+          cell.classList.toggle('is-flipped');
+        };
+        cell.addEventListener('click', toggle);
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') toggle(e);
+        });
+      });
+    })();
+
+    // ===== Share buttons =====
+    (function () {
+      const archetype = "The {{ view.title.archetype_name }}";
+      const blurb = "{{ share_blurbs.get(primary_name, blurbs.get(primary_name, ''))|replace('"', '\\"') }}";
+      const sessions = "{{ view.colophon.n_sessions }}";
+      const summary = "I'm " + archetype + " — " + blurb + " (Coding Archetype, " + sessions + " sessions analyzed.)";
+
+      const toast = document.getElementById('share-toast');
+      function flash(msg) {
+        toast.textContent = msg;
+        toast.classList.add('is-on');
+        clearTimeout(flash._t);
+        flash._t = setTimeout(() => toast.classList.remove('is-on'), 2200);
+      }
+
+      const copyBtn = document.getElementById('share-copy');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(summary);
+            flash('Copied to clipboard');
+          } catch {
+            flash('Copy failed — select the card text manually');
+          }
+        });
+      }
+
+      // ===== Share card as image =====
+      const shareBtn = document.getElementById('share-card-btn');
+      const cardEl = document.getElementById('share-card');
+
+      async function captureCard() {
+        // html2canvas is loaded via <script defer>; bail gracefully if it isn't ready.
+        if (typeof html2canvas !== 'function') {
+          flash('Image library not loaded yet');
+          return null;
+        }
+        const w = cardEl.offsetWidth;
+        const h = cardEl.offsetHeight;
+        return html2canvas(cardEl, {
+          width: w,
+          height: h,
+          scale: 2,
+          backgroundColor: '#0F1A12',
+          useCORS: true,
+          logging: false,
+        });
+      }
+
+      function downloadCanvas(canvas) {
+        const link = document.createElement('a');
+        link.download = 'coding-archetype-' + archetype.replace(/\s+/g, '-').toLowerCase() + '.png';
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+
+      if (shareBtn && cardEl) {
+        shareBtn.addEventListener('click', async () => {
+          flash('Capturing card…');
+          let canvas;
+          try {
+            canvas = await captureCard();
+          } catch (err) {
+            flash('Capture failed');
+            return;
+          }
+          if (!canvas) return;
+
+          // Try the modern Web Share API with a file payload.
+          if (navigator.canShare) {
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], 'coding-archetype.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({
+                  files: [file],
+                  title: archetype + ' — Coding Archetype',
+                  text: summary,
+                });
+                flash('Shared');
+                return;
+              } catch (err) {
+                if (err && err.name === 'AbortError') return;
+                // Fall through to download.
+              }
+            }
+          }
+          // Fallback: download the PNG.
+          downloadCanvas(canvas);
+          flash('Saved as image');
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+archetype,categorical_field,bucket,share_pct,n_sessions
+The Pair Programmer,session_shape,Marathon Workshop,33.5,57
+The Pair Programmer,session_shape,Workshop,28.8,49
+The Pair Programmer,session_shape,Unassigned,12.4,21
+The Pair Programmer,session_shape,Marathon,10.0,17
+The Pair Programmer,session_shape,One-shot,7.1,12
+The Pair Programmer,session_shape,Blueprint,2.9,5
+The Pair Programmer,session_shape,Scaffold,2.4,4
+The Pair Programmer,session_shape,Tight Workshop,1.2,2
+The Pair Programmer,session_shape,Late reveal,1.2,2
+The Pair Programmer,session_shape,Clean handoff,0.6,1
+The Pair Programmer,interaction_style,augmentative,72.9,124
+The Pair Programmer,interaction_style,delegative,11.8,20
+The Pair Programmer,interaction_style,mixed,9.4,16
+The Pair Programmer,interaction_style,unknown,5.9,10
+The Pair Programmer,engagement_depth,high,75.3,128
+The Pair Programmer,engagement_depth,moderate,10.6,18
+The Pair Programmer,engagement_depth,low,7.1,12
+The Pair Programmer,engagement_depth,unknown,5.9,10
+The Pair Programmer,engagement_depth,minimal,1.2,2
+The Pair Programmer,task_size,large,36.5,62
+The Pair Programmer,task_size,medium,32.4,55
+The Pair Programmer,task_size,very_large,17.6,30
+The Pair Programmer,task_size,small,13.5,23
+The Pair Programmer,arc_shape,setup_first,44.1,75
+The Pair Programmer,arc_shape,explore_first,25.3,43
+The Pair Programmer,arc_shape,jump_in,20.6,35
+The Pair Programmer,arc_shape,unknown,5.9,10
+The Pair Programmer,arc_shape,iterative,4.1,7
+The Pair Programmer,task_type,implementation,28.2,48
+The Pair Programmer,task_type,debugging,17.1,29
+The Pair Programmer,task_type,refactor,17.1,29
+The Pair Programmer,task_type,other,15.3,26
+The Pair Programmer,task_type,documentation,7.6,13
+The Pair Programmer,task_type,unknown,5.9,10
+The Pair Programmer,task_type,configuration,4.1,7
+The Pair Programmer,task_type,exploration,3.5,6
+The Pair Programmer,task_type,migration,1.2,2
+The Patcher,session_shape,One-shot,28.9,261
+The Patcher,session_shape,Unassigned,27.4,247
+The Patcher,session_shape,Workshop,17.1,154
+The Patcher,session_shape,Clean handoff,7.5,68
+The Patcher,session_shape,Scaffold,3.5,32
+The Patcher,session_shape,Drift,3.4,31
+The Patcher,session_shape,Marathon Workshop,3.3,30
+The Patcher,session_shape,Blueprint,3.1,28
+The Patcher,session_shape,Marathon,2.8,25
+The Patcher,session_shape,Tight Workshop,2.1,19
+The Patcher,session_shape,Spiral,0.8,7
+The Patcher,interaction_style,delegative,46.3,418
+The Patcher,interaction_style,augmentative,28.9,261
+The Patcher,interaction_style,unknown,14.5,131
+The Patcher,interaction_style,mixed,10.2,92
+The Patcher,engagement_depth,low,28.9,261
+The Patcher,engagement_depth,high,24.3,219
+The Patcher,engagement_depth,moderate,23.3,210
+The Patcher,engagement_depth,unknown,14.5,131
+The Patcher,engagement_depth,minimal,9.0,81
+The Patcher,task_size,small,50.1,452
+The Patcher,task_size,medium,38.6,348
+The Patcher,task_size,large,10.5,95
+The Patcher,task_size,very_large,0.8,7
+The Patcher,arc_shape,jump_in,55.1,497
+The Patcher,arc_shape,setup_first,18.3,165
+The Patcher,arc_shape,unknown,14.5,131
+The Patcher,arc_shape,explore_first,8.0,72
+The Patcher,arc_shape,iterative,3.8,34
+The Patcher,arc_shape,unclear,0.3,3
+The Patcher,task_type,implementation,26.9,243
+The Patcher,task_type,debugging,25.8,233
+The Patcher,task_type,unknown,14.5,131
+The Patcher,task_type,other,10.4,94
+The Patcher,task_type,documentation,8.1,73
+The Patcher,task_type,refactor,5.4,49
+The Patcher,task_type,exploration,4.7,42
+The Patcher,task_type,configuration,3.2,29
+The Patcher,task_type,migration,0.9,8
+The Manager,session_shape,Blueprint,19.2,203
+The Manager,session_shape,Unassigned,18.8,198
+The Manager,session_shape,Workshop,17.3,183
+The Manager,session_shape,One-shot,16.9,178
+The Manager,session_shape,Scaffold,13.9,147
+The Manager,session_shape,Marathon Workshop,4.9,52
+The Manager,session_shape,Clean handoff,4.7,50
+The Manager,session_shape,Marathon,1.9,20
+The Manager,session_shape,Tight Workshop,1.5,16
+The Manager,session_shape,Drift,0.7,7
+The Manager,session_shape,Late reveal,0.2,2
+The Manager,interaction_style,delegative,45.1,476
+The Manager,interaction_style,augmentative,35.2,372
+The Manager,interaction_style,mixed,9.9,105
+The Manager,interaction_style,unknown,9.8,103
+The Manager,engagement_depth,moderate,32.9,347
+The Manager,engagement_depth,high,32.7,345
+The Manager,engagement_depth,low,20.9,221
+The Manager,engagement_depth,unknown,9.8,103
+The Manager,engagement_depth,minimal,3.8,40
+The Manager,task_size,small,50.4,532
+The Manager,task_size,medium,37.2,393
+The Manager,task_size,large,10.6,112
+The Manager,task_size,very_large,1.8,19
+The Manager,arc_shape,setup_first,52.4,553
+The Manager,arc_shape,jump_in,25.2,266
+The Manager,arc_shape,unknown,9.8,103
+The Manager,arc_shape,explore_first,9.5,100
+The Manager,arc_shape,iterative,2.7,28
+The Manager,arc_shape,unclear,0.6,6
+The Manager,task_type,implementation,34.8,367
+The Manager,task_type,debugging,14.6,154
+The Manager,task_type,documentation,13.1,138
+The Manager,task_type,refactor,12.5,132
+The Manager,task_type,unknown,9.8,103
+The Manager,task_type,other,7.0,74
+The Manager,task_type,configuration,3.7,39
+The Manager,task_type,exploration,3.2,34
+The Manager,task_type,migration,1.4,15
+The Reality Tester,session_shape,Workshop,27.8,131
+The Reality Tester,session_shape,Unassigned,25.7,121
+The Reality Tester,session_shape,One-shot,19.5,92
+The Reality Tester,session_shape,Marathon Workshop,8.3,39
+The Reality Tester,session_shape,Tight Workshop,5.5,26
+The Reality Tester,session_shape,Clean handoff,5.3,25
+The Reality Tester,session_shape,Blueprint,3.2,15
+The Reality Tester,session_shape,Scaffold,1.9,9
+The Reality Tester,session_shape,Marathon,1.9,9
+The Reality Tester,session_shape,Drift,0.8,4
+The Reality Tester,interaction_style,augmentative,53.7,253
+The Reality Tester,interaction_style,delegative,29.7,140
+The Reality Tester,interaction_style,mixed,8.9,42
+The Reality Tester,interaction_style,unknown,7.6,36
+The Reality Tester,engagement_depth,high,46.7,220
+The Reality Tester,engagement_depth,moderate,27.0,127
+The Reality Tester,engagement_depth,low,16.3,77
+The Reality Tester,engagement_depth,unknown,7.6,36
+The Reality Tester,engagement_depth,minimal,2.3,11
+The Reality Tester,task_size,medium,47.3,223
+The Reality Tester,task_size,small,35.2,166
+The Reality Tester,task_size,large,16.6,78
+The Reality Tester,task_size,very_large,0.8,4
+The Reality Tester,arc_shape,jump_in,51.8,244
+The Reality Tester,arc_shape,explore_first,19.5,92
+The Reality Tester,arc_shape,setup_first,13.2,62
+The Reality Tester,arc_shape,unknown,7.6,36
+The Reality Tester,arc_shape,iterative,7.4,35
+The Reality Tester,arc_shape,unclear,0.4,2
+The Reality Tester,task_type,debugging,30.8,145
+The Reality Tester,task_type,implementation,27.6,130
+The Reality Tester,task_type,refactor,11.5,54
+The Reality Tester,task_type,documentation,9.8,46
+The Reality Tester,task_type,unknown,7.6,36
+The Reality Tester,task_type,configuration,4.9,23
+The Reality Tester,task_type,other,3.4,16
+The Reality Tester,task_type,exploration,2.3,11
+The Reality Tester,task_type,migration,2.1,10
+The Spec-First Architect,session_shape,One-shot,29.2,33
+The Spec-First Architect,session_shape,Unassigned,28.3,32
+The Spec-First Architect,session_shape,Blueprint,23.9,27
+The Spec-First Architect,session_shape,Workshop,10.6,12
+The Spec-First Architect,session_shape,Clean handoff,3.5,4
+The Spec-First Architect,session_shape,Tight Workshop,1.8,2
+The Spec-First Architect,session_shape,Drift,0.9,1
+The Spec-First Architect,session_shape,Marathon Workshop,0.9,1
+The Spec-First Architect,session_shape,Marathon,0.9,1
+The Spec-First Architect,interaction_style,delegative,51.3,58
+The Spec-First Architect,interaction_style,augmentative,26.5,30
+The Spec-First Architect,interaction_style,unknown,11.5,13
+The Spec-First Architect,interaction_style,mixed,10.6,12
+The Spec-First Architect,engagement_depth,moderate,37.2,42
+The Spec-First Architect,engagement_depth,high,24.8,28
+The Spec-First Architect,engagement_depth,low,18.6,21
+The Spec-First Architect,engagement_depth,unknown,11.5,13
+The Spec-First Architect,engagement_depth,minimal,8.0,9
+The Spec-First Architect,task_size,small,67.3,76
+The Spec-First Architect,task_size,medium,31.0,35
+The Spec-First Architect,task_size,large,1.8,2
+The Spec-First Architect,arc_shape,setup_first,41.6,47
+The Spec-First Architect,arc_shape,jump_in,35.4,40
+The Spec-First Architect,arc_shape,unknown,11.5,13
+The Spec-First Architect,arc_shape,explore_first,8.0,9
+The Spec-First Architect,arc_shape,iterative,3.5,4
+The Spec-First Architect,task_type,implementation,40.7,46
+The Spec-First Architect,task_type,debugging,15.0,17
+The Spec-First Architect,task_type,refactor,13.3,15
+The Spec-First Architect,task_type,unknown,11.5,13
+The Spec-First Architect,task_type,other,10.6,12
+The Spec-First Architect,task_type,documentation,4.4,5
+The Spec-First Architect,task_type,configuration,3.5,4
+The Spec-First Architect,task_type,migration,0.9,1
+The Streamliner,session_shape,Unassigned,72.7,16
+The Streamliner,session_shape,One-shot,9.1,2
+The Streamliner,session_shape,Workshop,4.5,1
+The Streamliner,session_shape,Clean handoff,4.5,1
+The Streamliner,session_shape,Marathon Workshop,4.5,1
+The Streamliner,session_shape,Tight Workshop,4.5,1
+The Streamliner,interaction_style,delegative,45.5,10
+The Streamliner,interaction_style,unknown,18.2,4
+The Streamliner,interaction_style,augmentative,18.2,4
+The Streamliner,interaction_style,mixed,18.2,4
+The Streamliner,engagement_depth,moderate,45.5,10
+The Streamliner,engagement_depth,high,22.7,5
+The Streamliner,engagement_depth,unknown,18.2,4
+The Streamliner,engagement_depth,low,9.1,2
+The Streamliner,engagement_depth,minimal,4.5,1
+The Streamliner,task_size,medium,81.8,18
+The Streamliner,task_size,small,13.6,3
+The Streamliner,task_size,large,4.5,1
+The Streamliner,arc_shape,jump_in,63.6,14
+The Streamliner,arc_shape,unknown,18.2,4
+The Streamliner,arc_shape,setup_first,9.1,2
+The Streamliner,arc_shape,explore_first,9.1,2
+The Streamliner,task_type,implementation,22.7,5
+The Streamliner,task_type,configuration,18.2,4
+The Streamliner,task_type,unknown,18.2,4
+The Streamliner,task_type,debugging,18.2,4
+The Streamliner,task_type,refactor,13.6,3
+The Streamliner,task_type,documentation,9.1,2
+The Generalist,session_shape,One-shot,32.9,128
+The Generalist,session_shape,Unassigned,30.3,118
+The Generalist,session_shape,Workshop,16.7,65
+The Generalist,session_shape,Blueprint,10.0,39
+The Generalist,session_shape,Clean handoff,3.3,13
+The Generalist,session_shape,Scaffold,2.6,10
+The Generalist,session_shape,Marathon Workshop,1.8,7
+The Generalist,session_shape,Tight Workshop,1.0,4
+The Generalist,session_shape,Drift,0.8,3
+The Generalist,session_shape,Marathon,0.3,1
+The Generalist,session_shape,Late reveal,0.3,1
+The Generalist,interaction_style,delegative,46.3,180
+The Generalist,interaction_style,augmentative,30.6,119
+The Generalist,interaction_style,unknown,14.4,56
+The Generalist,interaction_style,mixed,8.7,34
+The Generalist,engagement_depth,moderate,29.3,114
+The Generalist,engagement_depth,low,28.8,112
+The Generalist,engagement_depth,high,23.9,93
+The Generalist,engagement_depth,unknown,14.4,56
+The Generalist,engagement_depth,minimal,3.6,14
+The Generalist,task_size,small,57.1,222
+The Generalist,task_size,medium,38.8,151
+The Generalist,task_size,large,3.6,14
+The Generalist,task_size,very_large,0.5,2
+The Generalist,arc_shape,jump_in,42.4,165
+The Generalist,arc_shape,setup_first,28.5,111
+The Generalist,arc_shape,unknown,14.4,56
+The Generalist,arc_shape,explore_first,11.6,45
+The Generalist,arc_shape,iterative,3.1,12
+The Generalist,task_type,implementation,24.9,97
+The Generalist,task_type,debugging,21.1,82
+The Generalist,task_type,unknown,14.4,56
+The Generalist,task_type,refactor,14.1,55
+The Generalist,task_type,configuration,9.8,38
+The Generalist,task_type,exploration,4.4,17
+The Generalist,task_type,migration,3.9,15
+The Generalist,task_type,documentation,3.9,15
+The Generalist,task_type,other,3.6,14

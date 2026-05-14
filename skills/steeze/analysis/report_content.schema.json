@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "report_content.schema.json",
+  "title": "Practice Mirror Report Content",
+  "description": "Structured content authored by the LLM (Claude Code) and consumed by analysis/render_report.py. Numbers come from metrics.json via *_ref fields — the LLM does not round-trip arithmetic.",
+
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "title",
+    "tagline",
+    "shadow",
+    "section_identity",
+    "section_outcome",
+    "section_moves",
+    "colophon"
+  ],
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Lock to 1.0 in v3.0; bump when the contract breaks."
+    },
+    "comment_for_reviewers": {
+      "type": "string",
+      "description": "Optional human-readable note. Renderer ignores."
+    },
+
+    "title": {
+      "type": "object",
+      "description": "Title in 'The X Who Y' form. Archetype italicized in HTML; modifier upright. Both LLM-authored.",
+      "additionalProperties": false,
+      "required": ["archetype_name", "modifier"],
+      "properties": {
+        "archetype_name": {
+          "type": "string",
+          "description": "Bare archetype noun (e.g., 'Manager'). Renderer prepends 'The'."
+        },
+        "modifier": {
+          "type": "string",
+          "description": "What makes THIS user specific within their archetype (e.g., 'Who Audits'). 1-3 words; sentence-case."
+        }
+      }
+    },
+
+    "tagline": {
+      "type": "string",
+      "description": "One short sentence under the title — a vivid character-line that captures the user in one breath. Reserve the longer thesis for the pullquote in Section I.",
+      "minLength": 10,
+      "maxLength": 110
+    },
+
+    "fingerprint_badge": {
+      "type": "object",
+      "description": "Optional. Reserved for a future renderer. The current renderer does NOT show a percentile pill in the hero — the in-hero 2x2 communicates fingerprint sharpness spatially. Authors may omit; renderer ignores.",
+      "additionalProperties": false,
+      "required": ["ref", "label_map"],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "description": "Path into metrics.json that resolves to one of: 'sharp', 'typical', 'borderline'."
+        },
+        "label_map": {
+          "type": "object",
+          "description": "Map from sharpness value to display label.",
+          "additionalProperties": { "type": "string" },
+          "required": ["sharp", "typical", "borderline"]
+        },
+        "detail": { "type": "string" },
+        "score_ref": {
+          "type": "string",
+          "description": "Path into metrics.json for the numeric score (rendered alongside the label)."
+        }
+      }
+    },
+
+    "headline_stats": {
+      "type": "array",
+      "description": "Optional. Reserved for a future renderer to surface 1-3 high-level stats. The current renderer relies on the fingerprint_badge in the hero and the trait bars in Section I — the headline-stats row is dropped from v3.0 to keep the hero screenshot-tight. Authors may omit; renderer ignores.",
+      "minItems": 0,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/headline_stat" }
+    },
+
+    "shadow": {
+      "type": "object",
+      "description": "Shadow archetype shown in the hero. tagline is LLM-authored prose; name and axis are refs into metrics.json so they always match the data layer.",
+      "additionalProperties": false,
+      "required": ["name_ref", "tagline", "axis_ref"],
+      "properties": {
+        "name_ref": { "type": "string" },
+        "tagline": { "type": "string", "minLength": 20, "maxLength": 200 },
+        "axis_ref": { "type": "string" }
+      }
+    },
+
+    "section_identity": {
+      "type": "object",
+      "description": "Section I — pure recognition, no deficits.",
+      "additionalProperties": false,
+      "required": [
+        "section_label",
+        "heading",
+        "traits",
+        "pullquote",
+        "recognition_lines"
+      ],
+      "properties": {
+        "section_label": { "type": "string", "const": "I" },
+        "heading": { "type": "string" },
+        "lede": { "type": "string" },
+        "traits": {
+          "type": "array",
+          "description": "Exactly three traits. Typical pattern is 2 high + 1 contrast, but 3 high is allowed when the data calls for it.",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/trait" }
+        },
+        "pullquote": {
+          "type": "object",
+          "description": "The screenshot moment. One sentence (or two short ones) with weight; renderer applies serif-italic + paper-warm panel.",
+          "additionalProperties": false,
+          "required": ["text"],
+          "properties": {
+            "text": { "type": "string", "minLength": 30, "maxLength": 280 },
+            "attribution": { "type": "string" }
+          }
+        },
+        "recognition_lines": {
+          "type": "array",
+          "description": "'You'll know this is you if…' lines. Second-person, behavior-specific, written for uncanny-recognition. Until research authors per-archetype lines, the LLM provides them inline.",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "string", "minLength": 10, "maxLength": 200 }
+        }
+      }
+    },
+
+    "section_outcome": {
+      "type": "object",
+      "description": "Section II — where the data shows tension. Strengths alongside trade-offs; honest but not deficit-framed.",
+      "additionalProperties": false,
+      "required": [
+        "section_label",
+        "heading",
+        "headline",
+        "body",
+        "primary_value",
+        "comparison_values"
+      ],
+      "properties": {
+        "section_label": { "type": "string", "const": "II" },
+        "heading": { "type": "string" },
+        "lede": { "type": "string" },
+        "headline": { "type": "string" },
+        "body": { "type": "string" },
+        "primary_value": { "$ref": "#/$defs/gauge_value" },
+        "comparison_values": {
+          "type": "array",
+          "description": "Cohort comparison rows for the gauge. value_static is allowed for cross-archetype facts (e.g., 'Reality Tester ships at 22.7%') because they're stable corpus statistics from archetype_baselines.csv, not user data.",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/gauge_value" }
+        }
+      }
+    },
+
+    "section_moves": {
+      "type": "object",
+      "description": "Section III — exactly two moves, each named as a borrow from another archetype.",
+      "additionalProperties": false,
+      "required": ["section_label", "heading", "moves"],
+      "properties": {
+        "section_label": { "type": "string", "const": "III" },
+        "heading": { "type": "string" },
+        "lede": { "type": "string" },
+        "moves": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "$ref": "#/$defs/move" }
+        }
+      }
+    },
+
+    "compass": {
+      "type": "object",
+      "description": "Spatial map placing the user among all 7 archetypes. Renderer computes coordinates from all_scores + sharpness; the content JSON only specifies whether to include it and which refs to read.",
+      "additionalProperties": false,
+      "required": ["include"],
+      "properties": {
+        "include": { "type": "boolean" },
+        "user_archetype_ref": { "type": "string" },
+        "user_sharpness_ref": { "type": "string" },
+        "shadow_archetype_ref": { "type": "string" },
+        "all_scores_ref": { "type": "string" },
+        "note_for_reviewers": { "type": "string" }
+      }
+    },
+
+    "reflection_prompts_ref": {
+      "type": "string",
+      "description": "Path into metrics.json that resolves to a list of 3 prompt strings. Authored by research; LLM only references them."
+    },
+
+    "colophon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n_sessions_ref", "footnote"],
+      "properties": {
+        "n_sessions_ref": { "type": "string" },
+        "date_earliest_ref": { "type": "string" },
+        "date_latest_ref": { "type": "string" },
+        "footnote": { "type": "string" }
+      }
+    }
+  },
+
+  "$defs": {
+    "headline_stat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "format"],
+      "properties": {
+        "label": { "type": "string" },
+        "value_ref": { "type": "string" },
+        "value_static": { "type": "number" },
+        "format": {
+          "type": "string",
+          "enum": [
+            "percent_int",
+            "percent_1_decimal",
+            "number_1_decimal",
+            "integer"
+          ]
+        },
+        "detail": { "type": "string" },
+        "comparison": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "format"],
+          "properties": {
+            "label": { "type": "string" },
+            "value_ref": { "type": "string" },
+            "value_static": { "type": "number" },
+            "format": {
+              "type": "string",
+              "enum": [
+                "percent_int",
+                "percent_1_decimal",
+                "number_1_decimal",
+                "integer"
+              ]
+            }
+          },
+          "oneOf": [
+            { "required": ["value_ref"] },
+            { "required": ["value_static"] }
+          ]
+        }
+      },
+      "oneOf": [
+        { "required": ["value_ref"] },
+        { "required": ["value_static"] }
+      ]
+    },
+
+    "trait": {
+      "type": "object",
+      "description": "A signature behavior with a friendly name, prose characterization (no numbers), and a data reference the renderer uses to draw the bar pair.",
+      "additionalProperties": false,
+      "required": ["kind", "name_em", "characterization", "data"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["high", "contrast"],
+          "description": "Narrative role. 'high' = a defining strength; 'contrast' = an archetype-typical move you've replaced (framed positively, not as a deficit)."
+        },
+        "name_em": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "characterization": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 280,
+          "description": "What the move looks like in human terms. NO numbers, NO percentile language — those go in the bar."
+        },
+        "data": {
+          "oneOf": [
+            { "$ref": "#/$defs/trait_data_signal" },
+            { "$ref": "#/$defs/trait_data_categorical" }
+          ]
+        }
+      }
+    },
+
+    "trait_data_signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "signal"],
+      "properties": {
+        "kind": { "const": "signal" },
+        "signal": {
+          "type": "string",
+          "description": "Signal name. Renderer reads user_archetype.user_signal_rates[signal] for user value, user_archetype.within_archetype_positioning.signals[signal=X].cohort_p50 for cohort baseline."
+        }
+      }
+    },
+
+    "trait_data_categorical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "field", "bucket"],
+      "properties": {
+        "kind": { "const": "categorical" },
+        "field": {
+          "type": "string",
+          "enum": [
+            "session_shape",
+            "interaction_style",
+            "engagement_depth",
+            "task_size",
+            "arc_shape",
+            "task_type"
+          ]
+        },
+        "bucket": { "type": "string" }
+      }
+    },
+
+    "gauge_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "format"],
+      "properties": {
+        "label": { "type": "string" },
+        "value_ref": { "type": "string" },
+        "value_static": { "type": "number" },
+        "format": {
+          "type": "string",
+          "enum": [
+            "percent_int",
+            "percent_1_decimal",
+            "number_1_decimal",
+            "integer"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["primary", "cohort"],
+          "description": "primary = the user's value (highlight color); cohort = comparison row (muted)."
+        },
+        "source_note": { "type": "string" }
+      },
+      "oneOf": [
+        { "required": ["value_ref"] },
+        { "required": ["value_static"] }
+      ]
+    },
+
+    "move": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from_archetype", "verb_phrase", "body_lead", "body_action"],
+      "properties": {
+        "from_archetype": {
+          "type": "string",
+          "description": "Full archetype name: 'The Reality Tester', 'The Pair Programmer', etc."
+        },
+        "verb_phrase": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 60,
+          "description": "Imperative move name with terminal punctuation: 'Run it yourself.', 'Reframe the goal mid-flight.'"
+        },
+        "body_lead": {
+          "type": "string",
+          "minLength": 30,
+          "maxLength": 240,
+          "description": "Why this move, given the user's data. One sentence."
+        },
+        "body_action": {
+          "type": "string",
+          "minLength": 30,
+          "maxLength": 320,
+          "description": "What to actually do this week. Concrete, behavioral. May include backticks for inline code (e.g., `git diff`)."
+        },
+        "effect_size_signal": {
+          "type": "string",
+          "description": "Optional signal name from signal_effect_sizes; renderer can pull the pp delta to ground the recommendation."
+        },
+        "effect_size_note": {
+          "type": "string",
+          "description": "Optional human-readable framing of the research correlate."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,604 @@
+{
+  "name": "SWE-chat unified signal schema",
+  "version": "2.0",
+  "description": "Unified registry of every signal computed during enrichment. Each signal has a category (what it captures) and a computation (how it's produced). Deterministic signals are computed from message structure with no LLM call; interpretive signals are LLM-annotated. Together they form one signal stream that downstream tools (shapes, archetypes, dynamics) consume.",
+
+  "design_principles": [
+    "Deterministic where possible. If a signal can be computed reliably from message structure, that's where it lives. No LLM cost, no precision-over-recall trade-off, full reproducibility.",
+    "Interpretive only for what LLMs are uniquely good at — semantic intent, posture, quote-anchored moments, qualitative judgments. The interpretive layer is small and focused.",
+    "One schema, two computation paths. enrich.py reads the deterministic subset; annotate.py reads the interpretive subset and builds an LLM prompt. Shape rules and downstream analyses see a unified signal stream.",
+    "Signals are categorized by what they CAPTURE (behavior / pattern / outcome), not by how they're computed. The category orthogonal to computation lets us ask 'which behavior signals predict outcomes?' across both paths.",
+    "Each signal declares its earliest-detectable turn so early-detection analyses are first-class."
+  ],
+
+  "categories": {
+    "behavior": "What the user did — their observable actions, intent moments, and posture toward the agent's output. Most behavior signals are interpretive (semantic understanding of user prose).",
+    "pattern": "Shape and structure of the engagement — distributed properties like iteration count, edit cycles, pause patterns. Most pattern signals are deterministic.",
+    "outcome": "What the work produced or its end state — verification arcs, shipping artifacts, code attribution. Mostly deterministic; closer to the value question than the behavior question."
+  },
+
+  "computations": {
+    "deterministic": "Computed from messages JSON by enrich.py. No LLM. Reproducible. Output: scalar columns on the enriched sessions CSV.",
+    "interpretive": "LLM-annotated by annotate.py. Output: structured entries inside the signals_json column (with evidence, optional strength, and category-specific extension fields)."
+  },
+
+  "categorical_fields": {
+    "engagement_depth": {
+      "computation": "interpretive",
+      "options": ["high", "moderate", "low", "minimal"],
+      "description": "How deeply the user engages with the agent's output during the session. Descriptive of observed practice in this session, not a grade for the user.",
+      "option_rubrics": {
+        "high": "User reads the agent's output carefully, points at specifics, surfaces edge cases, redirects approach when needed. Verification + steering visible across the session.",
+        "moderate": "Setup present, some steering and verification, but limited reality-contact engagement. The user shapes the work but doesn't deeply iterate against output.",
+        "low": "Minimal setup, vague steering, little verification, no clear reality-contact. Functional but shallow.",
+        "minimal": "Dominated by anti-pattern behaviors (vague fix requests, no engagement with output). Bare interaction."
+      },
+      "calibration_note": "If `error_repaste` is present, engagement_depth should rarely be `high`."
+    },
+
+    "interaction_style": {
+      "computation": "interpretive",
+      "options": ["augmentative", "delegative", "mixed"],
+      "description": "Does the user treat the AI as a thought-partner or an executor?",
+      "option_rubrics": {
+        "augmentative": "Actively steers, verifies, reframes mid-session. Adjusts based on what the AI produces.",
+        "delegative": "Hands off the task and largely accepts. Minimal post-output iteration.",
+        "mixed": "Both patterns visible in the same session."
+      }
+    },
+
+    "task_type": {
+      "computation": "interpretive",
+      "options": ["implementation", "debugging", "refactor", "exploration", "configuration", "documentation", "migration", "other"],
+      "description": "What kind of work is the user doing in this session? An interpretive judgment based on the user's prompts and the artifact the agent produces. Useful for understanding why outcomes differ — a debugging session that 'didn't ship a PR' is structurally different from a feature-implementation session that didn't ship.",
+      "option_rubrics": {
+        "implementation": "Building a new feature, function, component, or capability that didn't exist before.",
+        "debugging": "Diagnosing and fixing a specific bug or unexpected behavior. The work is reactive: something is broken and the goal is to make it work.",
+        "refactor": "Reshaping existing code without changing its behavior — extraction, renaming, decomposition, deduplication, modernization.",
+        "exploration": "Reading or understanding code, data, or behavior. The user's goal is to learn, not to modify.",
+        "configuration": "Setting up tooling, dependencies, environment, deployment config, CI, or similar plumbing.",
+        "documentation": "Writing, editing, or generating documentation, READMEs, comments, or specs.",
+        "migration": "Moving code or data from one form to another (framework, language, dependency major version, schema change).",
+        "other": "None of the above clearly fits."
+      }
+    },
+
+    "arc_shape": {
+      "computation": "interpretive",
+      "options": ["setup_first", "explore_first", "jump_in", "iterative", "unclear"],
+      "description": "How does this session OPEN? A categorical judgment about the first 1–3 user prompts and what the agent does in response. Captures the trajectory's shape early — distinct from `interaction_style` which describes the whole session.",
+      "option_rubrics": {
+        "setup_first": "User begins with substantial context — files to read, conventions to follow, plan-mode request, safety constraints — before asking for work. The Scaffold opening.",
+        "explore_first": "User asks the agent to investigate, read, or understand the codebase before producing anything. Reconnaissance posture.",
+        "jump_in": "User immediately delegates a concrete task with little setup. The Clean handoff or Drift opening.",
+        "iterative": "Conversation begins as small back-and-forth — quick exchanges, no upfront framing. The work emerges through dialogue.",
+        "unclear": "None of the above clearly fits."
+      }
+    }
+  },
+
+  "summary_fields": {
+    "title": "Concise title (≤10 words) capturing what the user was working on. Describe the work, not the user.",
+    "keywords": "5–10 keywords or short phrases representing the main topics and technologies.",
+    "summary": "2–4 sentences: what the user was working on, what happened, how it ended. 10-second briefing for a researcher.",
+    "quality_concerns": "Concrete observable friction moments — places where the work didn't go smoothly. Empty string if the session ran clean.",
+    "engagement_notes": "1–2 sentences grounding the engagement_depth call."
+  },
+
+  "signals": {
+
+    "iteration_count": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Total user prompts in the session.",
+      "value_type": "count",
+      "earliest_turn": 1
+    },
+    "tool_call_density": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Tool calls per iteration. High = agent doing a lot per user prompt; low = quick turns.",
+      "value_type": "ratio",
+      "earliest_turn": 2
+    },
+    "edit_iteration_count": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Iterations in which the agent used Edit / Write / MultiEdit / NotebookEdit.",
+      "value_type": "count",
+      "earliest_turn": 1
+    },
+    "research_iteration_count": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Iterations in which the agent used Read / Grep / Glob / WebFetch / WebSearch / NotebookRead.",
+      "value_type": "count",
+      "earliest_turn": 1
+    },
+    "tool_diversity": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Distinct tool names / total tool calls. Low = repetitive deep work; high = scattered exploration.",
+      "value_type": "ratio",
+      "earliest_turn": 2
+    },
+    "edit_focus": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Edits hitting the most-edited file / total edits. High = surgical / single-file; low = sprawling.",
+      "value_type": "ratio",
+      "earliest_turn": 2
+    },
+    "course_correction_count": {
+      "category": "behavior",
+      "computation": "deterministic",
+      "description": "Short user prompts (<60 chars) that follow an agent Edit/Write. Observable redirect-after-action proxy without quote evidence.",
+      "value_type": "count",
+      "earliest_turn": 2
+    },
+    "late_pause_count": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Inter-turn gaps > 5 minutes in the last half of the session. Reading-carefully proxy.",
+      "value_type": "count",
+      "earliest_turn": 4
+    },
+    "median_pause_seconds": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Median inter-turn gap, capped at 24 hours per gap.",
+      "value_type": "seconds",
+      "earliest_turn": 2
+    },
+    "prompt_length_ratio": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Mean user-prompt chars in second half / first half. >1 = pushback growing; <1 = settling.",
+      "value_type": "ratio",
+      "earliest_turn": 4
+    },
+    "task_size": {
+      "category": "pattern",
+      "computation": "deterministic",
+      "description": "Bucketed estimate of task scope, derived from iteration_count. Used by analysis to stratify outcome comparisons across shapes — without it, shape PR-yield comparisons confound the shape with the size of work that shape happens to cover.",
+      "value_type": "categorical",
+      "options": ["small", "medium", "large", "very_large"],
+      "rubric": {
+        "small": "≤3 user prompts — quick fixes, brief Q&A, one-shots",
+        "medium": "4–15 user prompts — moderate work, single-feature scope",
+        "large": "16–50 user prompts — substantial features, complex debugging",
+        "very_large": ">50 user prompts — multi-day projects, major work"
+      },
+      "earliest_turn": 1
+    },
+
+    "tests_attempted": {
+      "category": "outcome",
+      "computation": "deterministic",
+      "description": "1 if any Bash command matched a test-runner pattern (pytest / npm test / cargo test / ...).",
+      "value_type": "bool",
+      "earliest_turn": 1
+    },
+    "tests_run_count": {
+      "category": "outcome",
+      "computation": "deterministic",
+      "description": "Number of distinct test-runner invocations.",
+      "value_type": "count",
+      "earliest_turn": 1
+    },
+    "diff_reviewed": {
+      "category": "outcome",
+      "computation": "deterministic",
+      "description": "1 if `git diff` / `git status` / `git show` ran in the last quarter of the session.",
+      "value_type": "bool",
+      "earliest_turn": 1
+    },
+
+    "problem_statement_explicit": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User articulates the goal in plain language beyond a bare code request.",
+      "look_for": "Goal stated with context and intent: 'we're building X so users can Y, and the issue is Z'. Not just 'write me a function that does X'.",
+      "does_not_count": "Pure code requests, single-line specs, requirement bullets without framing.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Minimal intent — goal stated but not contextualized.",
+        "2": "Goal + context.",
+        "3": "Rich framing with success criteria or downstream constraints."
+      }
+    },
+    "cited_team_convention": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User cites a team / project living doc as authoritative (CLAUDE.md, project conventions, internal style guide).",
+      "look_for": "'per CLAUDE.md', 'check our conventions', explicit reference to project docs by name.",
+      "does_not_count": "References to public docs (those are docs_or_spec_paste in v1; we no longer track that).",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Passing reference.",
+        "2": "Cited to direct a choice.",
+        "3": "Multiple convention references threaded through."
+      }
+    },
+    "context_loading_directive": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User instructs the agent to read a specific area / file set to orient itself before doing work.",
+      "look_for": "'first read X', 'take a look at the Y folder', 'start by understanding Z'.",
+      "does_not_count": "The agent reads on its own without instruction.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One orientation cue.",
+        "2": "Structured orientation sequence.",
+        "3": "Detailed multi-source context-loading plan."
+      }
+    },
+    "existing_code_shared": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User pastes their own existing code as a starting point or reference.",
+      "look_for": "Code block in a user prompt that's the user's own code (not a quote of AI output).",
+      "does_not_count": "The agent reads code via tool calls without the user pasting.",
+      "evidence_type": "description",
+      "strength_anchors": {
+        "1": "Snippet.",
+        "2": "Complete function or class.",
+        "3": "Substantial module or multi-file context."
+      }
+    },
+    "test_or_spec_provided": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User supplies tests, I/O examples, or acceptance criteria.",
+      "look_for": "Test case, expected I/O, behavioral spec given by the user.",
+      "does_not_count": "The agent writes tests on its own.",
+      "evidence_type": "description",
+      "strength_anchors": {
+        "1": "One example.",
+        "2": "Small suite.",
+        "3": "Comprehensive spec."
+      }
+    },
+
+    "decomposition": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User breaks the task into named sub-pieces.",
+      "look_for": "'first X, then Y', 'we need three things: ...', explicit ordering or stepping.",
+      "does_not_count": "The agent's own decomposition.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Implicit sequencing.",
+        "2": "Explicit multi-step plan.",
+        "3": "Sophisticated multi-part orchestration."
+      }
+    },
+    "requested_plan_mode": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks the agent to plan before executing.",
+      "look_for": "'plan first, don't run anything', 'use plan mode', 'tell me your plan before you start'.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Hint.",
+        "2": "Explicit request.",
+        "3": "Explicit + criteria for what should be in the plan."
+      }
+    },
+    "plan_approved": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "After the agent proposes a plan, user approves it as-is.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Bare yes.",
+        "2": "Approval with brief framing.",
+        "3": "Approval citing specific aspects."
+      }
+    },
+    "plan_rejected": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User rejects the proposed plan and asks for a different approach.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Rejection.",
+        "2": "Rejection with direction.",
+        "3": "Substantive rejection with rationale and replacement direction."
+      }
+    },
+    "plan_edited": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User approves the plan with explicit modifications.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Small tweak.",
+        "2": "Meaningful edits.",
+        "3": "Substantial restructuring."
+      }
+    },
+
+    "pointed_to_specific_issue": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User names a specific concrete problem, not generic 'doesn't work'.",
+      "look_for": "'line 42 is wrong because…', 'the value of X here doesn't account for Y', specific problem identification.",
+      "does_not_count": "'fix it', 'still broken', vague pushback.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One specific issue.",
+        "2": "Several distinct issues identified.",
+        "3": "Detailed diagnosis with root-cause narrative."
+      }
+    },
+    "ran_and_reported": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User indicates they manually ran something themselves (outside the agent's tool calls) and reports the result.",
+      "look_for": "'I tried it and got X', 'in my browser this shows Y', 'tested it locally and got Z'.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Bare report.",
+        "2": "Specific symptom.",
+        "3": "Full output and reproduction."
+      }
+    },
+    "asked_why_choice": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks why the AI picked X.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Casual 'why?'.",
+        "2": "Substantive probe.",
+        "3": "Deep interrogation of multiple decisions."
+      }
+    },
+    "asked_for_alternative": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks for a different approach, library, or implementation.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Once.",
+        "2": "Specific alternative requested.",
+        "3": "Side-by-side comparison."
+      }
+    },
+    "asked_about_tradeoffs": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks about pros/cons / perf / maintainability.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One.",
+        "2": "Specific comparison.",
+        "3": "Full tradeoff analysis."
+      }
+    },
+    "requested_diff_review": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks to see the diff or git status before accepting / committing. (Distinct from the deterministic `diff_reviewed` outcome signal — this captures user *intent*, that captures *whether it happened*.)",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Asked once.",
+        "2": "Standard practice across the session.",
+        "3": "Detailed audit trail requested."
+      }
+    },
+
+    "rejected_approach": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User explicitly rejects the AI's approach and asks for a different one.",
+      "does_not_count": "Goal restatement (that's intent_reframe).",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Single rejection.",
+        "2": "Rejection + alternative direction.",
+        "3": "Multiple rejections."
+      }
+    },
+    "constraint_added_later": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User adds a new constraint mid-conversation that wasn't in the original prompt.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One.",
+        "2": "Several.",
+        "3": "Continuous constraint refinement."
+      }
+    },
+    "change_request_specific": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks for a change referencing a specific part of AI output (named function, line, condition, behavior).",
+      "does_not_count": "Subjective changes (those are taste_override in v1; we no longer track that).",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One targeted change.",
+        "2": "Multiple specific changes.",
+        "3": "Sophisticated multi-part refinement."
+      }
+    },
+    "change_request_vague": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User asks for change without specifying what or where.",
+      "look_for": "'make it better', 'fix it', 'do it differently'.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "Once.",
+        "2": "Several.",
+        "3": "Persistent vague redirection."
+      }
+    },
+    "tool_use_steering": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User instructs HOW the agent should use its tools.",
+      "look_for": "'use Grep not find', 'run tasks in parallel', 'use the TodoList for this'.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One nudge.",
+        "2": "Clear preference.",
+        "3": "Detailed tool-use policy across turns."
+      }
+    },
+    "subagent_explicitly_delegated": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User explicitly directs the agent to use a sub-agent.",
+      "look_for": "'spawn an Explore agent', 'delegate this to a subagent'.",
+      "does_not_count": "Autonomous agent-initiated subagent use.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One delegation.",
+        "2": "Pattern of delegating discrete sub-tasks.",
+        "3": "Orchestration of multiple subagent operations."
+      }
+    },
+    "workflow_step_delegation": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User directs the agent to handle a workflow step (commit, PR, push, deploy, run-the-tests-and-commit).",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One.",
+        "2": "Several across the session.",
+        "3": "End-to-end workflow delegation."
+      }
+    },
+    "safety_constraint_set": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User sets safety / permission boundaries.",
+      "look_for": "'don't run migrations', 'read-only', 'ask before touching X', 'don't commit until I review'.",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One.",
+        "2": "Multiple.",
+        "3": "Comprehensive safety scoping."
+      }
+    },
+    "meta_behavioral_steering": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User instructs HOW the AI should reason or approach.",
+      "look_for": "'think more carefully before editing', 'stop assuming, ask me first', 'you're going the wrong direction, back up'.",
+      "does_not_count": "Rejecting an approach (that's rejected_approach).",
+      "evidence_type": "quote",
+      "strength_anchors": {
+        "1": "One nudge.",
+        "2": "Clear behavioral direction.",
+        "3": "Sustained reasoning-mode steering."
+      }
+    },
+
+    "accept_verbatim_no_question": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Anti-pattern. User signals acceptance ('thanks', 'ok', 'perfect') with no follow-up question or specific reference, despite output that warranted engagement.",
+      "evidence_type": "quote"
+    },
+    "fix_request_without_specifics": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Anti-pattern. User asks for a fix without saying what's wrong, what they tried, or showing an error.",
+      "evidence_type": "quote"
+    },
+    "repeated_same_prompt": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Anti-pattern. User re-sends substantially the same prompt without incorporating the AI's prior response.",
+      "evidence_type": "description"
+    },
+    "error_repaste": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Anti-pattern. User pastes the same / near-identical error in ≥2 turns after the agent proposed a fix. Strong death-spiral signature.",
+      "evidence_type": "description"
+    },
+
+    "post_implementation_correction": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Reality-contact. User adds a correction in a turn AFTER the agent has produced an implementation. Distinct from `constraint_added_later` by the timing — implementation must already exist.",
+      "look_for": "'actually...', 'having seen it...', 'I realize...', 'now that it's running...'.",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    },
+    "in_review_edge_case_surface": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Reality-contact. While READING the AI's output (not running it), the user surfaces an edge case the agent didn't handle.",
+      "look_for": "'wait, what happens if...', 'this assumes X but...', 'this would break if the user isn't logged in'.",
+      "does_not_count": "Hypothetical counterexample from spec (rare; not tracked separately in v2).",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    },
+    "external_reality_disclosure": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Reality-contact. User reveals previously-unstated knowledge in response to AI's plan or output.",
+      "look_for": "'oh, the API actually returns null for these cases', 'right, this service has a 30s timeout', 'I forgot to mention…'.",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    },
+    "intent_reframe": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Reality-contact. User explicitly restates the goal in materially different terms after seeing partial work.",
+      "look_for": "'stepping back, what I really need is...', 'actually the real goal is...'.",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    },
+    "edge_case_failure_observed": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "Reality-contact. User reports running the implementation against a specific input and observing it fail.",
+      "look_for": "'I tried X and got Y', 'for input Z it crashes'.",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    },
+
+    "taste_override": {
+      "category": "behavior",
+      "computation": "interpretive",
+      "description": "User overrides what the agent produced based on personal/team aesthetic or design judgment — not a correctness fix. The user knows the AI's output works but has chosen something different. High-recognition signal: where the user's taste and judgment are visibly shaping the work.",
+      "look_for": "'this is fine but I prefer X', 'change this to match our style', 'don't like this naming, use Y instead', 'too clever — make it boring', 'let's keep it explicit even if it's longer', user rewriting working code purely for clarity / convention / vibe.",
+      "does_not_count": "Bug fixes, behavior corrections, or anything where the AI's output was wrong (those are post_implementation_correction or in_review_edge_case_surface). Routine style nits the AI could have inferred from the codebase don't count — taste override is where the user's judgment goes BEYOND what was inferable.",
+      "evidence_type": "quote",
+      "extension_fields": ["trigger", "surface_type"]
+    }
+  },
+
+  "reality_contact_extension_fields": {
+    "trigger": {
+      "type": "categorical",
+      "options": [
+        "testing_or_running",
+        "viewing_implementation",
+        "code_review_reading",
+        "error_encountered",
+        "comparing_to_existing",
+        "stepping_back",
+        "unclear"
+      ]
+    },
+    "surface_type": {
+      "type": "categorical",
+      "options": [
+        "ui_component",
+        "product_flow",
+        "technical_surface",
+        "problem_class",
+        "codebase_area",
+        "unclear"
+      ]
+    }
+  }
+}

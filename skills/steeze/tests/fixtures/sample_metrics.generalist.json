@@ -1,0 +1,61 @@
+{
+  "schema_version": "2.3",
+  "n_sessions_tagged": 12,
+  "n_sessions_total": 14,
+  "structural": {
+    "pr_rate_pct": 14.5,
+    "date_range": {
+      "earliest": "2026-03-01",
+      "latest": "2026-04-29"
+    }
+  },
+  "interaction_style": {
+    "percentages": {
+      "delegative": 35.0,
+      "directive": 40.0,
+      "collaborative": 25.0
+    }
+  },
+  "user_archetype": {
+    "available": true,
+    "primary": "The Generalist",
+    "primary_score": 0.0,
+    "secondary": "",
+    "secondary_score": 0.0,
+    "margin": 0.0,
+    "decisive": false,
+    "confidence": "moderate",
+    "fingerprint_sharpness": "",
+    "all_scores": {
+      "The Pair Programmer": 0.0,
+      "The Patcher": 0.0,
+      "The Manager": 0.0,
+      "The Reality Tester": 0.0,
+      "The Spec-First Architect": 0.0,
+      "The Streamliner": 0.0
+    },
+    "user_signal_rates": {
+      "external_reality_disclosure": 0.36,
+      "decomposition": 0.42,
+      "ran_and_reported": 0.18
+    },
+    "user_det_medians": {
+      "iteration_count": 5.4
+    },
+    "shadow": {
+      "name": "",
+      "axis": ""
+    },
+    "baseline": {
+      "reflection_prompts": [
+        "Across your last ten sessions, which archetype-mode showed up most? Which least? Was that the right distribution given the tasks?",
+        "Pick the archetype your sessions resemble *least*. Try one session in that mode this week. What does the constraint teach you?",
+        "What's the failure mode you're most likely to fall into when you're tired or rushed — which archetype's bad habits do you default to?"
+      ]
+    },
+    "within_archetype_positioning": {
+      "signals": [],
+      "categoricals": {}
+    }
+  }
+}
