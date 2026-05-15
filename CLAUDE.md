@@ -42,7 +42,7 @@ claude --plugin-dir ./
 
 ## Quick reference (for agents who land here)
 
-- **Where does the report style live?** `skills/steeze/analysis/render/templates/`. `report.html.j2` is `editorial`, `report_wrapped.html.j2` is `wrapped`. Selected via `render_report.py --style {editorial,wrapped}`.
+- **Where does the report style live?** `skills/steeze/analysis/render/templates/`. `report_wrapped.html.j2` is `wrapped` (default), `report.html.j2` is `editorial`. Selected via `render_report.py --style {wrapped,editorial}`.
 - **Where does the archetype taxonomy live?** `skills/steeze/tagging/taxonomy.json`. Locked — do not modify without re-tagging the corpus baseline.
 - **Where do the baselines live?** `skills/steeze/baselines/`. 12 files, measured 2026-05-01 from 4,846 sessions. Locked.
 - **What does the user invoke?** `/steeze` (slash command in `commands/steeze.md`), which calls the skill in `skills/steeze/SKILL.md`.
@@ -60,7 +60,7 @@ claude --plugin-dir ./
 6. Assemble + compute metrics → `metrics.json` (positioned against baselines).
 7. Spawn 1 × `steeze-tagger` subagent (mode: open) → `findings.md`.
 8. Author `report_content.json` synthesizing both tracks (per `analysis/interpret.md` voice rules).
-9. Render with `--style editorial|wrapped` → HTML + Markdown + hero card.
+9. Render with `--style wrapped|editorial` (default `wrapped`) → HTML + Markdown + hero card.
 
 ## Restrictions
 

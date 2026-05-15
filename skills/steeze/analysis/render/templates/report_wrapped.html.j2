@@ -7,35 +7,45 @@
 <title>The {{ view.title.archetype_name }} — Coding Archetype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <style>
+  @font-face {
+    font-family: 'PP Neue Machina';
+    src: url('{{ "assets/fonts/PPNeueMachinaInktrap-Regular.woff2"|b64_asset }}') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
   :root {
-    --paper: #EFECE3;
+    --paper: #F4F3F0;
     --card: #FFFFFF;
-    --ink: #0F1A12;
+    --ink: #070E08;
     --ink-soft: #1F2E24;
     --text-2: #4A554F;
     --muted: #7A8581;
-    --rule: rgba(15, 26, 18, 0.12);
+    --rule: rgba(7, 14, 8, 0.12);
     --accent: #3F784E;
-    --accent-soft: #5FAB72;
+    --accent-soft: #93F099;
 
-    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --serif: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --serif: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'PP Neue Machina', 'DM Sans', -apple-system, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     background: var(--ink);
     color: var(--paper);
     font-family: var(--sans);
+    font-synthesis: none;
     -webkit-font-smoothing: antialiased;
     line-height: 1.4;
     height: 100%;
   }
+  em { font-style: normal; }
   body {
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
     overflow-y: scroll;
     height: 100vh;
   }
@@ -55,6 +65,7 @@
     min-height: 100vh;
     width: 100%;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -63,13 +74,23 @@
   }
   .slide-inner { max-width: 880px; margin: 0 auto; width: 100%; }
   .eyebrow {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--accent-soft);
+    letter-spacing: -0.011em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #93F099;
+    color: var(--ink);
     margin-bottom: 28px;
+  }
+  /* Light-slide eyebrows use a dark fill on the light background. */
+  .stand .eyebrow,
+  .method .eyebrow {
+    background: #1F3124;
+    color: var(--paper);
   }
   .scroll-cue {
     position: absolute;
@@ -93,15 +114,31 @@
     50% { transform: translateY(4px); }
   }
 
+  /* Bigspin brand — corner logomark on most slides, larger primary on reveal/share */
+  .brand-mark, .brand-primary {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    display: block;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .brand-mark { width: 22px; opacity: 0.55; }
+  .brand-primary { width: 132px; opacity: 0.92; }
+  .brand-mark svg, .brand-primary svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 640px) {
+    .brand-mark, .brand-primary { top: 20px; left: 20px; }
+    .brand-primary { width: 104px; }
+  }
+
   /* ============== Slide 0: Build-up ============== */
   .buildup {
     background: var(--ink);
     color: var(--paper);
   }
-  .buildup .eyebrow { color: var(--accent-soft); }
   .buildup .buildup-h {
-    font-family: var(--sans);
-    font-weight: 600;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(28px, 3.6vw, 44px);
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -116,8 +153,8 @@
     max-width: 720px;
   }
   .buildup-stat .num {
-    font-family: var(--sans);
-    font-weight: 700;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(56px, 8.5vw, 104px);
     letter-spacing: -0.04em;
     line-height: 0.95;
@@ -153,22 +190,18 @@
     background: var(--ink);
   }
   .reveal h1 {
-    font-family: var(--sans);
-    font-weight: 700;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(56px, 9vw, 120px);
     line-height: 0.98;
     letter-spacing: -0.035em;
     color: var(--paper);
   }
   .reveal h1 em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--accent-soft);
   }
   .reveal .tagline {
-    font-family: var(--serif);
-    font-style: italic;
     font-weight: 400;
     font-size: clamp(20px, 2.4vw, 30px);
     color: var(--paper);
@@ -210,8 +243,6 @@
   .reveal .pill.shadow {
     border-color: rgba(255, 255, 255, 0.12);
     color: var(--muted);
-    font-style: italic;
-    font-family: var(--serif);
     text-transform: none;
     letter-spacing: 0;
     font-size: 14px;
@@ -222,10 +253,9 @@
     background: var(--paper);
     color: var(--ink);
   }
-  .stand .eyebrow { color: var(--accent); }
   .stand h2 {
-    font-family: var(--sans);
-    font-weight: 600;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(32px, 4.4vw, 52px);
     letter-spacing: -0.025em;
     line-height: 1.05;
@@ -233,13 +263,10 @@
     max-width: 720px;
   }
   .stand h2 em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
-    color: var(--accent);
+    font-weight: 400;
+    color: var(--ink);
   }
   .stand .lede {
-    font-family: var(--serif);
     font-size: clamp(17px, 1.6vw, 22px);
     color: var(--ink-soft);
     margin-top: 14px;
@@ -248,248 +275,169 @@
   }
   .compare-line {
     margin-top: 22px;
-    padding: 16px 20px;
-    background: var(--card);
-    border-left: 3px solid var(--accent);
+    padding: 16px 22px;
+    background: rgba(147, 240, 153, 0.20);
     font-family: var(--sans);
     font-size: clamp(15px, 1.4vw, 18px);
     line-height: 1.5;
     color: var(--ink);
     max-width: 620px;
-    border-radius: 0 6px 6px 0;
+    border-radius: 16px;
   }
   .compare-line strong {
     font-weight: 700;
-    color: var(--accent);
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
-  /* ============== 2x2 archetype matrix (replaces the old SVG map) ============== */
-  .matrix-frame {
-    margin-top: 22px;
-    max-width: 760px;
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    grid-template-rows: 1fr 28px;
-    gap: 8px;
+  /* ============== Archetype distribution bars ============== */
+  .distribution {
+    margin-top: 72px;
+    max-width: 780px;
   }
-  .matrix-axis-y {
-    grid-column: 1; grid-row: 1;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--ink-soft);
-    align-self: center;
-    justify-self: center;
-  }
-  .matrix-axis-x {
-    grid-column: 2; grid-row: 2;
-    text-align: center;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--ink-soft);
-    margin-top: 4px;
-  }
-  .matrix {
-    grid-column: 2; grid-row: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 1px;
-    background: var(--rule);
-    border: 0.5px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-  }
-  .cell {
-    background: transparent;
-    position: relative;
-    perspective: 1200px;
-    cursor: pointer;
-    min-height: 0;
-  }
-  .cell-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.55s cubic-bezier(0.4, 0.05, 0.2, 1);
-  }
-  .cell.is-flipped .cell-inner {
-    transform: rotateY(180deg);
-  }
-  .face {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    background: var(--card);
-    padding: 16px 18px 18px;
-    display: flex;
-    flex-direction: column;
-  }
-  .face.back {
-    transform: rotateY(180deg);
-    background: var(--card);
-    justify-content: center;
-    padding: 22px 22px 32px;
-  }
-  .face.back .back-name {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--accent);
+  .distribution-caption {
+    font-family: var(--sans);
+    font-size: 10px;
     font-weight: 600;
-    margin-bottom: 10px;
-  }
-  .face.back .back-blurb {
-    font-family: var(--serif);
-    font-size: clamp(13px, 1.05vw, 15px);
-    line-height: 1.5;
-    color: var(--ink-soft);
-  }
-  .face.back .back-hint {
-    position: absolute;
-    bottom: 12px;
-    right: 14px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .cell.is-user .face.front {
-    background: var(--ink);
-  }
-  .cell.is-user .face.front .cell-name { color: var(--paper); }
-  .cell.is-user .face.front .you-tag { color: var(--accent-soft); }
-  .cell.is-user .face.front .cell-chips li {
-    color: var(--paper);
-    opacity: 0.82;
-  }
-  .cell.is-user .face.front .cell-dot {
-    background: var(--accent-soft);
-    box-shadow:
-      0 0 0 5px rgba(95, 171, 114, 0.18),
-      0 0 0 10px rgba(95, 171, 114, 0.06);
-  }
-  .cell.is-shadow .face.front .cell-name { color: var(--muted); }
-  .cell.is-shadow .face.front .cell-chips li { color: var(--muted); opacity: 0.85; }
-  .flip-hint {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    opacity: 0.55;
-    transition: opacity 0.2s, color 0.2s;
-    pointer-events: none;
-  }
-  .cell:hover .flip-hint { opacity: 1; color: var(--accent); }
-  .stand .map-hint {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    margin-top: 22px;
-    margin-bottom: 8px;
-  }
-  .cell-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .cell-name {
-    font-family: var(--mono);
-    font-size: 11.5px;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--ink-soft);
-    font-weight: 600;
+    color: var(--ink);
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(7, 14, 8, 0.10);
+    margin-bottom: 20px;
   }
-  .cell.is-user .cell-name { color: var(--paper); font-weight: 700; }
-  .you-tag {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-  .you-tag em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    color: var(--text-2);
-    letter-spacing: 0;
-  }
-  .shadow-tag {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    font-weight: 500;
-    color: var(--muted);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .cell-chips {
+  .bars {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    flex: 1;
+    gap: 18px;
   }
-  .cell-chips li {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    line-height: 1.35;
-    color: var(--text-2);
+  .bar-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 180px) 1fr 56px;
+    align-items: center;
+    column-gap: 18px;
+    font-family: var(--sans);
+    position: relative;
   }
-  .cell.is-user .cell-chips li { color: var(--ink-soft); }
-  .cell-dot {
+  .bar-row[data-blurb]:hover { cursor: help; }
+  .bar-row[data-blurb]::before,
+  .bar-row[data-blurb]::after {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 50;
+  }
+  .bar-row[data-blurb]::after {
+    content: attr(data-blurb);
     position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--text-2);
-    bottom: 14px;
-    right: 14px;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    width: 340px;
+    max-width: 90vw;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 12px 28px rgba(7, 14, 8, 0.22);
   }
-  .cell.is-user .cell-dot {
-    width: 13px;
-    height: 13px;
-    background: var(--accent);
-    box-shadow:
-      0 0 0 5px rgba(63, 120, 78, 0.16),
-      0 0 0 10px rgba(63, 120, 78, 0.06);
+  .bar-row[data-blurb]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 6px solid transparent;
+    border-top-color: var(--ink);
   }
-  .cell.is-shadow .cell-dot {
+  .bar-row[data-blurb]:hover::before,
+  .bar-row[data-blurb]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .bar-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .bar-row.is-you .bar-label { font-weight: 700; }
+  .bar-track {
+    position: relative;
+    height: 36px;
+    background: #E7E5DF;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 12px;
+    background: #D3D1CB;
+    /* Animate width on first paint */
+    transition: width 0.6s cubic-bezier(0.4, 0.05, 0.2, 1);
+  }
+  .bar-row.is-you .bar-fill {
+    background: var(--ink);
+  }
+  .bar-row.is-shadow .bar-track {
     background: transparent;
-    border: 1.4px dashed var(--ink-soft);
-    width: 9px;
-    height: 9px;
+    overflow: visible;
   }
-  .stand .map-caption {
-    font-family: var(--mono);
+  .bar-row.is-shadow .bar-fill {
+    background: transparent;
+    border: 1.5px dashed var(--ink);
+    box-sizing: border-box;
+    /* Ensure the dashed pill is wide enough to fit the SHADOW label even
+       when the user's shadow score is 0%. Visual category, not a data lie:
+       the actual % still reads on the right of the row. */
+    min-width: 108px;
+  }
+  .bar-tag {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--sans);
     font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    margin-top: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .bar-row.is-you .bar-tag { color: var(--paper); }
+  .bar-row.is-shadow .bar-tag { color: var(--ink); }
+  .bar-value {
+    text-align: right;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .bar-row.is-you .bar-value { font-weight: 700; }
+  .stand .stand-footer {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #585C56;
+    margin-top: 32px;
+  }
+  @media (max-width: 640px) {
+    .bar-row {
+      grid-template-columns: 120px 1fr 48px;
+      column-gap: 12px;
+    }
+    .bar-label { font-size: 14px; }
+    .bar-value { font-size: 14px; }
+    .bar-track { height: 30px; }
+    .bar-row.is-shadow .bar-fill { min-width: 92px; }
   }
 
   /* ============== Slide 3: Methodology ============== */
@@ -497,10 +445,9 @@
     background: var(--paper);
     color: var(--ink);
   }
-  .method .eyebrow { color: var(--accent); }
   .method h2 {
-    font-family: var(--sans);
-    font-weight: 600;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(32px, 4.4vw, 52px);
     letter-spacing: -0.025em;
     line-height: 1.05;
@@ -508,14 +455,10 @@
     max-width: 700px;
   }
   .method h2 em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--accent);
   }
   .method-sub {
-    font-family: var(--serif);
-    font-style: italic;
     font-size: clamp(15px, 1.4vw, 19px);
     color: var(--ink-soft);
     margin-top: 14px;
@@ -523,64 +466,59 @@
     line-height: 1.5;
   }
   .method-grid {
-    margin-top: 32px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 18px;
+    margin-top: 56px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: flex-start;
+  }
+  .method-stat {
+    width: 220px;
+    text-align: center;
   }
   .method-stat .num {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: clamp(36px, 4vw, 52px);
-    color: var(--accent);
+    display: block;
+    background: #E7E5DF;
+    border-radius: 16px;
+    /* PP Neue Machina digits sit slightly above the line-box midline,
+       so visual padding looks lopsided when top/bottom are equal.
+       Bumping top by ~4px and trimming bottom by ~4px centers them. */
+    padding: 20px 18px 12px;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 48px;
+    color: var(--ink);
     letter-spacing: -0.02em;
     line-height: 1.0;
   }
   .method-stat .lbl {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    font-weight: 500;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
     color: var(--ink-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-top: 8px;
+    margin-top: 16px;
+    line-height: 1.4;
   }
   .method-list {
-    margin-top: 32px;
+    margin-top: 56px;
     max-width: 700px;
-    list-style: none;
-    counter-reset: step;
+    padding-left: 22px;
+    list-style: disc;
   }
   .method-list li {
     font-family: var(--sans);
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.55;
     color: var(--ink-soft);
-    padding-left: 38px;
-    position: relative;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+  }
+  .method-list li::marker {
+    color: var(--ink-soft);
   }
   .method-list li strong {
     font-family: var(--sans);
     font-weight: 600;
     color: var(--ink);
-  }
-  .method-list li::before {
-    counter-increment: step;
-    content: counter(step);
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    border-radius: 999px;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   /* ============== Slide 4: What to do ============== */
@@ -588,10 +526,9 @@
     background: var(--ink);
     color: var(--paper);
   }
-  .moves .eyebrow { color: var(--accent-soft); }
   .moves h2 {
-    font-family: var(--sans);
-    font-weight: 600;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(32px, 4.4vw, 52px);
     letter-spacing: -0.025em;
     line-height: 1.05;
@@ -599,13 +536,10 @@
     max-width: 720px;
   }
   .moves h2 em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--accent-soft);
   }
   .moves .moves-lede {
-    font-family: var(--serif);
     font-size: clamp(17px, 1.6vw, 22px);
     color: var(--paper);
     opacity: 0.7;
@@ -620,26 +554,31 @@
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
   }
-  .move-card .from {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
+  .move-card .move-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .move-card .move-num {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(24px, 2.6vw, 32px);
+    letter-spacing: -0.01em;
     color: var(--accent-soft);
-    margin-bottom: 12px;
+    line-height: 1.18;
+    flex-shrink: 0;
   }
   .move-card .verb {
     font-family: var(--sans);
-    font-weight: 700;
-    font-size: clamp(24px, 2.6vw, 32px);
-    letter-spacing: -0.01em;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 0;
     color: var(--paper);
-    line-height: 1.18;
-    margin-top: 4px;
+    line-height: 1.4;
+    margin: 0;
   }
   .move-card .verb code {
-    font-family: var(--mono);
+    font-family: var(--sans);
     background: rgba(255, 255, 255, 0.10);
     padding: 2px 8px;
     border-radius: 5px;
@@ -647,18 +586,23 @@
     font-weight: 500;
     vertical-align: baseline;
   }
-  .move-card .action {
+  .move-card .move-desc {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 14px;
+    margin-left: 40px;
+  }
+  .move-card .move-desc li {
     font-family: var(--sans);
     font-size: clamp(15.5px, 1.4vw, 17px);
     font-weight: 400;
     line-height: 1.55;
     color: var(--paper);
     opacity: 0.92;
-    margin-top: 16px;
   }
-  .move-card .action em { font-style: italic; color: var(--accent-soft); }
-  .move-card .action code {
-    font-family: var(--mono);
+  .move-card .move-desc em { color: var(--accent-soft); }
+  .move-card .move-desc code {
+    font-family: var(--sans);
     background: rgba(255, 255, 255, 0.10);
     padding: 2px 6px;
     border-radius: 4px;
@@ -682,13 +626,12 @@
     text-align: center;
   }
   .share-slide .eyebrow {
-    color: var(--accent-soft);
-    text-align: center;
-    margin: 0 auto 28px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .share-slide h2 {
-    font-family: var(--sans);
-    font-weight: 700;
+    font-family: var(--display);
+    font-weight: 400;
     font-size: clamp(36px, 5vw, 56px);
     letter-spacing: -0.025em;
     line-height: 1.05;
@@ -697,90 +640,109 @@
     max-width: 680px;
   }
   .share-slide h2 em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--accent-soft);
   }
-  /* The shareable card: a tight visual mini-summary */
+  /* The shareable card */
   .share-card {
+    --card-bg: #F8F8F6;
+    --card-ink: #070E08;
+    --card-green: #93F099;
     margin: 36px auto 0;
-    width: min(92%, 480px);
+    width: min(92%, 432px);
     aspect-ratio: 4 / 5;
-    background: #0F1A12;
-    border: 0.5px solid rgba(255, 255, 255, 0.14);
-    border-radius: 18px;
-    padding: 36px 32px;
+    background: var(--card-bg);
+    border-radius: 32px;
+    padding: 32px;
     text-align: left;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    color: var(--card-ink);
     box-shadow: 0 28px 64px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
   }
-  .share-card .desc {
-    font-family: var(--sans);
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--paper);
-    opacity: 0.78;
-    margin-top: 16px;
-    max-width: 360px;
-  }
-  .share-card .stat-row {
-    margin-top: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--accent-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-  }
-  .share-card .stat-row span::before {
-    content: "→ ";
-    color: var(--accent-soft);
-  }
-  .share-card .eyebrow {
-    color: var(--accent-soft);
-    text-align: left;
-    margin: 0 0 14px;
-    font-size: 10px;
-  }
-  .share-card .name {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: clamp(34px, 5vw, 48px);
-    line-height: 1.0;
-    letter-spacing: -0.025em;
-    color: var(--paper);
-  }
-  .share-card .name em {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 500;
-    color: var(--accent-soft);
-  }
-  .share-card .tag {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 16px;
-    color: var(--paper);
-    opacity: 0.78;
-    margin-top: 14px;
-  }
-  .share-card .footer {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--muted);
+  .share-card .card-top {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
   }
+  .share-card .pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--card-green);
+    color: var(--card-ink);
+    font-family: 'DM Sans', var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 999px;
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+  .share-card .meta {
+    font-family: 'DM Sans', var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--card-ink);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+  }
+  .share-card .card-title {
+    font-family: 'PP Neue Machina', var(--sans);
+    font-weight: 400;
+    font-size: 52px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--card-ink);
+    margin-top: 28px;
+  }
+  .share-card .card-tag {
+    font-family: 'DM Sans', var(--sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--card-ink);
+    margin-top: 24px;
+  }
+  .share-card .card-desc {
+    font-family: 'DM Sans', var(--sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--card-ink);
+    margin-top: 14px;
+  }
+  .share-card .card-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    min-height: 0;
+  }
+  .share-card .card-illustration img {
+    display: block;
+    max-width: 72%;
+    max-height: 100%;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+  }
+  .share-card .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+  .share-card .card-footer .brand {
+    width: 92px;
+    color: var(--card-ink);
+    margin-bottom: 0;
+    opacity: 1;
+  }
+  .share-card .card-footer .brand svg { display: block; width: 100%; height: auto; }
   .share-buttons {
     margin-top: 32px;
     display: flex;
@@ -798,7 +760,7 @@
     background: rgba(255, 255, 255, 0.04);
     color: var(--paper);
     font-family: var(--sans);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -808,14 +770,15 @@
     border-color: rgba(255, 255, 255, 0.30);
   }
   .share-btn.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--paper);
+    background: #93F099;
+    border-color: #93F099;
+    color: #1F3124;
+    border-radius: 12px;
   }
   .share-btn.primary:hover {
-    background: var(--accent-soft);
-    border-color: var(--accent-soft);
-    color: var(--ink);
+    background: #A8F4AE;
+    border-color: #A8F4AE;
+    color: #1F3124;
   }
   .share-toast {
     margin-top: 16px;
@@ -829,8 +792,17 @@
     transition: opacity 0.2s;
   }
   .share-toast.is-on { opacity: 1; }
+  .share-slide .share-promo {
+    margin: 24px auto 0;
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.5vw, 21px);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--paper);
+    max-width: 520px;
+  }
   .share-slide .footnote {
-    margin-top: 36px;
+    margin-top: 12px;
     font-family: var(--sans);
     font-size: clamp(17px, 1.5vw, 21px);
     font-weight: 400;
@@ -840,6 +812,17 @@
     max-width: 480px;
     margin-left: auto;
     margin-right: auto;
+  }
+  .share-slide .footnote a {
+    color: var(--paper);
+    text-decoration: none;
+    border-bottom: 1px solid var(--paper);
+    padding-bottom: 1px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .share-slide .footnote a:hover {
+    color: var(--accent-soft);
+    border-bottom-color: var(--accent-soft);
   }
 
   @media (max-width: 640px) {
@@ -869,12 +852,8 @@
       break-after: auto;
     }
     .scroll-cue,
-    .flip-hint,
-    .map-hint,
     .share-buttons,
     .share-toast { display: none !important; }
-    .cell-inner { transform: none !important; }
-    .face.back { display: none !important; }
   }
 </style>
 </head>
@@ -906,13 +885,13 @@
   {%- endmacro %}
   {# Per-archetype thesis line — short, second-person, obviously ties to the archetype name. #}
   {% set you_taglines = {
-    "The Manager": "You plan first. You ship after the diff says yes.",
-    "The Reality Tester": "You run the code first. Reality is your editor.",
-    "The Pair Programmer": "You think out loud — with the agent in the loop.",
-    "The Patcher": "You react. You re-ask. You hope it sticks.",
-    "The Streamliner": "You move fast. Few words wasted.",
-    "The Spec-First Architect": "The brief is the artifact. Code follows.",
-    "The Generalist": "You shift styles to match the task."
+    "The Manager": "You like to know what you're walking into.",
+    "The Reality Tester": "You'd rather see what the code does than plan it out on paper.",
+    "The Pair Programmer": "You think best when you're talking.",
+    "The Patcher": "You'd rather keep moving than stop to figure things out.",
+    "The Streamliner": "You don't over-explain. You give the agent enough to go on.",
+    "The Spec-First Architect": "You think the shape of a thing decides whether it works.",
+    "The Generalist": "You don't have one default way of working."
   } %}
   {# Signal ID → noun-form label for big stat blocks (e.g. "31 numbered plans"). #}
   {% set signal_nouns = {
@@ -948,40 +927,41 @@
     "task_type:bug": "Hunted bugs"
   } %}
   {# Two voices: `you_blurbs` is for slide 1 (it's about the reader), `blurbs` is for slide 2 hover (the reader is exploring other archetypes). #}
-  {# Snackable, witty per-archetype lines for the share card. Short, punchy, slightly self-aware — built to read as a tweet. #}
+  {# Per-archetype lines for the share card. Concise but read naturally — descriptive sentences, no staccato fragments or "X is the Y" punchlines. #}
   {% set share_blurbs = {
-    "The Manager": "Plans first, audits the diff, ships when it passes inspection. Trust is earned by reading.",
-    "The Reality Tester": "Skips the plan, runs the code, fixes what breaks. Treats execution like a critic.",
-    "The Pair Programmer": "Code emerges through chat. Small turns, lots of 'wait, what about…' moments.",
-    "The Patcher": "Sees broken output, types vague re-ask, hopes it sticks. Reactive minimalism with crossed fingers.",
-    "The Streamliner": "Pair Programmer with less ceremony. Talks to the agent like a coworker who already gets it.",
-    "The Spec-First Architect": "Specifies everything before a single line runs. The brief is the artifact, code is just downstream.",
-    "The Generalist": "Shifts styles to match the task. Could be anyone, depending on the day."
+    "The Manager": "Plans the work before any code runs, and reviews the diff carefully before shipping. Trusts a result more once it's been read through.",
+    "The Reality Tester": "Tends to run the code first and let whatever breaks show where to look. Iterates on what just happened, rather than planning it out on paper.",
+    "The Pair Programmer": "Works in small back-and-forth turns with the agent. The code takes shape through the conversation, more than from anything written up front.",
+    "The Patcher": "Moves fast. When something breaks, tends to re-ask quickly and trust the next try to land closer.",
+    "The Streamliner": "Doesn't over-explain. Gives the agent enough to go on and trusts it to handle the rest, the way you'd talk to a colleague who already knows the project.",
+    "The Spec-First Architect": "Spends most of the time on the brief before any code runs. Once the spec is written, tends not to iterate much.",
+    "The Generalist": "No default approach. Reads the task and shifts to meet whatever it's asking for."
   } %}
   {% set you_blurbs = {
-    "The Manager": "You break work into numbered plans before any code runs. You review diffs carefully, watch the agent execute, and trust structure over speed. For you, the audit is the work.",
-    "The Reality Tester": "You run the code first and let reality push back. You iterate fast on what breaks, treating execution as the source of truth.",
-    "The Pair Programmer": "You stay conversational and tight — many small turns with the agent, evolving in real time. Your code emerges through back-and-forth, not specification.",
-    "The Patcher": "You see broken output, type a vague re-ask, and hope the next attempt sticks. Reactive, minimal effort; rarely structured upfront.",
-    "The Streamliner": "You're a leaner Pair Programmer. Fewer ceremonies, more momentum. You talk to the agent like a colleague who already gets it.",
-    "The Spec-First Architect": "You take long planning passes before any code runs. Your briefs are detailed; iteration is rare. The artifact is the spec.",
-    "The Generalist": "You mix signals from all four corners. No dominant pattern — you balance structure and iteration depending on the task."
+    "The Manager": "Your sessions usually start with a plan, which is a way of knowing what you're walking into before any code runs. You watch the agent execute, you read the diff carefully, and you'd rather take an extra ten minutes to be sure of the result than ship and find out something was off.",
+    "The Reality Tester": "You'd rather see what the code actually does than work it out on paper first. Your sessions tend to start with execution, and you adjust based on whatever it surfaces — what broke, what didn't run, what looks different from what you expected.",
+    "The Pair Programmer": "You think best when you're talking, and most of your sessions look more like a conversation than a plan. You and the agent trade short turns, and the code takes shape through that exchange rather than from anything you wrote down up front.",
+    "The Patcher": "You move fast. When something doesn't work, you usually re-ask quickly rather than pull back to figure out why, and you trust the next try to land closer. Your sessions don't have much structure up front — most of the work comes together by just keeping going.",
+    "The Streamliner": "You don't waste your words. You give the agent enough to go on and trust it to handle the rest, the way you'd talk to a colleague who already knows the project. Setup feels like overhead to you, and most of your sessions skip straight to the actual work.",
+    "The Spec-First Architect": "You think the shape of a thing decides whether it works, so most of your sessions spend a long time on the brief before any code runs. Your specs tend to be detailed enough that once they're written, the rest mostly falls into place without much iteration.",
+    "The Generalist": "You don't have one default way of working. Some sessions you plan it out carefully, others you start running and adjust, others you'll spend an hour shaping the spec before any code runs. It really depends on what the work is asking for."
   } %}
   {% set blurbs = {
-    "The Manager": "Breaks work into numbered plans before any code runs. Reviews diffs carefully, watches the agent execute, and trusts structure over speed. The audit is the work.",
-    "The Reality Tester": "Runs the code first and lets reality push back. Iterates fast on what breaks, treating execution as the source of truth.",
-    "The Pair Programmer": "Conversational and tight — many small turns with the agent, evolving in real time. Code emerges through back-and-forth, not specification.",
-    "The Patcher": "Sees broken output, types a vague re-ask, hopes the next attempt sticks. Reactive minimal effort; rarely structured upfront.",
-    "The Streamliner": "A leaner Pair Programmer. Fewer ceremonies, more momentum. Talks to the agent like a colleague who already gets it.",
-    "The Spec-First Architect": "Long planning passes before any code runs. Briefs are detailed; iteration is rare. The artifact is the spec.",
-    "The Generalist": "Mixes signals from all four corners. No dominant pattern — balanced across structure and iteration depending on the task."
+    "The Manager": "Plans the work before any code runs, and reads the diff carefully before shipping. Tends to trust a result more after reading it through.",
+    "The Reality Tester": "Tends to run the code first and let whatever breaks show where to look. Iterates on what just happened, rather than planning it out on paper.",
+    "The Pair Programmer": "Works in back-and-forth turns with the agent. The code takes shape through the conversation rather than from a written plan.",
+    "The Patcher": "Moves fast. When something breaks, tends to re-ask quickly and trust the next try to land closer.",
+    "The Streamliner": "Doesn't over-explain. Gives the agent enough to go on and trusts it to handle the rest.",
+    "The Spec-First Architect": "Spends a long time on the brief before any code runs. Once it's written, doesn't iterate much.",
+    "The Generalist": "No default approach. Reads the task and shifts to meet whatever it's asking for."
   } %}
   {% set primary_name = "The " + view.title.archetype_name %}
 
   <!-- ============== Slide 0: BUILD-UP — earn the reveal with specific facts ============== -->
   <section class="slide buildup">
+    <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
     <div class="slide-inner">
-      <div class="eyebrow">A peek at your last 30 days</div>
+      <div class="eyebrow">Across your last 30 days</div>
       <h2 class="buildup-h">Here's what we noticed.</h2>
 
       <div class="buildup-stats">
@@ -1013,13 +993,14 @@
         {% endfor %}
       </div>
 
-      <p class="buildup-sub">It all contributes to an archetype. Here's yours.</p>
+      <p class="buildup-sub">All of this adds up to an archetype — here's how yours came out.</p>
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
 
   <!-- ============== Slide 1: REVEAL ============== -->
   <section class="slide reveal">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
       <div class="eyebrow">Your Claude Code archetype</div>
       <h1>The <em>{{ view.title.archetype_name }}</em></h1>
@@ -1035,19 +1016,20 @@
   <!-- ============== Slide 2: WHERE YOU STAND ============== -->
   {% if landscape %}
   <section class="slide stand">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
       <div class="eyebrow">Where you stand</div>
       {% set sharp = (landscape.sharpness or '')|lower %}
       {% set primary_short = (landscape.primary or 'Manager')|replace('The ', '') %}
       {% if sharp == 'sharp' %}
-      <h2>You stick to <em>one mode</em>.</h2>
-      <p class="lede">Most engineers drift between styles depending on the task. You don't — your habits cluster sharply in one corner.</p>
+      <h2>You don't drift. You stay in <em>one mode</em>.</h2>
+      <p class="lede">Most engineers shift between styles depending on the task. You don't — your sessions tend to land in the same corner, over and over.</p>
       {% elif sharp == 'borderline' %}
-      <h2>You work in <em>two modes</em>.</h2>
-      <p class="lede">Some sessions look like {{ primary_short }}. Others look like {{ (landscape.secondary or '')|replace('The ', '') }}. You shift between them on a given day.</p>
+      <h2>Your sessions split between <em>two modes</em>.</h2>
+      <p class="lede">Some days your sessions look like {{ primary_short }}, and on others they look like {{ (landscape.secondary or '')|replace('The ', '') }}. You shift between them depending on what the work is asking for.</p>
       {% else %}
-      <h2>You move with <em>the pack</em>.</h2>
-      <p class="lede">Your habits sit near the middle of the {{ primary_short }} group — flexible, balanced, hard to pin to one corner.</p>
+      <h2>There isn't <em>one shape</em> to how you work.</h2>
+      <p class="lede">Your sessions sit near the middle of the {{ primary_short }} group — flexible, and shaped more by the task in front of you than by any default way of working.</p>
       {% endif %}
 
       {# Comparison line: user vs typical-archetype on the strongest signal. Single most viral framing in year-in-review reports. #}
@@ -1062,66 +1044,31 @@
         {% set phrase1 = signal_phrases.get(sig1, t1.name_em|replace('*', ''))|lower %}
       <p class="compare-line">
         You {{ phrase1 }} in
-        <strong>{{ t1.you_pct|round|int }}%</strong> of your sessions.
+        <strong>{{ t1.you_pct|round|int }}% of your sessions*</strong>.
         Most {{ primary_short }}s hit <strong>{{ t1.cohort_pct|round|int }}%</strong>.
       </p>
       {% endif %}
 
-      {# Map a primary or variant archetype to one of the 4 cells. Variants and the user's archetype highlight their parent primary's cell. #}
-      {% set primary = landscape.primary or "" %}
-      {% set shadow = landscape.shadow or "" %}
-      {% set arch_to_cell = {
-        "The Manager": "manager",
-        "The Spec-First Architect": "manager",
-        "The Reality Tester": "reality",
-        "The Pair Programmer": "pair",
-        "The Streamliner": "pair",
-        "The Patcher": "patcher"
-      } %}
-      {% set user_cell = arch_to_cell.get(primary, "") %}
-      {% set shadow_cell = arch_to_cell.get(shadow, "") %}
-
-      <div class="map-hint">Tap any cell to flip and learn about that archetype</div>
-      <div class="matrix-frame">
-        <div class="matrix-axis-y">More iteration ↑</div>
-        <div class="matrix">
-          {% macro cell(key, name, chips) -%}
-          <div class="cell{% if user_cell == key %} is-user{% endif %}{% if shadow_cell == key and user_cell != key %} is-shadow{% endif %}" data-arch="{{ name }}" tabindex="0" role="button" aria-label="Flip to read about {{ name }}">
-            <div class="cell-inner">
-              <div class="face front">
-                <div class="cell-head">
-                  <span class="cell-name">{{ name|replace('The ', '') }}</span>
-                  {% if user_cell == key %}
-                  <span class="you-tag">★ You{% if primary != ('The ' + name|replace('The ', '')) and primary %} <em>· {{ primary|replace('The ', '') }}</em>{% endif %}</span>
-                  {% elif shadow_cell == key %}
-                  <span class="shadow-tag">Shadow</span>
-                  {% else %}
-                  <span class="flip-hint">Flip ↻</span>
-                  {% endif %}
-                </div>
-                <ul class="cell-chips">
-                  {% for c in chips %}<li>"{{ c }}"</li>{% endfor %}
-                </ul>
-                <div class="cell-dot"></div>
-              </div>
-              <div class="face back">
-                <div class="back-name">{{ name }}</div>
-                <div class="back-blurb">{{ blurbs.get(name, '') }}</div>
-                <div class="back-hint">Tap to flip back</div>
+      <div class="distribution">
+        <div class="distribution-caption">You vs Everyone Else</div>
+        <ul class="bars">
+          {% for bar in landscape.bars %}
+          <li class="bar-row{% if bar.is_user_primary %} is-you{% endif %}{% if bar.is_shadow %} is-shadow{% endif %}"
+              data-blurb="{{ blurbs.get(bar.name, '') }}">
+            <div class="bar-label">{{ bar.short_name }}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width: {{ bar.pct|round(1) }}%">
+                {% if bar.is_user_primary %}<span class="bar-tag">★ You</span>{% endif %}
+                {% if bar.is_shadow %}<span class="bar-tag">Shadow</span>{% endif %}
               </div>
             </div>
-          </div>
-          {%- endmacro %}
-
-          {{ cell("pair",     "The Pair Programmer", ["many small turns", "code by chat"]) }}
-          {{ cell("reality",  "The Reality Tester",  ["ran the code first", "fixed what broke"]) }}
-          {{ cell("patcher",  "The Patcher",         ["vague re-ask", "hope it sticks"]) }}
-          {{ cell("manager",  "The Manager",         ["wrote a numbered plan", "read the diff"]) }}
-        </div>
-        <div class="matrix-axis-x">More structure →</div>
+            <div class="bar-value">{{ bar.pct|round|int }}%</div>
+          </li>
+          {% endfor %}
+        </ul>
       </div>
 
-      <div class="map-caption">{{ view.colophon.n_sessions }} of your sessions analyzed</div>
+      <div class="stand-footer">*Based on {{ view.colophon.n_sessions }} analyzed sessions</div>
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
@@ -1129,32 +1076,33 @@
 
   <!-- ============== Slide 3: METHODOLOGY ============== -->
   <section class="slide method">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
       <div class="eyebrow">Methodology</div>
-      <h2>Where these numbers came from.</h2>
-      <p class="method-sub">The whole analysis ran on your machine. We compared your sessions against a baseline of 172 engineers and 4,846 real Claude Code sessions — no data left your laptop.</p>
+      <h2>How we got to these numbers.</h2>
+      <p class="method-sub">The whole analysis ran on your machine. We compared your sessions against a baseline of 172 engineers and 4,846 real Claude Code sessions, and nothing left your laptop.</p>
 
       <div class="method-grid">
         <div class="method-stat">
-          <div class="num">~36</div>
+          <div class="num">36</div>
           <div class="lbl">Behavioral signals tagged per session</div>
         </div>
         <div class="method-stat">
           <div class="num">7</div>
-          <div class="lbl">Archetypes scored from those signals</div>
+          <div class="lbl">Archetypes scored from signals</div>
         </div>
         <div class="method-stat">
           <div class="num">{{ view.colophon.n_sessions }}</div>
-          <div class="lbl">Of your sessions in this analysis</div>
+          <div class="lbl">Of your sessions analyzed</div>
         </div>
       </div>
 
-      <ol class="method-list">
-        <li>Your local Claude Code history was tagged for things like: did you write a plan, did you run the tests, did you check output before moving on, did you split work into steps.</li>
-        <li>Those signal rates were compared to seven archetype profiles built from the 172-engineer baseline.</li>
-        <li>You were placed at a weighted center on the structure × iteration map — the same map you saw on slide 2.</li>
-        <li>Everything ran locally on your machine. No transcripts left your laptop.</li>
-      </ol>
+      <ul class="method-list">
+        <li>We tagged your local Claude Code history for things like whether you wrote a plan, whether you ran the tests, whether you checked the output before moving on, and whether you broke the work into steps.</li>
+        <li>Those signals were then compared to seven archetype profiles built from the 172-engineer baseline.</li>
+        <li>Your sessions were scored against each of the seven archetypes — that's the distribution you saw on slide 2.</li>
+        <li>Everything ran locally on your machine, and no transcripts left your laptop.</li>
+      </ul>
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
@@ -1162,15 +1110,20 @@
   <!-- ============== Slide 4: WHAT TO DO ============== -->
   {% if view.section_moves and view.section_moves.moves %}
   <section class="slide moves">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
       <div class="eyebrow">What to do with this</div>
-      <h2>Two experiments to run this month.</h2>
+      <h2>A couple of things worth trying this month.</h2>
 
       {% for m in view.section_moves.moves %}
       <div class="move-card">
-        <div class="from">From {{ arch_one_liners.get(m.from_archetype, m.from_archetype) }}</div>
-        <div class="verb">{{ m.verb_phrase|emify }}</div>
-        <div class="action">{{ depersonify(m.body_action)|emify }}</div>
+        <div class="move-head">
+          <span class="move-num">{{ loop.index }}.</span>
+          <div class="verb">{{ m.verb_phrase|emify }}</div>
+        </div>
+        <ul class="move-desc">
+          <li>{{ depersonify(m.body_action)|emify }}</li>
+        </ul>
       </div>
       {% endfor %}
     </div>
@@ -1181,50 +1134,41 @@
   <!-- ============== Slide 5: SHARE ============== -->
   <section class="slide share-slide">
     <div class="slide-inner">
-      <div class="eyebrow">Share your archetype</div>
       <h2>Share your coding <em>archetype</em>.</h2>
 
+      {% set illustration_uri = ('assets/illustrations/' ~ view.title.archetype_name ~ '.png')|b64_asset %}
+      <!-- @CARD_START -->
       <div class="share-card" id="share-card">
-        <div>
-          <div class="eyebrow">My Claude Code archetype</div>
-          <div class="name">The <em>{{ view.title.archetype_name }}</em></div>
-          <div class="tag">{{ you_taglines.get(primary_name, view.tagline) }}</div>
-          <div class="desc">{{ share_blurbs.get(primary_name, blurbs.get(primary_name, '')) }}</div>
-          <div class="stat-row">
-            {% set traits_view = view.section_identity.traits_view or [] %}
-            {% set traits_raw  = view.section_identity.traits or [] %}
-            {% set shown = namespace(n=0) %}
-            {% for i in range(traits_view|length) %}
-              {% set t = traits_view[i] %}
-              {% set raw = traits_raw[i] if i < traits_raw|length else None %}
-              {% if t.kind == 'high' and shown.n < 2 and raw %}
-                {% if raw.data.kind == 'signal' %}
-                  {% set sig = raw.data.signal %}
-                {% else %}
-                  {% set sig = raw.data.field ~ ':' ~ raw.data.bucket %}
-                {% endif %}
-                {% set phrase = signal_phrases.get(sig, t.name_em|replace('*', '')) %}
-                {% set total = view.colophon.n_sessions %}
-                {% set count = ((t.you_pct / 100) * total)|round|int %}
-                <span>{{ phrase }} · {{ count }}/{{ total }}</span>
-                {% set shown.n = shown.n + 1 %}
-              {% endif %}
-            {% endfor %}
-          </div>
+        <div class="card-top">
+          <span class="pill">My Claude Code Archetype</span>
+          <span class="meta">{{ view.colophon.n_sessions }} Sessions Analyzed</span>
         </div>
-        <div class="footer">
-          <span>Coding Archetype</span>
-          <span>{{ view.colophon.n_sessions }} sessions</span>
+
+        <h3 class="card-title">The {{ view.title.archetype_name }}</h3>
+        <p class="card-tag">{{ you_taglines.get(primary_name, view.tagline) }}</p>
+        <p class="card-desc">{{ share_blurbs.get(primary_name, blurbs.get(primary_name, '')) }}</p>
+
+        {% if illustration_uri %}
+        <div class="card-illustration">
+          <img src="{{ illustration_uri }}" alt="Illustration of the {{ view.title.archetype_name }} archetype">
+        </div>
+        {% else %}
+        <div class="card-illustration"></div>
+        {% endif %}
+
+        <div class="card-footer">
+          <div class="brand">{% include '_logo_primary.svg' %}</div>
         </div>
       </div>
+      <!-- @CARD_END -->
 
       <div class="share-buttons">
-        <button class="share-btn primary" id="share-card-btn">Share card</button>
-        <button class="share-btn" id="share-copy">Copy text</button>
+        <button class="share-btn primary" id="share-card-btn">Share results</button>
       </div>
-      <div class="share-toast" id="share-toast"></div>
 
-      <p class="footnote">Want to see what your coding archetype is?<br>Run the Coding Archetype test yourself.</p>
+      <p class="share-promo">Want to see a report like this on your agent's user conversations?</p>
+      <p class="footnote"><a href="https://bigspin.ai/steeze">Learn more</a></p>
+      <div class="share-toast" id="share-toast"></div>
     </div>
   </section>
 
@@ -1261,18 +1205,107 @@
       counters.forEach(c => obs.observe(c));
     })();
 
-    // ===== Matrix: flip cells on click/tap =====
+    // ===== Slide snap navigation =====
+    // One wheel gesture / arrow / page-down animates to one slide.
+    //
+    // Trackpad inertia is the tricky part: after a physical swipe, the
+    // OS keeps firing wheel events for up to ~1.5s with steadily
+    // decaying deltaY. We need to (a) ignore that tail, and (b) NOT
+    // ignore a fresh deliberate swipe that lands during it.
+    //
+    // The heuristic: after a jump fires, remember its initial deltaY.
+    // For the next INERTIA_WINDOW_MS, events whose deltaY is under
+    // INERTIA_RATIO of that initial delta are presumed inertia and
+    // dropped. Anything larger is treated as a fresh swipe and fires
+    // immediately. After the inertia window expires, the next event
+    // (any size) is fresh.
     (function () {
-      const cells = document.querySelectorAll('.matrix .cell');
-      cells.forEach(cell => {
-        const toggle = (e) => {
-          e.preventDefault();
-          cell.classList.toggle('is-flipped');
-        };
-        cell.addEventListener('click', toggle);
-        cell.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggle(e);
-        });
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      if (slides.length < 2) return;
+
+      const ANIM_LOCK_MS = 500;
+      const INERTIA_WINDOW_MS = 1500;
+      const INERTIA_RATIO = 0.5;
+      const GESTURE_RESET_MS = 250;
+      let lastJumpTime = -Infinity;
+      let lastEventTime = 0;
+      let recentPeakDelta = 0; // peak deltaY of the current/last gesture
+
+      function currentIndex() {
+        let best = 0, bestDist = Infinity;
+        for (let i = 0; i < slides.length; i++) {
+          const rect = slides[i].getBoundingClientRect();
+          const dist = Math.abs(rect.top);
+          if (dist < bestDist) { bestDist = dist; best = i; }
+        }
+        return best;
+      }
+
+      function jumpToSlide(idx) {
+        if (idx < 0 || idx >= slides.length) return;
+        const now = performance.now();
+        if (now - lastJumpTime < ANIM_LOCK_MS) return;
+        lastJumpTime = now;
+        slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      window.addEventListener('wheel', (e) => {
+        if (e.deltaY === 0) return;
+
+        // If the current slide overflows the viewport (e.g., share slide
+        // with the new copy added), let the user scroll within it
+        // natively rather than jumping. We only intercept once they're
+        // at the slide boundary in the direction they're scrolling.
+        const idx = currentIndex();
+        const slide = slides[idx];
+        const rect = slide.getBoundingClientRect();
+        const viewH = window.innerHeight;
+        const slideOverflows = slide.offsetHeight > viewH + 4;
+        if (slideOverflows) {
+          const dir = e.deltaY > 0 ? 1 : -1;
+          if (dir > 0 && rect.bottom > viewH + 4) return; // room to scroll down
+          if (dir < 0 && rect.top < -4) return;            // room to scroll up
+        }
+
+        e.preventDefault();
+        const now = performance.now();
+        const absDelta = Math.abs(e.deltaY);
+
+        // Track the peak deltaY of the current gesture. Reset the peak
+        // after a quiet period so a previous gesture's strong swipe
+        // doesn't poison the threshold for the next one.
+        if (now - lastEventTime > GESTURE_RESET_MS) recentPeakDelta = 0;
+        lastEventTime = now;
+        recentPeakDelta = Math.max(recentPeakDelta, absDelta);
+
+        const sinceJump = now - lastJumpTime;
+        if (sinceJump < ANIM_LOCK_MS) return;
+
+        // In the post-jump window, drop events small relative to the
+        // gesture peak — those are inertia tail. Anything close to peak
+        // is a fresh swipe and breaks through.
+        if (sinceJump < INERTIA_WINDOW_MS
+            && absDelta < recentPeakDelta * INERTIA_RATIO) {
+          return;
+        }
+
+        jumpToSlide(currentIndex() + (e.deltaY > 0 ? 1 : -1));
+      }, { passive: false });
+
+      window.addEventListener('keydown', (e) => {
+        const t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        const c = e.code;
+        const idx = currentIndex();
+        if (c === 'ArrowDown' || c === 'PageDown' || c === 'Space' || c === 'ArrowRight') {
+          e.preventDefault(); jumpToSlide(idx + 1);
+        } else if (c === 'ArrowUp' || c === 'PageUp' || c === 'ArrowLeft') {
+          e.preventDefault(); jumpToSlide(idx - 1);
+        } else if (c === 'Home') {
+          e.preventDefault(); jumpToSlide(0);
+        } else if (c === 'End') {
+          e.preventDefault(); jumpToSlide(slides.length - 1);
+        }
       });
     })();
 
@@ -1319,7 +1352,7 @@
           width: w,
           height: h,
           scale: 2,
-          backgroundColor: '#0F1A12',
+          backgroundColor: '#070E08',
           useCORS: true,
           logging: false,
         });

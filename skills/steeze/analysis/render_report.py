@@ -30,8 +30,27 @@ import jsonschema
 
 HERE = Path(__file__).resolve().parent
 DEFAULT_SCHEMA = HERE / "report_content.schema.json"
+ARCHETYPE_PROFILES_PATH = HERE.parent / "baselines" / "archetype_profiles.json"
 
 log = logging.getLogger("render_report")
+
+
+def _load_cohort_prevalence() -> dict[str, float]:
+    """Per-archetype share of the baseline cohort, in percent (sums ≈ 100).
+
+    Loaded once at import. If the baseline file is missing, returns an
+    empty dict — the renderer will fall back to a flat distribution so
+    nothing visually breaks.
+    """
+    try:
+        data = json.loads(ARCHETYPE_PROFILES_PATH.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+    return {a["name"]: float(a.get("prevalence_pct", 0.0))
+            for a in data.get("archetypes", [])}
+
+
+COHORT_PREVALENCE: dict[str, float] = _load_cohort_prevalence()
 
 
 # =====================================================================
@@ -319,9 +338,31 @@ def landscape_view(content: dict, metrics: dict) -> dict | None:
             "score": all_scores.get(name, 0.0),
         })
 
+    # Distribution bars: how the cohort (the baseline corpus of measured
+    # engineers) distributes across all 7 archetypes — the user's primary
+    # is marked "You", their shadow marked "Shadow". This reframes the
+    # chart from "your own mix" to "where you sit in the population".
+    # The numbers come from baselines/archetype_profiles.json
+    # (`prevalence_pct`) and sum to ≈100. Falls back to flat weighting if
+    # the baseline file isn't loaded, so the visual still shows.
+    prevalence = COHORT_PREVALENCE or {
+        name: 100.0 / len(ARCHETYPE_POSITIONS) for name in ARCHETYPE_POSITIONS
+    }
+    bars: list[dict] = []
+    for name, pct in prevalence.items():
+        bars.append({
+            "name": name,
+            "short_name": name.replace("The ", ""),
+            "pct": float(pct),
+            "is_user_primary": name == primary,
+            "is_shadow": name == shadow,
+        })
+    bars.sort(key=lambda b: b["pct"], reverse=True)
+
     return {
         "you": {"x": you_x, "y": you_y},
         "archetypes": archetypes,
+        "bars": bars,
         "primary": primary,
         "shadow": shadow,
         "secondary": secondary,
@@ -523,10 +564,11 @@ def main(argv: list[str] | None = None) -> int:
                         default="all")
     parser.add_argument("--style",
                         choices=["editorial", "wrapped"],
-                        default="editorial",
-                        help="HTML report style. 'editorial' (default) uses the "
-                             "Kinfolk-magazine single-page template; 'wrapped' "
-                             "uses the Spotify-Wrapped-style slide variant.")
+                        default="wrapped",
+                        help="HTML report style. 'wrapped' (default) uses the "
+                             "Spotify-Wrapped-style slide variant with the "
+                             "Bigspin brand palette; 'editorial' uses the "
+                             "Kinfolk-magazine single-page template.")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args(argv)
 

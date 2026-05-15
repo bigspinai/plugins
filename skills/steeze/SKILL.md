@@ -107,9 +107,9 @@ Announce what you're about to do — show the defaults, don't ask:
 - **Last 30 parent sessions** in `~/.claude/projects` for structured tagging.
 - **20 sessions sampled across projects** for the open behavioral pass.
 - **Sessions root**: `~/.claude/projects` (override available via `--session-root` if the user passes one).
-- **Report style**: `editorial` (the user can re-run with `/steeze --style wrapped` for the slide variant).
+- **Report style**: `wrapped` (the user can re-run with `/steeze --style editorial` for the single-page variant).
 
-If the user passed `--sessions N` or `--style wrapped` as args, honor them; otherwise use these defaults and proceed.
+If the user passed `--sessions N` or `--style editorial` as args, honor them; otherwise use these defaults and proceed.
 
 ## Step 2 — preprocess
 
@@ -263,10 +263,10 @@ Pre-flight checklist (also in interpret.md):
 
 ## Step 8 — render
 
-Determine style: if the user passed `--style wrapped` in their slash command args, use `wrapped`; otherwise `editorial`.
+Determine style: if the user passed `--style editorial` in their slash command args, use `editorial`; otherwise `wrapped` (the default).
 
 ```bash
-STEEZE_STYLE="${STEEZE_STYLE:-editorial}"
+STEEZE_STYLE="${STEEZE_STYLE:-wrapped}"
 "$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/render_report.py" \
     --content "$STEEZE_RUN_DIR/report_content.json" \
     --metrics "$STEEZE_RUN_DIR/metrics.json" \

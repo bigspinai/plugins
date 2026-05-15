@@ -17,7 +17,7 @@ Once it finishes running, you will receive an html report that will open automat
 
 `/steeze` reads `~/.claude/projects/` (the directory Claude Code already keeps your session history in), runs a nine-step analysis pipeline, and writes a fresh batch of artifacts to `~/.claude/steeze/<timestamp>/`:
 
-- **`report.html`** — the full editorial report. Opens automatically in your default browser. Mobile-vertical, screenshot-friendly.
+- **`report.html`** — the full slide-style report. Opens automatically in your default browser. Mobile-vertical, screenshot-friendly.
 - **`report.md`** — the same report as markdown. Portable, no images, can be pasted back into Claude Code.
 - **`hero.md`** — a tight summary (~10 lines) printed inline in the chat right after the run finishes. The thing you actually read first.
 - **`hero_card.txt`** + **`hero_card.plain.txt`** — CLI hero card with and without ANSI color.
@@ -28,8 +28,8 @@ Two HTML styles ship with the plugin. Same content, same `report_content.json` �
 
 | Style | When | Vibe |
 |---|---|---|
-| **`editorial`** (default) | `/steeze` | Kinfolk-magazine, single-page, editorial-serif voice with rust accents. Best for reading end-to-end, screenshotting a section, or sharing as a PDF. |
-| **`wrapped`** | `/steeze --style wrapped` | Spotify-Wrapped-inspired slide reveal, build-up cards, more visual punch. Best for sharing on social or one-screen-at-a-time discovery. |
+| **`wrapped`** (default) | `/steeze` | Spotify-Wrapped-inspired slide reveal with the Bigspin brand palette, build-up cards, per-archetype illustrations. Best for sharing on social or one-screen-at-a-time discovery. |
+| **`editorial`** | `/steeze --style editorial` | Kinfolk-magazine, single-page, editorial-serif voice with rust accents. Best for reading end-to-end, screenshotting a section, or sharing as a PDF. |
 
 ## Privacy
 

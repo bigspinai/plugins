@@ -11,6 +11,7 @@ switch the @font-face declarations to local URLs.
 """
 from __future__ import annotations
 
+import base64
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +22,25 @@ from markupsafe import Markup, escape
 
 HERE = Path(__file__).resolve().parent
 TEMPLATES = HERE / "templates"
+
+_MIME_BY_EXT = {
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".webp": "image/webp",
+}
+
+
+def _b64_asset(rel_path: str) -> str:
+    """Return a data: URI for a file under templates/. Empty string if missing."""
+    p = TEMPLATES / rel_path
+    if not p.is_file():
+        return ""
+    mime = _MIME_BY_EXT.get(p.suffix.lower(), "application/octet-stream")
+    return f"data:{mime};base64,{base64.b64encode(p.read_bytes()).decode('ascii')}"
 
 
 def _bar_pct(value: float | None) -> float:
@@ -60,6 +80,7 @@ def render(view: dict[str, Any], template_name: str = "report.html.j2") -> str:
     )
     env.filters["bar_pct"] = _bar_pct
     env.filters["emify"] = _emify
+    env.filters["b64_asset"] = _b64_asset
     tmpl = env.get_template(template_name)
 
     # Pass unit-square coords (-1..1) through to the template; jinja
