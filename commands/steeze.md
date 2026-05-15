@@ -1,12 +1,12 @@
 ---
 description: Generate a personal Claude Code practice report from your local session history.
-argument-hint: "[--style wrapped|editorial] [--sessions N]"
+argument-hint: "[--style default|editorial] [--sessions N]"
 ---
 
 The user invoked `/steeze`. Follow `skills/steeze/SKILL.md` to completion.
 
 Pass through any arguments the user supplied:
-- `--style wrapped` (default) or `--style editorial` — selects the HTML report template.
+- `--style default` (default) or `--style editorial` — selects the HTML report template.
 - `--sessions N` — number of recent parent sessions to analyze (default 30).
 
 The skill handles environment setup (`STEEZE_PLUGIN_ROOT`, `STEEZE_RUN_DIR`), Python dependency bootstrapping, the full nine-step pipeline (preprocessing → enrichment → subagent tagging → metrics → open behavioral pass → render), and delivery (print hero markdown inline, open `report.html` in the user's browser).

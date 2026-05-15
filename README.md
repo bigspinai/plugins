@@ -28,7 +28,7 @@ Two HTML styles ship with the plugin. Same content, same `report_content.json` â
 
 | Style | When | Vibe |
 |---|---|---|
-| **`wrapped`** (default) | `/steeze` | Spotify-Wrapped-inspired slide reveal with the Bigspin brand palette, build-up cards, per-archetype illustrations. Best for sharing on social or one-screen-at-a-time discovery. |
+| **`default`** | `/steeze` | Bigspin-branded slide reveal with build-up cards and per-archetype illustrations. Best for sharing on social or one-screen-at-a-time discovery. |
 | **`editorial`** | `/steeze --style editorial` | Kinfolk-magazine, single-page, editorial-serif voice with rust accents. Best for reading end-to-end, screenshotting a section, or sharing as a PDF. |
 
 ## Privacy

@@ -563,11 +563,10 @@ def main(argv: list[str] | None = None) -> int:
                         choices=["html", "markdown", "hero", "cli", "all"],
                         default="all")
     parser.add_argument("--style",
-                        choices=["editorial", "wrapped"],
-                        default="wrapped",
-                        help="HTML report style. 'wrapped' (default) uses the "
-                             "Spotify-Wrapped-style slide variant with the "
-                             "Bigspin brand palette; 'editorial' uses the "
+                        choices=["default", "editorial"],
+                        default="default",
+                        help="HTML report style. 'default' uses the Bigspin-"
+                             "branded slide variant; 'editorial' uses the "
                              "Kinfolk-magazine single-page template.")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args(argv)
