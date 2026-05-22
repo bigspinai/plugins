@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Open a file (typically the steeze report.html) in the user's default
+# Open a file (typically the persona report.html) in the user's default
 # browser. Works on macOS, Linux, and Windows (WSL/Git Bash).
 #
 # Usage:

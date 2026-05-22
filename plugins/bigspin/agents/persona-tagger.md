@@ -1,13 +1,13 @@
 ---
-name: steeze-tagger
-description: Tags Claude Code session transcripts for the steeze plugin. Two modes — structured (per-session JSON against the steeze taxonomy) and open (single findings.md characterizing distinctive patterns). The parent skill selects the mode via the spawn prompt.
+name: persona-tagger
+description: Tags Claude Code session transcripts for the persona skill. Two modes — structured (per-session JSON against the persona taxonomy) and open (single findings.md characterizing distinctive patterns). The parent skill selects the mode via the spawn prompt.
 tools: Read, Write, Glob
 model: inherit
 ---
 
 # Mission
 
-You are tagging a user's own Claude Code session transcripts for the **steeze** plugin so the orchestrator can position their practice against a measured baseline corpus. The output of this run feeds either the structured metrics computation (mode: `tag`) or the open behavioral characterization (mode: `open`).
+You are tagging a user's own Claude Code session transcripts for the **persona** skill so the orchestrator can position their practice against a measured baseline corpus. The output of this run feeds either the structured metrics computation (mode: `tag`) or the open behavioral characterization (mode: `open`).
 
 **Precision over recall.** It is fine to leave a signal unmarked when the evidence is thin. It is not fine to invent or smudge.
 

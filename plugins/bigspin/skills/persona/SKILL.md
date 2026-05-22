@@ -1,11 +1,11 @@
 ---
-name: steeze
-description: Generates a personal Claude Code practice report ("archetype mirror") by analyzing the user's local ~/.claude/projects session history against a measured baseline corpus. Use when the user invokes /steeze, or when they ask for a "claude code archetype", "practice report", "session analysis", or "what's my coding style". The report is rendered locally as HTML; no data leaves the user's machine.
+name: persona
+description: Generates a personal Claude Code practice report ("archetype mirror") by analyzing the user's local ~/.claude/projects session history against a measured baseline corpus. Use when the user invokes /persona, or when they ask for a "claude code archetype", "practice report", "session analysis", or "what's my coding style". The report is rendered locally as HTML; no data leaves the user's machine.
 ---
 
-# Skill: Run the Steeze Practice Mirror
+# Skill: Run the Persona Practice Mirror
 
-You are the orchestrator. The user invoked `/steeze` (or asked for an archetype report). Walk through the steps below in order. Everything stays local — no API key required, no data leaves their machine.
+You are the orchestrator. The user invoked `/persona` (or asked for an archetype report). Walk through the steps below in order. Everything stays local — no API key required, no data leaves their machine.
 
 The full voice + content rules live in `analysis/interpret.md` (alongside this file in the plugin install). Read that **after** you have `metrics.json` + `findings.md` and before you write `report_content.json`. Don't skip it.
 
@@ -29,21 +29,21 @@ analysis/compute_metrics.py        → $RUN/metrics.json
 analysis/render_report.py          → $RUN/report.html, report.md, hero.md, hero_card.txt
 ```
 
-Where `$RUN` is `~/.claude/steeze/<timestamp>/`. The plugin's read-only assets (scripts, baselines, templates) live under `$PLUGIN_ROOT/skills/steeze/...` and are referenced by absolute path.
+Where `$RUN` is `~/.claude/bigspin/<timestamp>/`. The plugin's read-only assets (scripts, baselines, templates) live under `$PLUGIN_ROOT/skills/persona/...` and are referenced by absolute path.
 
 The output is **three artifacts sharing copy verbatim**: an HTML report, a CLI hero card, and a markdown report. All three render from a single `report_content.json`.
 
 The pipeline has **three** layers:
 
 1. **Deterministic signals** (`enrich.py`) — ~14 structural columns from message structure. Iteration counts, tool diversity, tests_attempted. Free, instant, fully reproducible.
-2. **Structured interpretive tagging** — ~36 schema-bound signals + four categorical fields. Tagged by the `steeze-tagger` subagent reading each session against a fixed taxonomy. Produces aggregated rates that position the user against a 4,846-session corpus baseline.
-3. **Open behavioral observation** — one `steeze-tagger` subagent in `open` mode reads ~20 sessions without a schema and returns rich findings: co-occurrence patterns, failure modes, session anchors.
+2. **Structured interpretive tagging** — ~36 schema-bound signals + four categorical fields. Tagged by the `persona-tagger` subagent reading each session against a fixed taxonomy. Produces aggregated rates that position the user against a 4,846-session corpus baseline.
+3. **Open behavioral observation** — one `persona-tagger` subagent in `open` mode reads ~20 sessions without a schema and returns rich findings: co-occurrence patterns, failure modes, session anchors.
 
 The **structured track** gives the archetype label, fingerprint gauge, and within-cohort bars. The **open track** gives the recognition lines, sensitivity framing, and experiments. Neither alone produces a credible report — the synthesis does.
 
 ## Critical: model pinning
 
-The corpus baselines were tagged with **Claude Opus 4.7**. For within-cohort positioning to be calibrated, the `steeze-tagger` subagent must run on the same model. Subagents inherit the parent session's model (the agent definition declares `model: inherit`), so this happens automatically when the user invoked you from Opus 4.7.
+The corpus baselines were tagged with **Claude Opus 4.7**. For within-cohort positioning to be calibrated, the `persona-tagger` subagent must run on the same model. Subagents inherit the parent session's model (the agent definition declares `model: inherit`), so this happens automatically when the user invoked you from Opus 4.7.
 
 Before Step 4, **verify** which model the parent session is on. If it's not Opus 4.7:
 
@@ -63,16 +63,16 @@ Before Step 1, set two environment variables. **You will reference these for eve
 #    (older Claude Code), derive it from this SKILL.md's path.
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 if [ -z "$PLUGIN_ROOT" ]; then
-  # Fallback: this SKILL.md is at $PLUGIN_ROOT/skills/steeze/SKILL.md
+  # Fallback: this SKILL.md is at $PLUGIN_ROOT/skills/persona/SKILL.md
   SKILL_DIR=$(cd "$(dirname "$0")" && pwd)  # only works if invoked as a script
   PLUGIN_ROOT=$(cd "$SKILL_DIR/../.." && pwd)
 fi
-export STEEZE_PLUGIN_ROOT="$PLUGIN_ROOT"
+export BIGSPIN_PLUGIN_ROOT="$PLUGIN_ROOT"
 
 # 2. Create a fresh run directory.
-RUN_ID=$(bash "$STEEZE_PLUGIN_ROOT/skills/steeze/scripts/run_id.sh")
-export STEEZE_RUN_DIR="$HOME/.claude/steeze/$RUN_ID"
-mkdir -p "$STEEZE_RUN_DIR"
+RUN_ID=$(bash "$BIGSPIN_PLUGIN_ROOT/skills/persona/scripts/run_id.sh")
+export BIGSPIN_RUN_DIR="$HOME/.claude/bigspin/$RUN_ID"
+mkdir -p "$BIGSPIN_RUN_DIR"
 ```
 
 When invoking these as shell commands from within Claude Code, set both env vars at the start of your shell session and reuse them in every subsequent `Bash` call. If your environment doesn't preserve env vars between Bash calls, substitute the absolute paths inline.
@@ -82,12 +82,12 @@ When invoking these as shell commands from within Claude Code, set both env vars
 Bootstrap the Python venv:
 
 ```bash
-STEEZE_PY=$(bash "$STEEZE_PLUGIN_ROOT/skills/steeze/scripts/bootstrap.sh" \
-    "$STEEZE_PLUGIN_ROOT/skills/steeze/requirements.txt")
-echo "Python: $STEEZE_PY"
+BIGSPIN_PY=$(bash "$BIGSPIN_PLUGIN_ROOT/skills/persona/scripts/bootstrap.sh" \
+    "$BIGSPIN_PLUGIN_ROOT/skills/persona/requirements.txt")
+echo "Python: $BIGSPIN_PY"
 ```
 
-The script is idempotent — first run installs `jinja2` and `jsonschema` into `~/.claude/steeze/.venv` via `uv` (or `python3 -m venv` fallback); subsequent runs just print the interpreter path.
+The script is idempotent — first run installs `jinja2` and `jsonschema` into `~/.claude/bigspin/.venv` via `uv` (or `python3 -m venv` fallback); subsequent runs just print the interpreter path.
 
 **If bootstrap exits non-zero**: report the error to the user and stop. Common cases:
 - exit 2 — no `uv` and no `python3` on PATH. Tell the user to install one and re-run.
@@ -96,8 +96,8 @@ The script is idempotent — first run installs `jinja2` and `jsonschema` into `
 Then run the smoke test:
 
 ```bash
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/tests/smoke_test.py" \
-    --plugin-root "$STEEZE_PLUGIN_ROOT/skills/steeze"
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/tests/smoke_test.py" \
+    --plugin-root "$BIGSPIN_PLUGIN_ROOT/skills/persona"
 ```
 
 Free, fast, < 1 second. Confirms the renderer can produce all five artifacts from the schema + the Manager exemplar + the Generalist edge case. **If it fails, stop and surface the error to the user.**
@@ -107,15 +107,15 @@ Announce what you're about to do — show the defaults, don't ask:
 - **Last 30 parent sessions** in `~/.claude/projects` for structured tagging.
 - **20 sessions sampled across projects** for the open behavioral pass.
 - **Sessions root**: `~/.claude/projects` (override available via `--session-root` if the user passes one).
-- **Report style**: `default` (the user can re-run with `/steeze --style editorial` for the single-page variant).
+- **Report style**: `default` (the user can re-run with `/persona --style editorial` for the single-page variant).
 
 If the user passed `--sessions N` or `--style editorial` as args, honor them; otherwise use these defaults and proceed.
 
 ## Step 2 — preprocess
 
 ```bash
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/preprocessing/sessions_to_csv.py" \
-    --out "$STEEZE_RUN_DIR/sessions.csv" \
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/preprocessing/sessions_to_csv.py" \
+    --out "$BIGSPIN_RUN_DIR/sessions.csv" \
     --min-messages 5
 ```
 
@@ -124,9 +124,9 @@ Surface the script's summary back to the user — parent count, subagent count, 
 ## Step 3 — enrich (deterministic signals, no API call)
 
 ```bash
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/preprocessing/enrich.py" \
-    "$STEEZE_RUN_DIR/sessions.csv" \
-    --out "$STEEZE_RUN_DIR/sessions_enriched.csv"
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/preprocessing/enrich.py" \
+    "$BIGSPIN_RUN_DIR/sessions.csv" \
+    --out "$BIGSPIN_RUN_DIR/sessions_enriched.csv"
 ```
 
 Surface the per-script summary — it lists the 14 column names added.
@@ -138,40 +138,40 @@ Four sub-steps. The helpers all live in `tagging/tag_sessions.py`.
 ### 4a. Export the prompt + per-session transcripts
 
 ```bash
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/tagging/tag_sessions.py" \
-    --export-prompt "$STEEZE_RUN_DIR/tag_prompt.md"
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/tagging/tag_sessions.py" \
+    --export-prompt "$BIGSPIN_RUN_DIR/tag_prompt.md"
 
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/tagging/tag_sessions.py" \
-    "$STEEZE_RUN_DIR/sessions_enriched.csv" \
-    --export-transcripts "$STEEZE_RUN_DIR/transcripts/" \
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/tagging/tag_sessions.py" \
+    "$BIGSPIN_RUN_DIR/sessions_enriched.csv" \
+    --export-transcripts "$BIGSPIN_RUN_DIR/transcripts/" \
     --limit 30
 ```
 
 The first line writes the ~20 KB system prompt (built from `taxonomy.json`) to `tag_prompt.md`. The second writes one `<session_id>.txt` per selected session into `transcripts/`, plus a `_manifest.json` the assembler reads later.
 
-### 4b. Spawn `steeze-tagger` subagents in parallel
+### 4b. Spawn `persona-tagger` subagents in parallel
 
 Create the annotations dir:
 
 ```bash
-mkdir -p "$STEEZE_RUN_DIR/annotations/"
+mkdir -p "$BIGSPIN_RUN_DIR/annotations/"
 ```
 
-Then spawn **5 subagents in parallel, 6 transcripts each** for a 30-session run. Use `subagent_type: "steeze-tagger"` — the plugin ships this agent definition specifically for this step.
+Then spawn **5 subagents in parallel, 6 transcripts each** for a 30-session run. Use `subagent_type: "persona-tagger"` — the plugin ships this agent definition specifically for this step.
 
 Issue all 5 `Task` calls in a single message so they run concurrently. Each call's prompt should be:
 
 ```
 mode: tag
 
-system prompt: <$STEEZE_RUN_DIR/tag_prompt.md absolute path>
+system prompt: <$BIGSPIN_RUN_DIR/tag_prompt.md absolute path>
 
 transcripts to tag (read each in full and write JSON annotation):
   <absolute path to transcript 1>.txt
   <absolute path to transcript 2>.txt
   ... (6 per batch)
 
-annotations dir: <$STEEZE_RUN_DIR/annotations/ absolute path>
+annotations dir: <$BIGSPIN_RUN_DIR/annotations/ absolute path>
 
 Read the system prompt end-to-end first. For each transcript, write
 <session_id>.json (where session_id is the filename without .txt) to the
@@ -184,17 +184,17 @@ Subagents work in parallel. Each session typically takes 30–90 seconds dependi
 ### 4c. Assemble
 
 ```bash
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/tagging/tag_sessions.py" \
-    --assemble "$STEEZE_RUN_DIR/annotations/" \
-    --manifest "$STEEZE_RUN_DIR/transcripts/_manifest.json" \
-    --out "$STEEZE_RUN_DIR/tagged_sessions.csv"
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/tagging/tag_sessions.py" \
+    --assemble "$BIGSPIN_RUN_DIR/annotations/" \
+    --manifest "$BIGSPIN_RUN_DIR/transcripts/_manifest.json" \
+    --out "$BIGSPIN_RUN_DIR/tagged_sessions.csv"
 ```
 
-Reports `ok / missing / invalid` counts. If `missing` > 10% of the batch, re-spawn a `steeze-tagger` subagent for the missing session_ids before continuing.
+Reports `ok / missing / invalid` counts. If `missing` > 10% of the batch, re-spawn a `persona-tagger` subagent for the missing session_ids before continuing.
 
 ### 4d. Validate
 
-Spot-check 2–3 random files in `$STEEZE_RUN_DIR/annotations/`. Confirm:
+Spot-check 2–3 random files in `$BIGSPIN_RUN_DIR/annotations/`. Confirm:
 - All required top-level fields present.
 - Fired signals have `evidence` strings.
 - Reality-contact signals have `trigger` + `surface_type`.
@@ -204,19 +204,19 @@ The renderer won't catch malformed annotations until much later, so a 30-second 
 ## Step 5 — compute metrics
 
 ```bash
-mkdir -p "$STEEZE_RUN_DIR/report"  # not strictly needed; output is the JSON itself
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/compute_metrics.py" \
-    "$STEEZE_RUN_DIR/tagged_sessions.csv" \
-    --raw "$STEEZE_RUN_DIR/sessions.csv" \
-    --baselines "$STEEZE_PLUGIN_ROOT/skills/steeze/baselines/" \
-    --out "$STEEZE_RUN_DIR/metrics.json"
+mkdir -p "$BIGSPIN_RUN_DIR/report"  # not strictly needed; output is the JSON itself
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/analysis/compute_metrics.py" \
+    "$BIGSPIN_RUN_DIR/tagged_sessions.csv" \
+    --raw "$BIGSPIN_RUN_DIR/sessions.csv" \
+    --baselines "$BIGSPIN_PLUGIN_ROOT/skills/persona/baselines/" \
+    --out "$BIGSPIN_RUN_DIR/metrics.json"
 ```
 
 Pure stdlib, fast. Output is the JSON file the renderer consumes for numbers via `*_ref` paths.
 
 ## Step 6 — open behavioral pass
 
-Spawn **one** `steeze-tagger` subagent in `open` mode. Hand it 20 sessions sampled across projects, not just the most recent. The Task prompt:
+Spawn **one** `persona-tagger` subagent in `open` mode. Hand it 20 sessions sampled across projects, not just the most recent. The Task prompt:
 
 ```
 mode: open
@@ -226,7 +226,7 @@ sessions to characterize (sampled across projects, ~20 total):
   <absolute path to session 2>
   ...
 
-output path: <$STEEZE_RUN_DIR/findings.md absolute path>
+output path: <$BIGSPIN_RUN_DIR/findings.md absolute path>
 
 Characterize what's distinctive about how this user works. Write four
 sections to findings.md: Character, Three distinctive patterns,
@@ -239,15 +239,15 @@ The output `findings.md` carries the rich behavioral observation into Step 7. Th
 
 ## Step 7 — author report_content.json
 
-**Now read `$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/interpret.md` end to end.** It has the voice rules, structural contract, Y-vocabulary table for picking the title verb, and the section on synthesizing across structured + open tracks.
+**Now read `$BIGSPIN_PLUGIN_ROOT/skills/persona/analysis/interpret.md` end to end.** It has the voice rules, structural contract, Y-vocabulary table for picking the title verb, and the section on synthesizing across structured + open tracks.
 
-Then author `$STEEZE_RUN_DIR/report_content.json`:
+Then author `$BIGSPIN_RUN_DIR/report_content.json`:
 
 - **Title, fingerprint badge, traits, comparison bars, archetype label, shadow** → from `metrics.json` via `*_ref` paths.
 - **Recognition lines, Section II body, Section III move bodies** → from `findings.md`. The open pass authored these specifically; lift them with light editing for voice.
 - **Pullquote** → synthesis. Should land both the structured thesis (the archetype) and the open thesis (the distinctive pattern) in one breath.
 
-The schema is at `$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/report_content.schema.json`. The renderer validates and exits non-zero on failure.
+The schema is at `$BIGSPIN_PLUGIN_ROOT/skills/persona/analysis/report_content.schema.json`. The renderer validates and exits non-zero on failure.
 
 **You write strings. The renderer fetches numbers via `*_ref` paths.** Don't round-trip arithmetic through your head.
 
@@ -266,22 +266,22 @@ Pre-flight checklist (also in interpret.md):
 Determine style: if the user passed `--style editorial` in their slash command args, use `editorial`; otherwise `default`.
 
 ```bash
-STEEZE_STYLE="${STEEZE_STYLE:-default}"
-"$STEEZE_PY" "$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/render_report.py" \
-    --content "$STEEZE_RUN_DIR/report_content.json" \
-    --metrics "$STEEZE_RUN_DIR/metrics.json" \
-    --schema "$STEEZE_PLUGIN_ROOT/skills/steeze/analysis/report_content.schema.json" \
-    --style "$STEEZE_STYLE" \
-    --out "$STEEZE_RUN_DIR"
+BIGSPIN_STYLE="${BIGSPIN_STYLE:-default}"
+"$BIGSPIN_PY" "$BIGSPIN_PLUGIN_ROOT/skills/persona/analysis/render_report.py" \
+    --content "$BIGSPIN_RUN_DIR/report_content.json" \
+    --metrics "$BIGSPIN_RUN_DIR/metrics.json" \
+    --schema "$BIGSPIN_PLUGIN_ROOT/skills/persona/analysis/report_content.schema.json" \
+    --style "$BIGSPIN_STYLE" \
+    --out "$BIGSPIN_RUN_DIR"
 ```
 
 Validates the content JSON, resolves all `*_ref` paths, writes:
 
-- `$STEEZE_RUN_DIR/report.html`           — full report
-- `$STEEZE_RUN_DIR/report.md`             — markdown version
-- `$STEEZE_RUN_DIR/hero.md`               — chat-paste summary (the inline deliverable)
-- `$STEEZE_RUN_DIR/hero_card.txt`         — CLI hero card with ANSI
-- `$STEEZE_RUN_DIR/hero_card.plain.txt`   — same, no ANSI
+- `$BIGSPIN_RUN_DIR/report.html`           — full report
+- `$BIGSPIN_RUN_DIR/report.md`             — markdown version
+- `$BIGSPIN_RUN_DIR/hero.md`               — chat-paste summary (the inline deliverable)
+- `$BIGSPIN_RUN_DIR/hero_card.txt`         — CLI hero card with ANSI
+- `$BIGSPIN_RUN_DIR/hero_card.plain.txt`   — same, no ANSI
 
 If validation fails or a `*_ref` doesn't resolve, the renderer prints a diff and exits non-zero. Fix the content JSON and re-run.
 
@@ -290,19 +290,19 @@ If validation fails or a `*_ref` doesn't resolve, the renderer prints a diff and
 1. **Print the hero markdown inline** in the chat (so the user gets recognition without opening anything):
 
    ```bash
-   cat "$STEEZE_RUN_DIR/hero.md"
+   cat "$BIGSPIN_RUN_DIR/hero.md"
    ```
 
 2. **Open the HTML report** in the user's browser:
 
    ```bash
-   bash "$STEEZE_PLUGIN_ROOT/skills/steeze/scripts/open_report.sh" \
-       "$STEEZE_RUN_DIR/report.html"
+   bash "$BIGSPIN_PLUGIN_ROOT/skills/persona/scripts/open_report.sh" \
+       "$BIGSPIN_RUN_DIR/report.html"
    ```
 
 3. **Tell the user where the artifacts live** for later reference:
 
-   > Report opened in your browser. All artifacts saved to `$STEEZE_RUN_DIR/`.
+   > Report opened in your browser. All artifacts saved to `$BIGSPIN_RUN_DIR/`.
 
 Stop there. No file inventory, no `cat`'ing the ANSI hero card, no "want me to dive into…" follow-up question. The user can ask if they want more.
 
@@ -310,10 +310,10 @@ If the user later asks "is this private?" — yes, fully. With the subagent path
 
 ## Failure modes to watch for
 
-- **Bootstrap failure (exit 2 or 3).** Tell the user; suggest `rm -rf ~/.claude/steeze/.venv` and re-run if the venv looks stale.
+- **Bootstrap failure (exit 2 or 3).** Tell the user; suggest `rm -rf ~/.claude/bigspin/.venv` and re-run if the venv looks stale.
 - **No sessions found.** Wrong path, or no Claude Code history yet. Suggest `ls ~/.claude/projects`.
 - **Few sessions tagged (< 10).** Either the user has small history or the filter dropped them. Tell `interpret.md` to flag this in the report (edge-case framing).
-- **Subagent annotation missing or invalid.** Common in long transcripts. The assembler reports counts; re-spawn a `steeze-tagger` subagent for the gaps before computing metrics. If a session is genuinely un-tag-able, leave it out — metrics will compute on what remains.
+- **Subagent annotation missing or invalid.** Common in long transcripts. The assembler reports counts; re-spawn a `persona-tagger` subagent for the gaps before computing metrics. If a session is genuinely un-tag-able, leave it out — metrics will compute on what remains.
 - **Open-pass findings shallow.** If `findings.md` reads as generic, the subagent likely under-sampled or skimmed. Re-spawn with a smaller batch (~10 sessions) and emphasize "specific session anchors required."
 - **Baselines missing or unreadable.** `compute_metrics.py` runs anyway; the renderer drops cohort comparison bars; `interpret.md`'s edge-case section describes how to author content JSON when comparisons are unavailable.
 

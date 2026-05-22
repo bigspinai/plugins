@@ -1,12 +1,12 @@
 {
-  "name": "steeze",
+  "name": "bigspin",
   "version": "0.1.0",
   "description": "Render a personal Claude Code practice report from your local session history.",
   "author": {
     "name": "Bigspin",
     "url": "https://bigspin.ai"
   },
-  "homepage": "https://github.com/bigspinai/steeze",
+  "homepage": "https://github.com/bigspinai/plugins",
   "license": "MIT",
   "keywords": ["analytics", "claude-code", "practice"]
 }

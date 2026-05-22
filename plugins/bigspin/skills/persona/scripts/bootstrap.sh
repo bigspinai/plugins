@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Bootstrap a Python venv for steeze and install runtime deps.
+# Bootstrap a Python venv for the bigspin plugin and install runtime deps.
 #
 # Usage:
 #   bootstrap.sh <requirements.txt>
@@ -16,11 +16,11 @@
 #   exit 2 — no uv and no python3 on PATH. Install one and retry.
 #   exit 3 — venv creation or pip install failed; stderr has details.
 #
-# Recovery: rm -rf ~/.claude/steeze/.venv and re-run.
+# Recovery: rm -rf ~/.claude/bigspin/.venv and re-run.
 
 set -euo pipefail
 
-VENV_DIR="${HOME}/.claude/steeze/.venv"
+VENV_DIR="${HOME}/.claude/bigspin/.venv"
 REQ_FILE="${1:-}"
 STAMP="${VENV_DIR}/.installed_from"
 
@@ -39,14 +39,14 @@ if [[ -d "${VENV_DIR}" && -f "${STAMP}" && -x "${VENV_DIR}/bin/python" ]]; then
     echo "${VENV_DIR}/bin/python"
     exit 0
   fi
-  echo "steeze: requirements changed since last bootstrap; rebuilding venv" >&2
+  echo "bigspin: requirements changed since last bootstrap; rebuilding venv" >&2
 fi
 
 mkdir -p "$(dirname "${VENV_DIR}")"
 
 # Prefer uv if present — faster and self-contained.
 if command -v uv >/dev/null 2>&1; then
-  echo "steeze: bootstrapping venv via uv" >&2
+  echo "bigspin: bootstrapping venv via uv" >&2
   if ! uv venv --python 3.10 "${VENV_DIR}" >&2; then
     echo "ERROR: uv venv failed" >&2
     exit 3
@@ -67,11 +67,11 @@ ERROR: neither uv nor python3 is installed.
 Install one:
   - uv (recommended):   curl -LsSf https://astral.sh/uv/install.sh | sh
   - Python 3.10+:       https://www.python.org/downloads/
-Then re-run /steeze.
+Then re-run /persona.
 EOF
     exit 2
   fi
-  echo "steeze: bootstrapping venv via ${PY} -m venv (uv not found)" >&2
+  echo "bigspin: bootstrapping venv via ${PY} -m venv (uv not found)" >&2
   if ! "${PY}" -m venv "${VENV_DIR}" >&2; then
     echo "ERROR: '${PY} -m venv' failed; ensure the python3-venv package is installed" >&2
     exit 3

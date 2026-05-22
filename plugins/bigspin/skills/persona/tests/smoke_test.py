@@ -34,7 +34,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 # ROOT defaults to HERE.parent (the skill's own dir when running in-place).
 # Override with --plugin-root when invoking from outside (e.g., the orchestrator
-# running smoke_test.py against the installed plugin from $STEEZE_RUN_DIR).
+# running smoke_test.py against the installed plugin from $BIGSPIN_RUN_DIR).
 ROOT = HERE.parent
 RENDERER = ROOT / "analysis" / "render_report.py"
 
@@ -117,7 +117,7 @@ def run_case(label: str, content: Path, metrics: Path) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Steeze renderer smoke test")
+    parser = argparse.ArgumentParser(description="Persona renderer smoke test")
     parser.add_argument(
         "--plugin-root",
         type=Path,
