@@ -808,6 +808,23 @@
     transition: opacity 0.2s;
   }
   .share-toast.is-on { opacity: 1; }
+  .share-subcopy {
+    margin: 12px auto 0;
+    max-width: 520px;
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--paper);
+    text-align: center;
+  }
+  .share-subcopy a {
+    color: #93F099;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.15s;
+  }
+  .share-subcopy a:hover { opacity: 0.8; }
   /* Footer strip at the bottom of the share slide — full-width band,
      small text, a "Learn more →" text-link. Lives outside the centered
      content stack so the share moment can breathe by itself. */
@@ -922,6 +939,8 @@
     "diff_reviewed": "diff reads",
     "test_first": "tests first",
     "ran_code": "code runs",
+    "ran_and_reported": "run-and-report checks",
+    "workflow_step_delegation": "runbook handoffs",
     "meta_behavioral_steering": "goal restatements",
     "interaction_style:delegative": "delegated sessions",
     "interaction_style:directive": "directed sessions",
@@ -949,6 +968,9 @@
     "diff_reviewed": "Read the diff",
     "test_first": "Wrote a test first",
     "ran_code": "Ran the code",
+    "ran_and_reported": "Ran it and reported back",
+    "workflow_step_delegation": "Handed over a runbook",
+    "fix_request_without_specifics": "Re-asked without specifics",
     "meta_behavioral_steering": "Restated the goal mid-flow",
     "interaction_style:delegative": "Worked delegatively",
     "interaction_style:directive": "Steered directly",
@@ -1211,9 +1233,11 @@
       <!-- @CARD_END -->
 
       <div class="share-buttons">
-        <button class="share-btn primary" id="share-card-btn">Share results</button>
+        <button class="share-btn primary" id="share-card-btn">Download card + share</button>
+        <button class="share-btn secondary" id="copy-card-btn">Copy image</button>
       </div>
       <div class="share-toast" id="share-toast"></div>
+      <p class="share-subcopy">Post to LinkedIn or Twitter and share <a href="https://github.com/bigspinai/plugins" target="_blank" rel="noopener">this link</a> so others can find their persona too.</p>
     </div>
     <footer class="share-footer">
       <span>Want a report on your agent's conversations?</span>
@@ -1427,29 +1451,40 @@
             return;
           }
           if (!canvas) return;
-
-          // Try the modern Web Share API with a file payload.
-          if (navigator.canShare) {
-            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-            const file = new File([blob], 'coding-archetype.png', { type: 'image/png' });
-            if (navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({
-                  files: [file],
-                  title: archetype + ' — Coding Archetype',
-                  text: summary,
-                });
-                flash('Shared');
-                return;
-              } catch (err) {
-                if (err && err.name === 'AbortError') return;
-                // Fall through to download.
-              }
-            }
-          }
-          // Fallback: download the PNG.
+          // Download the PNG directly — no native OS share sheet. The user
+          // posts the image to LinkedIn/X themselves, with the link in the
+          // subcopy below.
           downloadCanvas(canvas);
-          flash('Saved as image');
+          flash('Card downloaded');
+        });
+      }
+
+      // ===== Copy card image to clipboard =====
+      const copyImgBtn = document.getElementById('copy-card-btn');
+      if (copyImgBtn && cardEl) {
+        copyImgBtn.addEventListener('click', async () => {
+          flash('Capturing card…');
+          let canvas;
+          try {
+            canvas = await captureCard();
+          } catch (err) {
+            flash('Capture failed');
+            return;
+          }
+          if (!canvas) return;
+          try {
+            if (!navigator.clipboard || typeof ClipboardItem === 'undefined') {
+              throw new Error('clipboard image API unavailable');
+            }
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            flash('Image copied to clipboard');
+          } catch (err) {
+            // Image clipboard writes are blocked in some contexts (e.g. file://).
+            // Fall back to a download so the action never silently fails.
+            downloadCanvas(canvas);
+            flash('Clipboard unavailable — downloaded instead');
+          }
         });
       }
     })();
