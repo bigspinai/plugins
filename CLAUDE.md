@@ -1,34 +1,36 @@
 # CLAUDE.md — bigspin plugin (synced mirror)
 
-This is the published mirror of the bigspin Claude Code plugin. **The source of truth lives in a private monorepo** (`bigspinai/bigspin-app`, at `public-repos/plugins/plugins/bigspin/`), and a GitHub Actions workflow (`sync-plugins.yml`) propagates main-branch changes here. Do not edit files in this repo directly — they will be overwritten on the next sync. Open issues for bug reports; pull requests will be closed.
+This is the published mirror of the bigspin Claude Code plugin. **The source of truth lives in a private monorepo** (`bigspinai/bigspin-app`, at `public-repos/plugins/`), and a GitHub Actions workflow (`sync-plugins.yml`) propagates main-branch changes here. Do not edit files in this repo directly — they will be overwritten on the next sync. Open issues for bug reports; pull requests will be closed.
 
 ## Layout
 
 ```
 .
 ├── .claude-plugin/
+│   ├── marketplace.json   # declares this repo as the "bigspinai" marketplace
 │   └── plugin.json        # plugin manifest
-├── commands/
-│   └── persona.md         # /persona slash command entry point
-├── skills/
-│   └── persona/
-│       ├── SKILL.md       # orchestration playbook (9-step pipeline)
-│       ├── requirements.txt
-│       ├── scripts/       # bootstrap.sh, open_report.sh, run_id.sh
-│       ├── preprocessing/ # sessions_to_csv.py, enrich.py
-│       ├── tagging/       # tag_sessions.py + taxonomy + prompt template
-│       ├── analysis/      # archetypes, shapes, metrics, render, templates
-│       ├── baselines/     # 12 CSV/JSON files — measured corpus baseline
-│       ├── report/        # Manager exemplar (used by smoke test)
-│       └── tests/         # smoke_test.py + fixtures
-├── agents/
-│   └── persona-tagger.md  # subagent definition (tag mode + open mode)
+├── AGENTS.md              # cross-tool agent entrypoint (Codex, Cursor, Copilot, …)
+├── CLAUDE.md              # this file (Claude Code dev doc)
 ├── README.md              # end-user-facing
 ├── LICENSE                # MIT
-└── CLAUDE.md              # this file
+├── agents/
+│   └── persona-tagger.md  # subagent definition (tag mode + open mode)
+├── commands/
+│   └── persona.md         # /persona slash command entry point
+└── skills/
+    └── persona/
+        ├── SKILL.md       # orchestration playbook (9-step pipeline)
+        ├── requirements.txt
+        ├── scripts/       # bootstrap.sh, open_report.sh, run_id.sh
+        ├── preprocessing/ # sessions_to_csv.py, enrich.py
+        ├── tagging/       # tag_sessions.py + taxonomy + prompt template
+        ├── analysis/      # archetypes, shapes, metrics, render, templates
+        ├── baselines/     # 12 CSV/JSON files — measured corpus baseline
+        ├── report/        # Manager exemplar (used by smoke test)
+        └── tests/         # smoke_test.py + fixtures
 ```
 
-The marketplace manifest (`.claude-plugin/marketplace.json` declaring this repo as the "bigspinai" marketplace) lives at the repo root one level above this plugin directory — see the monorepo path `public-repos/plugins/.claude-plugin/marketplace.json`.
+The plugin sits at the repo root (no nested `plugins/<name>/` subdirectory) since this repo ships a single plugin.
 
 ## Local development
 
@@ -46,7 +48,7 @@ claude --plugin-dir ./
 - **Where does the report style live?** `skills/persona/analysis/render/templates/`. `report_wrapped.html.j2` is `default` (the Bigspin-branded slide variant), `report.html.j2` is `editorial`. Selected via `render_report.py --style {default,editorial}`.
 - **Where does the archetype taxonomy live?** `skills/persona/tagging/taxonomy.json`. Locked — do not modify without re-tagging the corpus baseline.
 - **Where do the baselines live?** `skills/persona/baselines/`. 12 files, measured 2026-05-01 from 4,846 sessions. Locked.
-- **What does the user invoke?** `/persona` (slash command in `commands/persona.md`), which calls the skill in `skills/persona/SKILL.md`.
+- **What does the user invoke?** `/persona` (slash command in `commands/persona.md`), which calls the skill in `skills/persona/SKILL.md`. Or, in clone-and-run mode, the paste-in prompt in the README that points the agent at `skills/persona/SKILL.md` directly.
 - **Where do per-run artifacts go?** `~/.claude/bigspin/<timestamp>/` on the user's machine. Never inside this repo.
 
 ## Pipeline overview

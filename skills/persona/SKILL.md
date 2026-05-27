@@ -59,12 +59,20 @@ Before Step 1, set two environment variables. **You will reference these for eve
 
 ```bash
 # 1. Discover the plugin root (where the read-only assets live).
-#    Claude Code injects $CLAUDE_PLUGIN_ROOT for plugin skills. If unset
-#    (older Claude Code), derive it from this SKILL.md's path.
-PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
+#    Three modes, in priority order:
+#      a) Claude Code plugin install: $CLAUDE_PLUGIN_ROOT is injected.
+#      b) Clone-and-run (any agent): $BIGSPIN_PLUGIN_ROOT is preset OR the
+#         agent runs from the cloned repo root, so $PWD is the plugin root.
+#      c) SKILL.md invoked as a script: derive from $0 (rare in practice).
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-${BIGSPIN_PLUGIN_ROOT:-}}"
+if [ -z "$PLUGIN_ROOT" ] && [ -f "$PWD/skills/persona/SKILL.md" ]; then
+  # Clone-and-run: the agent's cwd is the repo root.
+  PLUGIN_ROOT="$PWD"
+fi
 if [ -z "$PLUGIN_ROOT" ]; then
-  # Fallback: this SKILL.md is at $PLUGIN_ROOT/skills/persona/SKILL.md
-  SKILL_DIR=$(cd "$(dirname "$0")" && pwd)  # only works if invoked as a script
+  # Last-ditch: derive from this SKILL.md's path. Only works if invoked
+  # as a script (so $0 resolves) — most agents won't hit this branch.
+  SKILL_DIR=$(cd "$(dirname "$0")" && pwd)
   PLUGIN_ROOT=$(cd "$SKILL_DIR/../.." && pwd)
 fi
 export BIGSPIN_PLUGIN_ROOT="$PLUGIN_ROOT"
