@@ -24,6 +24,7 @@ Exit code: 0 on all-pass, 1 on any fail.
 """
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -110,6 +111,60 @@ def run_case(label: str, content: Path, metrics: Path) -> list[str]:
     return failures
 
 
+# Negative cases — the renderer MUST reject these. Guardrail: the displayed
+# archetype must match the deterministic classifier in metrics.json
+# (analysis/render_report.validate_archetype). Both a novel name and a
+# valid-but-wrong name should abort the render with a non-zero exit. The
+# valid name is derived from the classifier, so this stays correct across
+# archetype renames with no edit here.
+NEGATIVE_SPECS: list[tuple[str, Path, Path, str]] = [
+    (
+        "guardrail: novel archetype name rejected",
+        ROOT / "report" / "report_content.json",
+        HERE / "fixtures" / "sample_metrics.manager.json",
+        "Trailblazer",
+    ),
+    (
+        "guardrail: archetype name mismatched with classifier rejected",
+        ROOT / "report" / "report_content.json",
+        HERE / "fixtures" / "sample_metrics.manager.json",
+        "Runtime Mechanic",
+    ),
+]
+
+
+def run_negative_case(content: Path, metrics: Path, bad_name: str) -> list[str]:
+    """Mutate the exemplar's archetype_name to ``bad_name`` and confirm the
+    renderer exits non-zero. Returns failure strings (empty on pass)."""
+    if not content.exists():
+        return [f"content file missing: {_rel(content)}"]
+    if not metrics.exists():
+        return [f"metrics file missing: {_rel(metrics)}"]
+
+    data = json.loads(content.read_text(encoding="utf-8"))
+    data["title"]["archetype_name"] = bad_name
+    with tempfile.TemporaryDirectory(prefix="practice-mirror-neg-") as tmp:
+        tmp_path = Path(tmp)
+        bad_content = tmp_path / "content.json"
+        bad_content.write_text(json.dumps(data), encoding="utf-8")
+        result = subprocess.run(
+            [
+                sys.executable, str(RENDERER),
+                "--content", str(bad_content),
+                "--metrics", str(metrics),
+                "--out", str(tmp_path),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            return [
+                f"renderer ACCEPTED archetype_name={bad_name!r} — the guardrail "
+                f"should reject it (does not match the classifier's primary)"
+            ]
+    return []
+
+
 def main() -> int:
     print("=" * 64)
     print("Renderer smoke test")
@@ -135,11 +190,24 @@ def main() -> int:
             print("    PASS (5 artifacts produced)")
         print()
 
+    for label, content, metrics, bad_name in NEGATIVE_SPECS:
+        print(f"  case: {label}")
+        failures = run_negative_case(content, metrics, bad_name)
+        if failures:
+            print("    FAIL")
+            for f in failures:
+                print(f"      - {f}")
+            total_failures.append((label, failures))
+        else:
+            print("    PASS (renderer rejected it)")
+        print()
+
+    total = len(CASES) + len(NEGATIVE_SPECS)
     print("-" * 64)
     if total_failures:
-        print(f"FAILED: {len(total_failures)} of {len(CASES)} case(s)")
+        print(f"FAILED: {len(total_failures)} of {total} case(s)")
         return 1
-    print(f"OK ({len(CASES)} cases passed)")
+    print(f"OK ({total} cases passed)")
     print()
     print("The renderer can produce artifacts from a schema-valid content")
     print("JSON. Safe to proceed with the tagging step.")

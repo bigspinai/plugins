@@ -545,6 +545,38 @@ def build_view(content: dict, metrics: dict) -> dict:
 
 
 # =====================================================================
+# Guardrail — displayed archetype must match the classifier
+# =====================================================================
+
+def validate_archetype(content: dict, metrics: dict) -> None:
+    """The displayed archetype must match the deterministic classifier.
+
+    ``title.archetype_name`` is *computed* by ``analysis/archetypes.py``
+    from tagged signals — it is not free prose the author may choose. A
+    content JSON whose name disagrees with the classifier (or names a
+    persona that doesn't exist) is a bug, not a stylistic call: it would
+    render an unexpected persona with mismatched static copy. Fail loudly.
+
+    The valid name is derived from the classifier output in
+    ``metrics.json`` — not a hardcoded list — so renaming an archetype in
+    ``archetypes.py`` propagates automatically with no edit here.
+    """
+    authored = content["title"]["archetype_name"]
+    classified = (metrics.get("user_archetype") or {}).get("primary") or ""
+    classified_bare = (
+        classified[len("The "):] if classified.startswith("The ") else classified
+    )
+    if classified_bare and authored != classified_bare:
+        raise SystemExit(
+            f"\narchetype mismatch: title.archetype_name is {authored!r} but the "
+            f"classifier in metrics.json assigned {classified_bare!r}.\n"
+            f"The archetype label is computed, not authored — set "
+            f"title.archetype_name to {classified_bare!r} (or re-run "
+            f"compute_metrics.py if the classification changed)."
+        )
+
+
+# =====================================================================
 # Entry point
 # =====================================================================
 
@@ -579,6 +611,7 @@ def main(argv: list[str] | None = None) -> int:
 
     content = load_content(args.content, args.schema)
     metrics = load_metrics(args.metrics)
+    validate_archetype(content, metrics)
 
     try:
         view = build_view(content, metrics)

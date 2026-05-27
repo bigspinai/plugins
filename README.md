@@ -37,14 +37,9 @@ The `/persona` slash command (or the clone-and-run prompt) reads `~/.claude/proj
 - **`hero.md`** — a tight summary (~10 lines) printed inline in the chat right after the run finishes. The thing you actually read first.
 - **`hero_card.txt`** + **`hero_card.plain.txt`** — CLI hero card with and without ANSI color.
 
-## Report styles
+## Report style
 
-Two HTML styles ship with the plugin. Same content, same `report_content.json` — only the template differs.
-
-| Style | When | Vibe |
-|---|---|---|
-| **`default`** | `/persona` | Bigspin-branded slide reveal with build-up cards and per-archetype illustrations. Best for sharing on social or one-screen-at-a-time discovery. |
-| **`editorial`** | `/persona --style editorial` | Kinfolk-magazine, single-page, editorial-serif voice with rust accents. Best for reading end-to-end, screenshotting a section, or sharing as a PDF. |
+One HTML report ships with the plugin: a Bigspin-branded slide reveal with build-up cards and per-archetype illustrations, rendered from `report_content.json`. Best for sharing on social or one-screen-at-a-time discovery.
 
 ## Privacy
 

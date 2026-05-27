@@ -925,7 +925,19 @@
     "meta_behavioral_steering": "goal restatements",
     "interaction_style:delegative": "delegated sessions",
     "interaction_style:directive": "directed sessions",
-    "interaction_style:collaborative": "back-and-forths"
+    "interaction_style:collaborative": "back-and-forths",
+    "external_reality_disclosure": "reality checks",
+    "ran_and_reported": "code-run reports",
+    "in_review_edge_case_surface": "edge cases caught",
+    "edge_case_failure_observed": "failures surfaced",
+    "change_request_specific": "specific fixes",
+    "intent_reframe": "goal reframings",
+    "asked_why_choice": "rationale checks",
+    "constraint_added_later": "added constraints",
+    "plan_approved": "plans approved",
+    "requested_plan_mode": "plan-mode starts",
+    "problem_statement_explicit": "framed problems",
+    "workflow_step_delegation": "delegated steps"
   } %}
   {# Signal ID → plain-English action phrase, used in the slide-1 pills. #}
   {% set signal_phrases = {
@@ -943,7 +955,19 @@
     "interaction_style:collaborative": "Worked back-and-forth",
     "engagement_depth:deep_dive": "Settled into deep sessions",
     "task_type:feature": "Built features",
-    "task_type:bug": "Hunted bugs"
+    "task_type:bug": "Hunted bugs",
+    "external_reality_disclosure": "Brought in real-world results",
+    "ran_and_reported": "Ran it and reported back",
+    "in_review_edge_case_surface": "Surfaced an edge case in review",
+    "edge_case_failure_observed": "Caught a failing edge case",
+    "change_request_specific": "Made a specific change request",
+    "intent_reframe": "Reframed the goal",
+    "asked_why_choice": "Asked why a choice was made",
+    "constraint_added_later": "Added a constraint mid-flight",
+    "plan_approved": "Approved a plan",
+    "requested_plan_mode": "Asked for plan mode",
+    "problem_statement_explicit": "Framed the problem up front",
+    "workflow_step_delegation": "Delegated a workflow step"
   } %}
   {# Two voices: `you_blurbs` is for slide 1 (it's about the reader), `blurbs` is for slide 2 hover (the reader is exploring other archetypes). #}
   {# Per-archetype lines for the share card. Concise but read naturally — descriptive sentences, no staccato fragments or "X is the Y" punchlines. #}
@@ -1001,7 +1025,7 @@
             {% else %}
               {% set sig = raw.data.field ~ ':' ~ raw.data.bucket %}
             {% endif %}
-            {% set noun = signal_nouns.get(sig, t.name_em|replace('*', '')|lower) %}
+            {% set noun = signal_nouns.get(sig, sig|humanize) %}
             {% set count = ((t.you_pct / 100) * total)|round|int %}
             <div class="buildup-stat">
               <div class="num" data-count-up>{{ count }}</div>
@@ -1065,7 +1089,7 @@
         {% else %}
           {% set sig1 = raw1.data.field ~ ':' ~ raw1.data.bucket %}
         {% endif %}
-        {% set phrase1 = signal_phrases.get(sig1, t1.name_em|replace('*', ''))|lower %}
+        {% set phrase1 = signal_phrases.get(sig1, sig1|humanize)|lower %}
       <p class="compare-line">
         You {{ phrase1 }} in
         <strong>{{ t1.you_pct|round|int }}% of your sessions*</strong>.

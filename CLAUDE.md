@@ -45,7 +45,7 @@ claude --plugin-dir ./
 
 ## Quick reference (for agents who land here)
 
-- **Where does the report style live?** `skills/persona/analysis/render/templates/`. `report_wrapped.html.j2` is `default` (the Bigspin-branded slide variant), `report.html.j2` is `editorial`. Selected via `render_report.py --style {default,editorial}`.
+- **Where does the report template live?** `skills/persona/analysis/render/templates/`. `report_wrapped.html.j2` is the single report design (Bigspin-branded slides); `render_report.py` renders it. `reports_preview.py` / `cards_preview.py` render the same template for local design preview.
 - **Where does the archetype taxonomy live?** `skills/persona/tagging/taxonomy.json`. Locked — do not modify without re-tagging the corpus baseline.
 - **Where do the baselines live?** `skills/persona/baselines/`. 12 files, measured 2026-05-01 from 4,846 sessions. Locked.
 - **What does the user invoke?** `/persona` (slash command in `commands/persona.md`), which calls the skill in `skills/persona/SKILL.md`. Or, in clone-and-run mode, the paste-in prompt in the README that points the agent at `skills/persona/SKILL.md` directly.
@@ -63,7 +63,7 @@ claude --plugin-dir ./
 6. Assemble + compute metrics → `metrics.json` (positioned against baselines).
 7. Spawn 1 × `persona-tagger` subagent (mode: open) → `findings.md`.
 8. Author `report_content.json` synthesizing both tracks (per `analysis/interpret.md` voice rules).
-9. Render with `--style default|editorial` (default `default`) → HTML + Markdown + hero card.
+9. Render with `render_report.py` → HTML (wrapped slides) + Markdown + hero card.
 
 ## Restrictions
 

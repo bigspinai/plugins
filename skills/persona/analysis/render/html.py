@@ -70,7 +70,19 @@ def _emify(s: str) -> Markup:
     return Markup("").join(parts)
 
 
-def render(view: dict[str, Any], template_name: str = "report.html.j2") -> str:
+def _humanize(key: str) -> str:
+    """Turn a signal / ``field:bucket`` key into plain words for display.
+
+    Used as a *static* fallback in the template: when a trait's signal
+    isn't in the curated ``signal_nouns`` / ``signal_phrases`` maps, the
+    label is derived deterministically from the (bounded) signal key —
+    never from the LLM-authored ``name_em``. Keeps the build-up and
+    where-you-stand slides free of generated prose.
+    """
+    return re.sub(r"[_:]+", " ", str(key)).strip()
+
+
+def render(view: dict[str, Any], template_name: str = "report_wrapped.html.j2") -> str:
     """Render the resolved view to a complete HTML document."""
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(str(TEMPLATES)),
@@ -81,6 +93,7 @@ def render(view: dict[str, Any], template_name: str = "report.html.j2") -> str:
     env.filters["bar_pct"] = _bar_pct
     env.filters["emify"] = _emify
     env.filters["b64_asset"] = _b64_asset
+    env.filters["humanize"] = _humanize
     tmpl = env.get_template(template_name)
 
     # Pass unit-square coords (-1..1) through to the template; jinja
