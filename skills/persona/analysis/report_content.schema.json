@@ -36,7 +36,7 @@
       "properties": {
         "archetype_name": {
           "type": "string",
-          "description": "Bare archetype noun (e.g., 'Manager'). Renderer prepends 'The'."
+          "description": "Bare archetype noun (e.g., 'Showrunner'). Renderer prepends 'The'."
         },
         "modifier": {
           "type": "string",
@@ -159,7 +159,7 @@
         "primary_value": { "$ref": "#/$defs/gauge_value" },
         "comparison_values": {
           "type": "array",
-          "description": "Cohort comparison rows for the gauge. value_static is allowed for cross-archetype facts (e.g., 'Reality Tester ships at 22.7%') because they're stable corpus statistics from archetype_baselines.csv, not user data.",
+          "description": "Cohort comparison rows for the gauge. value_static is allowed for cross-archetype facts (e.g., 'Runtime Mechanic ships at 22.7%') because they're stable corpus statistics from archetype_baselines.csv, not user data.",
           "minItems": 1,
           "maxItems": 4,
           "items": { "$ref": "#/$defs/gauge_value" }
@@ -365,7 +365,7 @@
       "properties": {
         "from_archetype": {
           "type": "string",
-          "description": "Full archetype name: 'The Reality Tester', 'The Pair Programmer', etc."
+          "description": "Full archetype name: 'The Runtime Mechanic', 'The Pair Programmer', etc."
         },
         "verb_phrase": {
           "type": "string",

@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "comment_for_reviewers": "Generalist edge-case fixture. The shadow refs resolve to empty strings — the renderer suppresses the shadow block when name resolves empty. Traits use signal-kind data; cohort bars are absent because within-archetype positioning is unavailable for Generalist (by design).",
+  "comment_for_reviewers": "Multi-Mode Journeyman edge-case fixture. The shadow refs resolve to empty strings — the renderer suppresses the shadow block when name resolves empty. Traits use signal-kind data; cohort bars are absent because within-archetype positioning is unavailable for Multi-Mode Journeyman (by design).",
 
   "title": {
-    "archetype_name": "Generalist",
+    "archetype_name": "Multi-Mode Journeyman",
     "modifier": "Who Flexes"
   },
   "tagline": "No single signature — your practice flexes between modes.",
@@ -58,7 +58,7 @@
     "lede": "Different modes ship at different rates. Which mode you reached for matters more than your overall average.",
 
     "headline": "You ship — but the across-session distribution tells more than this number.",
-    "body": "Without one dominant archetype, the per-mode question is the better one: when you reached for the Manager mode, did the careful setup pay off? When you reached for Streamliner, did clean-and-quick land?",
+    "body": "Without one dominant archetype, the per-mode question is the better one: when you reached for the Showrunner mode, did the careful setup pay off? When you reached for Prompt Minimalist, did clean-and-quick land?",
 
     "primary_value": {
       "label": "You",
@@ -68,7 +68,7 @@
     },
     "comparison_values": [
       {
-        "label": "Reality Tester",
+        "label": "Runtime Mechanic",
         "value_static": 22.7,
         "format": "percent_1_decimal",
         "kind": "cohort"
@@ -89,17 +89,17 @@
 
     "moves": [
       {
-        "from_archetype": "The Reality Tester",
+        "from_archetype": "The Runtime Mechanic",
         "verb_phrase": "Open `git diff` before you accept.",
-        "body_lead": "Reality Testers ship at the highest rate of any archetype, and the borrow generalizes across whichever mode you're in.",
+        "body_lead": "Runtime Mechanics ship at the highest rate of any archetype, and the borrow generalizes across whichever mode you're in.",
         "body_action": "Pick three of next week's sessions. Before you accept the agent's output, pull up `git diff` and read it line by line. Notice the spots where you'd ask a follow-up — that's the move.",
         "effect_size_signal": "diff_reviewed",
         "effect_size_note": "verification arc correlates with +13–17pp on shipping"
       },
       {
-        "from_archetype": "The Manager",
+        "from_archetype": "The Showrunner",
         "verb_phrase": "Name the doc or RFC in your opening prompt.",
-        "body_lead": "Without a dominant default, you re-derive setup each session. Citing the convention up front is the Manager's anchor — it tilts the agent toward your team's shape from turn one.",
+        "body_lead": "Without a dominant default, you re-derive setup each session. Citing the convention up front is the Showrunner's anchor — it tilts the agent toward your team's shape from turn one.",
         "body_action": "Pick one opener and use it for a week: cite the relevant doc, RFC, or style guide *by name* in your first prompt. Notice if the rest of the session shape stabilizes.",
         "effect_size_signal": "cited_team_convention",
         "effect_size_note": "+8.5pp on PR yield among high-citers"
@@ -121,6 +121,6 @@
     "n_sessions_ref": "n_sessions_tagged",
     "date_earliest_ref": "structural.date_range.earliest",
     "date_latest_ref": "structural.date_range.latest",
-    "footnote": "Generalist is a positive label, not a fallback. Re-run monthly to watch for motion."
+    "footnote": "Multi-Mode Journeyman is a positive label, not a fallback. Re-run monthly to watch for motion."
   }
 }

@@ -94,21 +94,21 @@
       ],
       "borrow_from": [
         {
-          "from": "The Streamliner",
+          "from": "The Prompt Minimalist",
           "rationale": "Borrow the 'know when to stop' move. Your depth is your edge on hard problems but a tax on small ones. For routine tasks, try the cleaner, shorter ask."
         },
         {
-          "from": "The Manager",
+          "from": "The Showrunner",
           "rationale": "Borrow delegation for parallelization. Your deep engagement scales poorly across many tasks; spawning sub-agents and delegating workflow steps frees you to engage where it matters."
         }
       ]
     },
     {
-      "name": "The Patcher",
+      "name": "The Quick-Turn Sprinter",
       "tagline": "Spotting bugs and patching via re-asking. Friction signal visible.",
       "scene": "When something goes wrong, you ask the agent to fix it — sometimes vaguely ('this still isn't working'), sometimes by pasting the same error a second time after the first fix didn't take. You're not an inactive user; you're trying things. The visible signature in your sessions is the patching loop more than the diagnosing one.",
       "blind_spot": "Re-asking with the same context tends to get the same answer. The pattern has a loop-detection signal — if the same error pastes twice, the fix isn't going to come from a third paste.",
-      "framing_note": "The Patcher's PR-yield is 18.6% — slightly ABOVE population. These users are not failing overall. The death-spiral signature is visible enough to flag, but the framing must reflect that they ship at normal rates. Describe the friction pattern; don't imply the user is failing.",
+      "framing_note": "The Quick-Turn Sprinter's PR-yield is 18.6% — slightly ABOVE population. These users are not failing overall. The death-spiral signature is visible enough to flag, but the framing must reflect that they ship at normal rates. Describe the friction pattern; don't imply the user is failing.",
       "prevalence_pct": 15.8,
       "pr_yield_pct": 4.8,
       "decisive_pct": 73.7,
@@ -144,7 +144,7 @@
           "delta_pp": 2.4
         }
       ],
-      "shadow_archetype": "The Manager",
+      "shadow_archetype": "The Showrunner",
       "shadow_axis": "ceremony vs. reactive",
       "signature_moves": [
         {
@@ -170,17 +170,17 @@
       ],
       "borrow_from": [
         {
-          "from": "The Reality Tester",
+          "from": "The Runtime Mechanic",
           "rationale": "Borrow specificity. When you point at *what* specifically isn't working — line, identifier, actual symptom — the loop tends to close. Vague re-asks tend to produce vague re-fixes."
         },
         {
-          "from": "The Manager",
-          "rationale": "Borrow upfront context-loading. Patcher sessions often start short and accumulate fixes; starting with more orientation up front (read this folder, cite this convention) tends to shorten the patch loop."
+          "from": "The Showrunner",
+          "rationale": "Borrow upfront context-loading. Quick-Turn Sprinter sessions often start short and accumulate fixes; starting with more orientation up front (read this folder, cite this convention) tends to shorten the patch loop."
         }
       ]
     },
     {
-      "name": "The Manager",
+      "name": "The Showrunner",
       "tagline": "Sets up the work, cites conventions, delegates carefully, stays engaged.",
       "scene": "You open a session by pointing the agent at the right files, citing your team's conventions, often spinning up a subagent for discrete sub-tasks. You set safety constraints. The agent is a competent engineer you're managing — you set expectations clearly, then let them work, but you're not absent.",
       "blind_spot": "The 'set up well, then delegate' posture works when the plan is right; when the plan misses something, the ceremony makes mid-flight correction harder. Watch for sessions where you set things up carefully but accept output without engaging deeply.",
@@ -232,7 +232,7 @@
           "delta_pp": 5.0
         }
       ],
-      "shadow_archetype": "The Patcher",
+      "shadow_archetype": "The Quick-Turn Sprinter",
       "shadow_axis": "ceremony vs. reactive",
       "signature_moves": [
         {
@@ -268,17 +268,17 @@
       ],
       "borrow_from": [
         {
-          "from": "The Reality Tester",
-          "rationale": "Add deeper verification to your delegation. Your ceremony is strong; what you're least likely to do is run the code and read the diff before accepting. That's the move that takes Manager-shaped sessions from 'shipped a plan' to 'shipped a plan that works.'"
+          "from": "The Runtime Mechanic",
+          "rationale": "Add deeper verification to your delegation. Your ceremony is strong; what you're least likely to do is run the code and read the diff before accepting. That's the move that takes Showrunner-shaped sessions from 'shipped a plan' to 'shipped a plan that works.'"
         },
         {
           "from": "The Pair Programmer",
-          "rationale": "Borrow the 'reframe mid-flight' move. Your Manager posture sometimes carries the original plan further than it deserves. Be willing to restate the goal when the work surfaces something new."
+          "rationale": "Borrow the 'reframe mid-flight' move. Your Showrunner posture sometimes carries the original plan further than it deserves. Be willing to restate the goal when the work surfaces something new."
         }
       ]
     },
     {
-      "name": "The Reality Tester",
+      "name": "The Runtime Mechanic",
       "tagline": "Reads the draft, points at issues, runs the code, surfaces failures.",
       "scene": "When the agent produces something, you don't accept it — you read it. You point at specific lines, you run the code yourself, you surface edge cases you noticed. You ask 'why this choice?' before you accept a design call. The agent's output is a draft, not a deliverable.",
       "blind_spot": "Your verification is a real asset, but it can be heavy on functional correctness and lighter on systemic or design issues. The agent's first move sometimes anchors the design in a way you don't catch until it ships.",
@@ -330,7 +330,7 @@
           "delta_pp": 5.5
         }
       ],
-      "shadow_archetype": "The Streamliner",
+      "shadow_archetype": "The Prompt Minimalist",
       "shadow_axis": "verification depth",
       "signature_moves": [
         {
@@ -366,7 +366,7 @@
       ],
       "borrow_from": [
         {
-          "from": "The Manager",
+          "from": "The Showrunner",
           "rationale": "Borrow more deliberate setup. You're great at auditing the agent's output, but more careful scoping at intake — citing conventions, setting boundaries — would reduce the audit load."
         },
         {
@@ -447,8 +447,8 @@
       ],
       "borrow_from": [
         {
-          "from": "The Reality Tester",
-          "rationale": "Borrow the verification arc — running tests, reading diffs. Your spec is detailed; what's missing is the check that the agent's output actually does what the spec said. This is the single highest-leverage borrow in the data: Reality Testers ship at 22.7% vs Spec-First Architects at 1.8%."
+          "from": "The Runtime Mechanic",
+          "rationale": "Borrow the verification arc — running tests, reading diffs. Your spec is detailed; what's missing is the check that the agent's output actually does what the spec said. This is the single highest-leverage borrow in the data: Runtime Mechanics ship at 22.7% vs Spec-First Architects at 1.8%."
         },
         {
           "from": "The Pair Programmer",
@@ -457,7 +457,7 @@
       ]
     },
     {
-      "name": "The Streamliner",
+      "name": "The Prompt Minimalist",
       "tagline": "Clean ask, accept, move on. Workflow delegation without ceremony.",
       "scene": "Your sessions are short and clean. You delegate the workflow step (commit, PR, push), accept the output, and move on. No elaborate setup, no plan-mode, no sub-agents. The agent is a vending machine and you're not stocking it.",
       "blind_spot": "Zero verification — no tests run, no diffs reviewed — is the most consequential signal. You can't tell when the agent is wrong because you don't check. The single highest-leverage change is one verification step per non-trivial session.",
@@ -485,7 +485,7 @@
           "delta_pp": 8.2
         }
       ],
-      "shadow_archetype": "The Reality Tester",
+      "shadow_archetype": "The Runtime Mechanic",
       "shadow_axis": "verification depth",
       "signature_moves": [
         {
@@ -511,21 +511,21 @@
       ],
       "borrow_from": [
         {
-          "from": "The Reality Tester",
+          "from": "The Runtime Mechanic",
           "rationale": "Borrow one verification step per non-trivial session. Zero tests run + zero diffs reviewed is the most consequential gap in your fingerprint; even one check per session is the highest-leverage change available."
         },
         {
-          "from": "The Manager",
+          "from": "The Showrunner",
           "rationale": "Borrow one piece of upfront setup when the task is non-trivial. Cite the convention, set a constraint, point at the right file — small investments that prevent the streamlined session from missing something the agent didn't know to ask."
         }
       ]
     },
     {
-      "name": "The Generalist",
+      "name": "The Multi-Mode Journeyman",
       "tagline": "No single archetype dominates — your practice flexes.",
-      "scene": "Your sessions don't share a strong common thread. You do some Manager-shaped sessions, some Reality-Tester moments, occasional Streamliner-clean asks. Different tasks, different shapes — you adapt.",
+      "scene": "Your sessions don't share a strong common thread. You do some Showrunner-shaped sessions, some Reality-Tester moments, occasional Prompt Minimalist-clean asks. Different tasks, different shapes — you adapt.",
       "blind_spot": "Adaptive practice is hard to teach yourself from. There's no dominant pattern to reflect on; the across-session view is more useful than the in-session one. Re-running this report monthly and watching for *motion* (which archetype is gaining share) tells you more than any single snapshot.",
-      "framing_note": "Generalist is a positive label, not a fallback. Probably the healthiest shape in aggregate — you're not forcing one mode onto every task.",
+      "framing_note": "Multi-Mode Journeyman is a positive label, not a fallback. Probably the healthiest shape in aggregate — you're not forcing one mode onto every task.",
       "prevalence_pct": 13.3,
       "pr_yield_pct": 16.1,
       "decisive_pct": 0.0,
@@ -542,7 +542,7 @@
         {
           "name": "Match the mode to the task",
           "signal": "",
-          "description": "Notice which archetype-mode the task is asking for, then adopt it. Small task → Streamliner; complex task → Pair Programmer; unfamiliar codebase → Manager."
+          "description": "Notice which archetype-mode the task is asking for, then adopt it. Small task → Prompt Minimalist; complex task → Pair Programmer; unfamiliar codebase → Showrunner."
         },
         {
           "name": "Run the across-session view",
@@ -566,7 +566,7 @@
           "rationale": "Look at your archetype scores across all 7. Pick the one you score lowest on and try one session in that mode this week. The mismatch between your default and that mode is the lesson."
         },
         {
-          "from": "The Reality Tester",
+          "from": "The Runtime Mechanic",
           "rationale": "Of all the archetype borrows, this is the one with the highest research-validated effect on shipping (+5pp PR-yield over baseline). Worth trying regardless of which mode you're in."
         }
       ]

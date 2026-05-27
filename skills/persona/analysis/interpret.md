@@ -84,7 +84,7 @@ and I didn't have language for it."*
 2. Read `analysis/report_content.schema.json`. The schema is the
    contract; the renderer rejects anything that doesn't validate.
 3. Author `report/report_content.json` matching the schema. **The
-   existing file at that path is the Manager exemplar — read it as the
+   existing file at that path is the Showrunner exemplar — read it as the
    reference shape.**
 4. Run `python analysis/render_report.py`. It validates the schema, pulls
    numbers from `metrics.json` via your refs, and emits three artifacts.
@@ -93,7 +93,7 @@ and I didn't have language for it."*
 
 **You write strings. The renderer fetches numbers.** The only numeric
 content in the JSON is `value_static` for cross-archetype facts (e.g.,
-"Reality Tester ships at 22.7%") — those are stable corpus statistics
+"Runtime Mechanic ships at 22.7%") — those are stable corpus statistics
 from `archetype_baselines.csv`, not user data.
 
 ## Voice rules
@@ -103,7 +103,7 @@ report that lands as recognition and one that reads as a performance
 review.
 
 1. **Lead with a thesis, not a description.** The hook is a *claim* —
-   *"You're a Manager — but not a typical one"*. Not *"Your sessions show
+   *"You're a Showrunner — but not a typical one"*. Not *"Your sessions show
    patterns of decomposition."* The first 80 words decide whether they
    keep reading.
 
@@ -113,8 +113,8 @@ review.
    percentage almost certainly belongs in a bar.
 
 3. **Vocative, not analytical.** Translate the dialect: not
-   *"above_p75 within the Manager cohort"* but *"more than three-quarters
-   of Managers fall below where you are on this."* Avoid `rate`,
+   *"above_p75 within the Showrunner cohort"* but *"more than three-quarters
+   of Showrunners fall below where you are on this."* Avoid `rate`,
    `delta`, `percentile`, `signal_name`, `_snake_case_` in user-facing
    strings. Sensory anchors where possible.
 
@@ -129,7 +129,7 @@ review.
 6. **Identity-defining traits are positives, never deficits.** The
    "contrast" trait — the move you *don't* do that defines you against
    your archetype's default — is framed as character, not gap.
-   *"The Manager move you've replaced — not a gap in your practice."*
+   *"The Showrunner move you've replaced — not a gap in your practice."*
    The deficit conversation belongs in Section III (Moves), not in
    Section I (Identity).
 
@@ -139,7 +139,7 @@ review.
 8. **Borrowing is the prescription, in vocabulary.** Each move is a
    *named move from another archetype*, with the from-archetype credit
    making the experiment portable. The user should be saying
-   *"I tried a Reality Tester move"* in their head next week.
+   *"I tried a Runtime Mechanic move"* in their head next week.
 
 9. **Specificity over balance.** A sharp report has *one thesis* and cuts
    what doesn't sharpen it. Don't try to surface every finding the data
@@ -168,8 +168,8 @@ Reflection prompts and the colophon close the report.
 
 ### Title — *"The X Who Y"*
 
-`title.archetype_name` is the bare archetype noun (`"Manager"`, not
-`"The Manager"` — the renderer prepends "The"). It comes from
+`title.archetype_name` is the bare archetype noun (`"Showrunner"`, not
+`"The Showrunner"` — the renderer prepends "The"). It comes from
 `metrics.user_archetype.primary` minus the leading "The".
 
 `title.modifier` is what makes *this* user specific within their
@@ -189,8 +189,8 @@ the signal to a verb the user could say aloud:
 | `cited_team_convention` | "Cites" |
 
 Pick the verb that produces the most *narrative tension* with the
-archetype default. The Manager default is "delegates and accepts."
-*"The Manager Who Audits"* lands because it's the move a typical Manager
+archetype default. The Showrunner default is "delegates and accepts."
+*"The Showrunner Who Audits"* lands because it's the move a typical Showrunner
 *doesn't* make.
 
 ### Tagline
@@ -231,7 +231,7 @@ The trait section is the recognition spine. Each trait has:
 
 **The contrast trait must be framed as identity, not deficit.** Bad:
 *"You don't delegate — only 20% of your sessions, vs. 57% in the cohort."*
-Good: *"\"Hand off and trust the brief.\" The classic Manager move
+Good: *"\"Hand off and trust the brief.\" The classic Showrunner move
 you've replaced — not a gap in your practice."*
 
 ### Pullquote
@@ -240,7 +240,7 @@ The screenshot moment. One sentence — or two short ones — with weight.
 Renderer treats this as oversized serif italic with rules above and
 below. Earn the visual real estate.
 
-> *"Set up like a Manager. Audit like a Reality Tester. The combination
+> *"Set up like a Showrunner. Audit like a Runtime Mechanic. The combination
 > is unusual."*
 
 Two markers of a good pullquote: it can be read aloud cold, and it
@@ -286,7 +286,7 @@ where the asset is sensitive.
 - `primary_value`: the user's PR-rate (`structural.pr_rate_pct`).
   `kind: "primary"`.
 - `comparison_values`: two cohort rows for context. For cross-archetype
-  facts (Reality Tester ships at X%, Typical Manager at Y%), use
+  facts (Runtime Mechanic ships at X%, Typical Showrunner at Y%), use
   `value_static` with the number from `archetype_baselines.csv`.
   `kind: "cohort"`.
 
@@ -294,7 +294,7 @@ where the asset is sensitive.
 
 Exactly two moves. Each is a *borrow from another archetype* — framed
 as a small, named **experiment to try this week**, not a correction.
-The attribution matters: *"From the Reality Tester — …"* gives the
+The attribution matters: *"From the Runtime Mechanic — …"* gives the
 experiment a name and a community.
 
 **The verb_phrase has to be specific.** This is the line the user
@@ -341,7 +341,7 @@ Source the candidates from the user's primary-archetype `borrow_from`
 field in `archetype_profiles.json` (mirrored at
 `metrics.user_archetype.baseline.borrow_from`). The canned rationale
 is a starting point — sharpen the verb_phrase against this user's
-*actual* data before you ship. A Manager who already audits doesn't
+*actual* data before you ship. A Showrunner who already audits doesn't
 need *"Run it yourself"*; they need a more specific borrow that meets
 them where they are.
 
@@ -353,7 +353,7 @@ only specifies `include: true` and the refs.
 
 Set `include: false` only when:
 - `n_sessions_tagged < 5` (positioning would be noisy)
-- `user_archetype.primary == "The Generalist"` (no fingerprint, dot at
+- `user_archetype.primary == "The Multi-Mode Journeyman"` (no fingerprint, dot at
   center; renderer handles this)
 
 ### Reflection prompts
@@ -397,17 +397,17 @@ exits with the path and the parent keys it found, so you can fix.
 
 | Case | What to do |
 |---|---|
-| **Generalist primary** (no shadow, no fingerprint) | Set `compass.include: true` (renderer will dot-at-center). Tagline reframes positively: *"Your practice flexes."* Author the `shadow` block with refs into `user_archetype.shadow.{name,axis}` (those resolve to empty strings for Generalist) and a real prose tagline (≥ 20 chars; the schema requires it even though the renderer suppresses the block when the resolved name is empty). See `tests/fixtures/sample_content.generalist.json` for a worked example. |
+| **Multi-Mode Journeyman primary** (no shadow, no fingerprint) | Set `compass.include: true` (renderer will dot-at-center). Tagline reframes positively: *"Your practice flexes."* Author the `shadow` block with refs into `user_archetype.shadow.{name,axis}` (those resolve to empty strings for Multi-Mode Journeyman) and a real prose tagline (≥ 20 chars; the schema requires it even though the renderer suppresses the block when the resolved name is empty). See `tests/fixtures/sample_content.generalist.json` for a worked example. |
 | **Borderline / low confidence** (`user_archetype.confidence == "low"`) | Set the fingerprint badge label to "borderline" via `label_map`. Don't soften the rest of the prose — one visible hedge is enough. |
 | **Comparison baselines unavailable** (`comparison_to_baseline.available == false`) | Pick traits whose `data.kind == "signal"` so the renderer falls back to within-archetype positioning. |
 | **Thin data** (`n_sessions_tagged < 10`) | Add a one-line hedge to the tagline ("a tentative read"). Reduce trait count to 2 if data is genuinely sparse — set the schema's `traits` to exactly 3 still; pick the two strongest plus one weaker but anchorable. |
 
 ## Worked examples
 
-The current `report/report_content.json` is the Manager exemplar.
+The current `report/report_content.json` is the Showrunner exemplar.
 Read it side-by-side with this spec while authoring a new one.
 
-A second exemplar — Generalist — lives at
+A second exemplar — Multi-Mode Journeyman — lives at
 `tests/fixtures/sample_content.generalist.json`. It shows the
 shadow-stub pattern, the all-three-high trait pattern, and how to
 author moves when within-archetype positioning is unavailable.

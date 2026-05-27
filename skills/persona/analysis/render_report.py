@@ -234,7 +234,7 @@ def load_metrics(metrics_path: Path) -> dict:
 
 # Archetype landscape: a 2x2 of structure × iteration.
 # Four primaries anchor the corners; two variants sit adjacent to their
-# parent primary. Generalist sits at the center.
+# parent primary. Multi-Mode Journeyman sits at the center.
 #
 # Display coords: x ∈ [-1, 1] (low → high structure, left → right);
 # y ∈ [-1, 1] (low → high iteration, bottom → top, math convention —
@@ -243,22 +243,22 @@ def load_metrics(metrics_path: Path) -> dict:
 ARCHETYPE_POSITIONS: dict[str, tuple[float, float]] = {
     # Primary corners
     "The Pair Programmer":      (-0.78,  0.78),
-    "The Reality Tester":       ( 0.78,  0.78),
-    "The Patcher":              (-0.78, -0.78),
-    "The Manager":              ( 0.78, -0.78),
+    "The Runtime Mechanic":       ( 0.78,  0.78),
+    "The Quick-Turn Sprinter":              (-0.78, -0.78),
+    "The Showrunner":              ( 0.78, -0.78),
     # Variants adjacent to their parent primary
-    "The Streamliner":          (-0.42,  0.45),  # near Pair Programmer
-    "The Spec-First Architect": ( 0.92, -0.42),  # near Manager (extra structure)
+    "The Prompt Minimalist":          (-0.42,  0.45),  # near Pair Programmer
+    "The Spec-First Architect": ( 0.92, -0.42),  # near Showrunner (extra structure)
     # Center: the balance point
-    "The Generalist":           ( 0.00,  0.00),
+    "The Multi-Mode Journeyman":           ( 0.00,  0.00),
 }
 
 # Categorize for visual treatment.
 PRIMARIES = {
-    "The Pair Programmer", "The Reality Tester",
-    "The Patcher", "The Manager",
+    "The Pair Programmer", "The Runtime Mechanic",
+    "The Quick-Turn Sprinter", "The Showrunner",
 }
-VARIANTS = {"The Streamliner", "The Spec-First Architect"}
+VARIANTS = {"The Prompt Minimalist", "The Spec-First Architect"}
 
 
 def landscape_view(content: dict, metrics: dict) -> dict | None:
@@ -267,7 +267,7 @@ def landscape_view(content: dict, metrics: dict) -> dict | None:
 
     A user with score 4.0 in one archetype lands on that archetype's
     anchor point; a user with mixed scores interpolates toward each
-    contributing archetype proportionally. Generalist primary (or all
+    contributing archetype proportionally. Multi-Mode Journeyman primary (or all
     scores zero) → center.
 
     Returns None when the content JSON sets ``compass.include: false``.
@@ -299,15 +299,15 @@ def landscape_view(content: dict, metrics: dict) -> dict | None:
     else:
         you_x, you_y = 0.0, 0.0
 
-    # Generalist users sit at center even if they have a Generalist
-    # "score" — the all_scores dict doesn't include Generalist (it's a
+    # Multi-Mode Journeyman users sit at center even if they have a Multi-Mode Journeyman
+    # "score" — the all_scores dict doesn't include Multi-Mode Journeyman (it's a
     # fallback sentinel), so total may be 0 for them.
-    is_generalist = primary == "The Generalist" or not primary
+    is_generalist = primary == "The Multi-Mode Journeyman" or not primary
 
     # The four primary archetype corners are ALWAYS visible — they
     # anchor the 2x2 structurally. Showing only 2 dots in one row makes
     # the chart look broken; the corners give it the shape of a map.
-    # Variants (Streamliner, Spec-First) only render when they're the
+    # Variants (Prompt Minimalist, Spec-First) only render when they're the
     # user's primary, shadow, or secondary — otherwise they'd clutter.
     visible_names: set[str] = set(PRIMARIES)
     if not is_generalist:
@@ -483,7 +483,7 @@ def shadow_view(content: dict, metrics: dict) -> dict | None:
     s = content["shadow"]
     name = resolve_optional(metrics, s.get("name_ref"), "")
     if not name:
-        return None  # no shadow (e.g., Generalist primary)
+        return None  # no shadow (e.g., Multi-Mode Journeyman primary)
     axis = resolve_optional(metrics, s.get("axis_ref"), "")
     return {
         "name": name,
@@ -562,16 +562,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only",
                         choices=["html", "markdown", "hero", "cli", "all"],
                         default="all")
-    parser.add_argument("--style",
-                        choices=["default", "editorial"],
-                        default="default",
-                        help="HTML report style. 'default' uses the Bigspin-"
-                             "branded slide variant; 'editorial' uses the "
-                             "Kinfolk-magazine single-page template.")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args(argv)
-
-    template_name = "report.html.j2" if args.style == "editorial" else "report_wrapped.html.j2"
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -600,7 +592,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.only in ("html", "all"):
         from render import html as html_renderer
         out = args.out / "report.html"
-        out.write_text(html_renderer.render(view, template_name=template_name), encoding="utf-8")
+        out.write_text(html_renderer.render(view), encoding="utf-8")
         written.append(out)
     if args.only in ("markdown", "all"):
         from render import markdown as md_renderer

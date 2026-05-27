@@ -18,9 +18,9 @@
   },
   "user_archetype": {
     "available": true,
-    "primary": "The Manager",
+    "primary": "The Showrunner",
     "primary_score": 4.0,
-    "secondary": "The Reality Tester",
+    "secondary": "The Runtime Mechanic",
     "secondary_score": 1.5,
     "margin": 2.5,
     "decisive": true,
@@ -28,11 +28,11 @@
     "fingerprint_sharpness": "sharp",
     "all_scores": {
       "The Pair Programmer": 0.5,
-      "The Patcher": 0.0,
-      "The Manager": 4.0,
-      "The Reality Tester": 1.5,
+      "The Quick-Turn Sprinter": 0.0,
+      "The Showrunner": 4.0,
+      "The Runtime Mechanic": 1.5,
       "The Spec-First Architect": 0.0,
-      "The Streamliner": 0.0
+      "The Prompt Minimalist": 0.0
     },
     "user_signal_rates": {
       "decomposition": 0.67,
@@ -46,7 +46,7 @@
       "edit_iteration_count": 2.5
     },
     "shadow": {
-      "name": "The Patcher",
+      "name": "The Quick-Turn Sprinter",
       "axis": "structure vs. reactive"
     },
     "baseline": {

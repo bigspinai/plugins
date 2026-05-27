@@ -20,14 +20,14 @@ Methodology
    signal-rate thresholds + exclusions + optional metadata predicate).
 4. The classifier was validated against the bottom-up clusters
    (≥57% per-cluster recovery; 74% of users decisive) and via 100×
-   bootstrap resampling at 80% (Manager / Spec-First / Reality Tester
+   bootstrap resampling at 80% (Showrunner / Spec-First / Runtime Mechanic
    ≥75% mean stability).
 
 The fingerprints were tuned on users with ≥3 sessions; running the mirror
 on a single user with very few sessions can produce noisy assignments.
 Above ~10 sessions, scores stabilize.
 
-Six archetypes + Generalist fallback. Each is meant to be recognizable
+Six archetypes + Multi-Mode Journeyman fallback. Each is meant to be recognizable
 to a user reading their own report — a horoscope-quality description
 that the data backs up.
 
@@ -49,7 +49,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 
-UNASSIGNED = "The Generalist"
+UNASSIGNED = "The Multi-Mode Journeyman"
 
 # Shadow archetypes (the "opposite" each archetype contrasts against on
 # its most defining axis), signature moves, reflection prompts, and
@@ -113,10 +113,10 @@ class Archetype:
 #
 # Order matters only for tie-breaks; priority does the actual work.
 # Higher priority = matched first when two archetypes score the same.
-# Pair Programmer / Patcher are highest priority because they're the
+# Pair Programmer / Quick-Turn Sprinter are highest priority because they're the
 # strongest behavioral signals (extreme iteration, anti-pattern
 # signature) — we want to surface these before falling back to the
-# more "default" archetypes (Manager, Streamliner, etc.).
+# more "default" archetypes (Showrunner, Prompt Minimalist, etc.).
 
 ARCHETYPES: list[Archetype] = [
     Archetype(
@@ -144,7 +144,7 @@ ARCHETYPES: list[Archetype] = [
     ),
 
     Archetype(
-        name="The Patcher",
+        name="The Quick-Turn Sprinter",
         tagline="Spotting bugs and patching via re-asking. Friction signal visible.",
         canonical=(
             ("fix_request_without_specifics", 0.12),
@@ -157,16 +157,16 @@ ARCHETYPES: list[Archetype] = [
             ("plan_rejected", 0.02),
         ),
         excluded=(
-            # If they're pointing at issues, they're a Reality Tester.
+            # If they're pointing at issues, they're a Runtime Mechanic.
             ("pointed_to_specific_issue", 0.45),
-            # If they're orchestrating subagents, they're a Manager.
+            # If they're orchestrating subagents, they're a Showrunner.
             ("subagent_explicitly_delegated", 0.20),
         ),
         priority=8,
     ),
 
     Archetype(
-        name="The Manager",
+        name="The Showrunner",
         tagline="Sets up the work, cites conventions, delegates carefully, stays engaged.",
         canonical=(
             ("decomposition", 0.50),
@@ -176,7 +176,7 @@ ARCHETYPES: list[Archetype] = [
         ),
         # ≥2 of 4 — in practice this means decomposition + (one of the
         # ceremonial signals). Decomposition alone isn't enough; many
-        # users decompose without the Manager's full setup posture.
+        # users decompose without the Showrunner's full setup posture.
         min_canonical=2,
         bonus=(
             ("cited_team_convention", 0.10),
@@ -189,7 +189,7 @@ ARCHETYPES: list[Archetype] = [
     ),
 
     Archetype(
-        name="The Reality Tester",
+        name="The Runtime Mechanic",
         tagline="Reads the draft, points at issues, runs the code, surfaces failures.",
         canonical=(
             ("pointed_to_specific_issue", 0.32),
@@ -199,7 +199,7 @@ ARCHETYPES: list[Archetype] = [
             ("edge_case_failure_observed", 0.07),
             ("change_request_specific", 0.20),
         ),
-        # ≥3 of 6 — a true Reality Tester combines pointing-at-issues
+        # ≥3 of 6 — a true Runtime Mechanic combines pointing-at-issues
         # with running and surfacing edge cases, not just one of those.
         min_canonical=3,
         bonus=(
@@ -235,13 +235,13 @@ ARCHETYPES: list[Archetype] = [
             ("context_loading_directive", 0.30),
         ),
         # Spec-First sessions are short: write the brief, accept the
-        # answer. Longer sessions are Manager territory.
+        # answer. Longer sessions are Showrunner territory.
         metadata_predicate=lambda m: m.get("iteration_count", 0) <= 5,
         priority=2,
     ),
 
     Archetype(
-        name="The Streamliner",
+        name="The Prompt Minimalist",
         tagline="Clean ask, accept, move on. Workflow delegation without structure.",
         canonical=(
             ("workflow_step_delegation", 0.55),
@@ -279,7 +279,7 @@ def assign_archetype(signal_rates: dict[str, float],
     - ``det_medians`` — the user's median value for each numeric
       deterministic signal (iteration_count, edit_iteration_count, ...).
 
-    If no archetype scores > 0, primary = ``UNASSIGNED`` ("The Generalist").
+    If no archetype scores > 0, primary = ``UNASSIGNED`` ("The Multi-Mode Journeyman").
     Secondary is the next-highest scoring archetype, or "" if only one
     archetype matched.
     """

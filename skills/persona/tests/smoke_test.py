@@ -6,12 +6,12 @@ the schema + an exemplar — catches schema drift, broken ``*_ref`` paths,
 and missing edge-case handling before the user spends money on tagging.
 
 Two cases:
-  - **Manager exemplar.** Pairs ``report/report_content.json`` (the
-    canonical reference shape, hand-authored) with a synthetic Manager
+  - **Showrunner exemplar.** Pairs ``report/report_content.json`` (the
+    canonical reference shape, hand-authored) with a synthetic Showrunner
     ``metrics.json``. If schema-validation fails or any ``*_ref`` doesn't
     resolve, the exemplar has drifted from the renderer.
-  - **Generalist edge case.** Pairs ``tests/fixtures/sample_content.generalist.json``
-    with a Generalist ``metrics.json`` (no shadow, no within-archetype
+  - **Multi-Mode Journeyman edge case.** Pairs ``tests/fixtures/sample_content.generalist.json``
+    with a Multi-Mode Journeyman ``metrics.json`` (no shadow, no within-archetype
     positioning). Confirms the renderer suppresses the shadow block when
     the resolved name is empty and falls back gracefully when cohort
     bars aren't available.
@@ -24,7 +24,6 @@ Exit code: 0 on all-pass, 1 on any fail.
 """
 from __future__ import annotations
 
-import argparse
 import shutil
 import subprocess
 import sys
@@ -32,24 +31,19 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-# ROOT defaults to HERE.parent (the skill's own dir when running in-place).
-# Override with --plugin-root when invoking from outside (e.g., the orchestrator
-# running smoke_test.py against the installed plugin from $BIGSPIN_RUN_DIR).
 ROOT = HERE.parent
 RENDERER = ROOT / "analysis" / "render_report.py"
 
-# (label, content_relative, metrics_path) — content path is rebuilt against
-# the chosen ROOT inside main() so a CLI --plugin-root override works.
-CASE_SPECS: list[tuple[str, str, Path]] = [
+# (label, content path, metrics path)
+CASES: list[tuple[str, Path, Path]] = [
     (
-        "Manager exemplar (sharp fingerprint, full shadow + cohort bars)",
-        "report/report_content.json",
+        "Showrunner exemplar (sharp fingerprint, full shadow + cohort bars)",
+        ROOT / "report" / "report_content.json",
         HERE / "fixtures" / "sample_metrics.manager.json",
     ),
     (
-        "Generalist edge case (no shadow, no within-archetype positioning)",
-        # Generalist uses a fixture under tests/, not ROOT — kept as absolute below.
-        "__fixture__:sample_content.generalist.json",
+        "Multi-Mode Journeyman edge case (no shadow, no within-archetype positioning)",
+        HERE / "fixtures" / "sample_content.generalist.json",
         HERE / "fixtures" / "sample_metrics.generalist.json",
     ),
 ]
@@ -117,33 +111,9 @@ def run_case(label: str, content: Path, metrics: Path) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Persona renderer smoke test")
-    parser.add_argument(
-        "--plugin-root",
-        type=Path,
-        default=None,
-        help="Override the plugin root (defaults to the parent of tests/). "
-             "Use when invoking from outside the plugin install dir.",
-    )
-    args = parser.parse_args()
-
-    global ROOT, RENDERER
-    if args.plugin_root is not None:
-        ROOT = args.plugin_root.resolve()
-        RENDERER = ROOT / "analysis" / "render_report.py"
-
-    cases: list[tuple[str, Path, Path]] = []
-    for label, content_spec, metrics in CASE_SPECS:
-        if content_spec.startswith("__fixture__:"):
-            fname = content_spec.split(":", 1)[1]
-            cases.append((label, HERE / "fixtures" / fname, metrics))
-        else:
-            cases.append((label, ROOT / content_spec, metrics))
-
     print("=" * 64)
     print("Renderer smoke test")
     print("=" * 64)
-    print(f"  plugin root: {ROOT}")
     print()
 
     if not RENDERER.exists():
@@ -151,7 +121,7 @@ def main() -> int:
         return 1
 
     total_failures: list[tuple[str, list[str]]] = []
-    for label, content, metrics in cases:
+    for label, content, metrics in CASES:
         print(f"  case: {label}")
         print(f"    content: {_rel(content)}")
         print(f"    metrics: {_rel(metrics)}")
@@ -167,9 +137,9 @@ def main() -> int:
 
     print("-" * 64)
     if total_failures:
-        print(f"FAILED: {len(total_failures)} of {len(cases)} case(s)")
+        print(f"FAILED: {len(total_failures)} of {len(CASES)} case(s)")
         return 1
-    print(f"OK ({len(cases)} cases passed)")
+    print(f"OK ({len(CASES)} cases passed)")
     print()
     print("The renderer can produce artifacts from a schema-valid content")
     print("JSON. Safe to proceed with the tagging step.")

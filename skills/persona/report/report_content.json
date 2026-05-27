@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "comment_for_reviewers": "Hand-authored Manager exemplar. The renderer pulls all numbers from metrics.json via the *_ref fields below — the LLM never round-trips numbers. Strings (archetype names, prose, recognition lines) are LLM-authored.",
+  "comment_for_reviewers": "Hand-authored Showrunner exemplar. The renderer pulls all numbers from metrics.json via the *_ref fields below — the LLM never round-trips numbers. Strings (archetype names, prose, recognition lines) are LLM-authored.",
 
   "title": {
-    "archetype_name": "Manager",
+    "archetype_name": "Showrunner",
     "modifier": "Who Audits"
   },
   "tagline": "Reads the diff. Won't run it.",
@@ -52,7 +52,7 @@
       {
         "kind": "contrast",
         "name_em": "Delegative style",
-        "characterization": "\"Hand off and trust the brief.\" The classic Manager move you've replaced — not a gap in your practice.",
+        "characterization": "\"Hand off and trust the brief.\" The classic Showrunner move you've replaced — not a gap in your practice.",
         "data": {
           "kind": "categorical",
           "field": "interaction_style",
@@ -62,7 +62,7 @@
     ],
 
     "pullquote": {
-      "text": "Set up like a Manager. Audit like a Reality Tester. The combination is unusual.",
+      "text": "Set up like a Showrunner. Audit like a Runtime Mechanic. The combination is unusual.",
       "attribution": "The shape of your sessions"
     },
 
@@ -79,7 +79,7 @@
     "lede": "Sessions that ship — and where the careful setup either pays off or quietly papers over what wasn't run.",
 
     "headline": "You ship — but the asset is sensitive to what you didn't run.",
-    "body": "Your test-runs and diff-reviews land in the bottom decile of the Manager cohort. The reading half of verification is alive. The running half isn't.",
+    "body": "Your test-runs and diff-reviews land in the bottom decile of the Showrunner cohort. The reading half of verification is alive. The running half isn't.",
 
     "primary_value": {
       "label": "You",
@@ -89,14 +89,14 @@
     },
     "comparison_values": [
       {
-        "label": "Reality Tester",
+        "label": "Runtime Mechanic",
         "value_static": 22.7,
         "format": "percent_1_decimal",
         "kind": "cohort",
         "source_note": "archetype_baselines.csv: pr_yield_pct"
       },
       {
-        "label": "Typical Manager",
+        "label": "Typical Showrunner",
         "value_static": 15.5,
         "format": "percent_1_decimal",
         "kind": "cohort",
@@ -112,9 +112,9 @@
 
     "moves": [
       {
-        "from_archetype": "The Reality Tester",
+        "from_archetype": "The Runtime Mechanic",
         "verb_phrase": "Open `git diff` before you accept.",
-        "body_lead": "You already do the reading half — your audit pass is sharp. The running half is what closes the Reality Tester loop, and it's the cheapest verification step you can add.",
+        "body_lead": "You already do the reading half — your audit pass is sharp. The running half is what closes the Runtime Mechanic loop, and it's the cheapest verification step you can add.",
         "body_action": "Pick three of next week's sessions. Before you accept the agent's output, pull up `git diff` and read it line by line. Notice the spots where you'd ask a follow-up — that's the move.",
         "effect_size_signal": "diff_reviewed",
         "effect_size_note": "verification arc correlates with +13–17pp on shipping"
@@ -136,7 +136,7 @@
     "user_sharpness_ref": "user_archetype.fingerprint_sharpness",
     "shadow_archetype_ref": "user_archetype.shadow.name",
     "all_scores_ref": "user_archetype.all_scores",
-    "note_for_reviewers": "Exact visualization details pending review. Slot layout assumed: shadow pairs across (Manager↔Patcher, Reality Tester↔Streamliner, Pair Programmer↔Spec-First Architect); Generalist at center."
+    "note_for_reviewers": "Exact visualization details pending review. Slot layout assumed: shadow pairs across (Showrunner↔Quick-Turn Sprinter, Runtime Mechanic↔Prompt Minimalist, Pair Programmer↔Spec-First Architect); Multi-Mode Journeyman at center."
   },
 
   "reflection_prompts_ref": "user_archetype.baseline.reflection_prompts",

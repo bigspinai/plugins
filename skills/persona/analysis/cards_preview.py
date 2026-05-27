@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Multi-fixture preview for the share card — renders all 7 archetypes side-by-side.
 
-Reuses the Manager fixture as a base, mutating ``view.title.archetype_name``
+Reuses the Showrunner fixture as a base, mutating ``view.title.archetype_name``
 for each archetype. The card is extracted from each rendered report via
 the ``@CARD_START``/``@CARD_END`` markers in the template.
 
@@ -37,13 +37,13 @@ from render import html as html_renderer  # noqa: E402
 log = logging.getLogger("cards_preview")
 
 ARCHETYPES = [
-    "Manager",
-    "Reality Tester",
-    "Patcher",
+    "Showrunner",
+    "Runtime Mechanic",
+    "Quick-Turn Sprinter",
     "Pair Programmer",
     "Spec-First Architect",
-    "Streamliner",
-    "Generalist",
+    "Prompt Minimalist",
+    "Multi-Mode Journeyman",
 ]
 
 BASE_CONTENT = ROOT / "report" / "report_content.json"
@@ -168,7 +168,7 @@ def _build_preview_html() -> str:
 </head>
 <body>
   <h1 class="preview-h">Share card — all 7 archetypes</h1>
-  <p class="preview-sub">Reusing the Manager fixture; only the archetype name varies.
+  <p class="preview-sub">Reusing the Showrunner fixture; only the archetype name varies.
     Tagline + description text comes from the in-template lookup dicts; illustration is per-archetype.</p>
   <div class="grid">
     {cards_html}
@@ -202,14 +202,7 @@ class State:
 
 
 def _watch_loop(state: State, watched: list[Path]) -> None:
-    try:
-        from watchfiles import watch
-    except ModuleNotFoundError:
-        log.error(
-            "watcher disabled: `watchfiles` is not installed. "
-            "Run `pip install watchfiles` to enable auto-rebuild."
-        )
-        return
+    from watchfiles import watch
     log.info("watcher started")
     for _changes in watch(*[str(p) for p in watched], recursive=False):
         time.sleep(0.05)  # let editor finish writing

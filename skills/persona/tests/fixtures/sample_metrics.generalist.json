@@ -18,7 +18,7 @@
   },
   "user_archetype": {
     "available": true,
-    "primary": "The Generalist",
+    "primary": "The Multi-Mode Journeyman",
     "primary_score": 0.0,
     "secondary": "",
     "secondary_score": 0.0,
@@ -28,11 +28,11 @@
     "fingerprint_sharpness": "",
     "all_scores": {
       "The Pair Programmer": 0.0,
-      "The Patcher": 0.0,
-      "The Manager": 0.0,
-      "The Reality Tester": 0.0,
+      "The Quick-Turn Sprinter": 0.0,
+      "The Showrunner": 0.0,
+      "The Runtime Mechanic": 0.0,
       "The Spec-First Architect": 0.0,
-      "The Streamliner": 0.0
+      "The Prompt Minimalist": 0.0
     },
     "user_signal_rates": {
       "external_reality_disclosure": 0.36,

@@ -93,7 +93,7 @@ def render_landscape_ascii(landscape: dict, width: int = 60,
                 grid[row][c] = ch
 
     # Place archetype dots + labels — only the visible ones (primary,
-    # shadow, secondary, or all four primaries when Generalist).
+    # shadow, secondary, or all four primaries when Multi-Mode Journeyman).
     visible = [a for a in landscape["archetypes"] if a.get("is_visible")]
     for a in visible:
         col, row = to_inner(a["x"], a["y"])

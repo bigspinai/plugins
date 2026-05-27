@@ -566,7 +566,7 @@ def shape_summary(rows: list[dict]) -> dict:
 # =====================================================================
 # Archetype assignment — operational classifier over the user's per-signal
 # fire rates + deterministic medians. The archetype is what the report
-# leads with ("you're The Reality Tester"); shapes/signals become the
+# leads with ("you're The Runtime Mechanic"); shapes/signals become the
 # evidence underneath.
 # =====================================================================
 
@@ -660,7 +660,7 @@ def load_archetype_signal_distributions(
     """Read ``archetype_signal_distributions.csv`` into a nested
     ``{archetype: {signal: {p25, p50, p75, mean, n_users, signal_kind}}}``
     map. Used to position the user's signal rates within their cohort
-    ("among Reality Testers, you're top-quartile on diff-review").
+    ("among Runtime Mechanics, you're top-quartile on diff-review").
     """
     path = baselines_dir / "archetype_signal_distributions.csv"
     if not path.exists():
@@ -687,7 +687,7 @@ def load_archetype_categorical_distributions(
 ) -> dict[str, dict[str, dict[str, dict[str, float]]]]:
     """Read ``archetype_categorical_distributions.csv`` into a nested
     ``{archetype: {field: {bucket: {share_pct, n_sessions}}}}`` map.
-    Powers ``"Reality Testers' modal shape is Workshop at 47%; yours
+    Powers ``"Runtime Mechanics' modal shape is Workshop at 47%; yours
     is 53% — you're a sharp version."``"""
     path = baselines_dir / "archetype_categorical_distributions.csv"
     if not path.exists():
@@ -850,7 +850,7 @@ def signature_sessions(pairs: list[tuple[dict, dict]],
     produce "like that time you XYZ" anecdotes — without this, the
     writer has to dig through raw transcripts.
 
-    Returns ``[]`` for The Generalist (no canonical fingerprint).
+    Returns ``[]`` for The Multi-Mode Journeyman (no canonical fingerprint).
     """
     archetype = next(
         (a for a in archetypes_module.ARCHETYPES if a.name == archetype_name),
@@ -916,7 +916,7 @@ def _archetype_confidence(primary: str,
     from research."""
     margin = primary_score - secondary_score
     if primary == archetypes_module.UNASSIGNED:
-        # Generalist is a positive label when there's enough data to
+        # Multi-Mode Journeyman is a positive label when there's enough data to
         # call it deliberate, "tentative" when not.
         return "moderate" if n_sessions >= 15 else "low"
     if primary_score >= 4.0 and n_sessions >= 10 and margin >= 1.5:
@@ -964,7 +964,7 @@ def archetype_summary(
     )
 
     # Shadow lives in the profile (research-authored). Fall back to ""
-    # gracefully — Generalist intentionally has shadow_archetype: null.
+    # gracefully — Multi-Mode Journeyman intentionally has shadow_archetype: null.
     shadow_name = (baseline.get("shadow_archetype") or "") or ""
     shadow_axis = (baseline.get("shadow_axis") or "") or ""
     if not isinstance(shadow_name, str):
@@ -1325,7 +1325,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # User-archetype layer: the horoscope-quality framing. Composes the
     # per-signal fire rates + deterministic medians into one of seven
-    # named archetypes (or The Generalist). Baselines + profile fields
+    # named archetypes (or The Multi-Mode Journeyman). Baselines + profile fields
     # come from baselines/archetype_baselines.csv +
     # baselines/archetype_profiles.json. Within-cohort positioning uses
     # the new signal- and categorical-distribution baselines.
