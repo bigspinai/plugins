@@ -19,7 +19,7 @@ Once it finishes running, you'll receive an HTML report that opens automatically
 
 ### Option B — from a local clone
 
-Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill. If unfamilar with cloning a repo, you can simply ask your agentic coding tool to do it for you, then continue with the following instructions. From the repo root, paste this prompt:
+Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill. If unfamiliar with cloning a repo, you can simply ask your agentic coding tool to do it for you, then continue with the following instructions. From the repo root, paste this prompt:
 
 ```
 I want to discover my Claude Code archetype.
