@@ -6,7 +6,10 @@ A Claude Code plugin that analyzes your local session history and renders a pers
 
 ### Option A — as a Claude Code plugin
 
-Open Claude Code and start a new session. Paste each slash command, one at a time. Once it finishes running, you'll receive an HTML report that opens automatically.
+This works best from CLI. We do not recommend using the Claude desktop app.
+
+Open Claude Code and start a new session. Paste each slash command, one at a time. 
+Once it finishes running, you'll receive an HTML report that opens automatically.
 
 ```
 /plugin marketplace add bigspinai/plugins
@@ -16,7 +19,7 @@ Open Claude Code and start a new session. Paste each slash command, one at a tim
 
 ### Option B — from a local clone
 
-Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill. From the repo root, paste this prompt:
+Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill. If unfamilar with cloning a repo, you can simply ask your agentic coding tool to do it for you, then continue with the following instructions. From the repo root, paste this prompt:
 
 ```
 I want to discover my Claude Code archetype.
@@ -25,6 +28,8 @@ I've cloned https://github.com/bigspinai/plugins and am running from the repo ro
 
 Please follow `skills/persona/SKILL.md` end to end. The skill will analyze my local session history in ~/.claude/projects against the project's measured baseline corpus and produce the report. SKILL.md handles opening report.html in my browser when it's ready.
 ```
+
+Note: This is a better experience when Auto mode is turned on so you don't have to accept each item. But we leave that choice up to you. 
 
 Either path produces the same artifacts at the same location — see below.
 
