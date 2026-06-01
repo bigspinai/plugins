@@ -1393,17 +1393,43 @@
         }, ms);
       }
 
+      // Downloaded image dimensions — a standard 1200×627 social/OG card.
+      // Captured at 2× density (→ 2400×1254) so text and the illustration stay
+      // crisp; the aspect ratio is unchanged and platforms downscale cleanly.
+      const SHARE_W = 1200, SHARE_H = 627, SHARE_SCALE = 2, SHARE_BG = '#070E08';
+
       async function captureCard() {
         // html2canvas is loaded via <script defer>; bail gracefully if it isn't ready.
         if (typeof html2canvas !== 'function') return null;
-        return html2canvas(cardEl, {
-          width: cardEl.offsetWidth,
-          height: cardEl.offsetHeight,
-          scale: 2,
-          backgroundColor: '#070E08',
-          useCORS: true,
-          logging: false,
-        });
+        // Render the card centered on a 1200×627 frame. The frame color matches
+        // the share slide (--ink), so this background is invisible in the
+        // on-page preview and only appears once the image is downloaded.
+        const frame = document.createElement('div');
+        frame.setAttribute('aria-hidden', 'true');
+        frame.style.cssText =
+          'position:fixed;left:-99999px;top:0;width:' + SHARE_W + 'px;height:' + SHARE_H +
+          'px;display:flex;align-items:center;justify-content:center;background:' + SHARE_BG + ';';
+        const clone = cardEl.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.margin = '0';
+        // html2canvas renders large box-shadows as a gray wash with edge
+        // artifacts, so drop the shadow on the captured copy — the card sits
+        // flush on the frame. The on-page card keeps its shadow.
+        clone.style.boxShadow = 'none';
+        frame.appendChild(clone);
+        document.body.appendChild(frame);
+        try {
+          return await html2canvas(frame, {
+            width: SHARE_W,
+            height: SHARE_H,
+            scale: SHARE_SCALE,
+            backgroundColor: SHARE_BG,
+            useCORS: true,
+            logging: false,
+          });
+        } finally {
+          frame.remove();
+        }
       }
 
       function downloadCanvas(canvas) {
