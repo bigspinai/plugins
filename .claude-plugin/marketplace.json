@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "bigspin",
-      "source": ".",
+      "source": "./",
       "description": "Local Claude Code practice mirror — analyzes your ~/.claude/projects history and renders an HTML report + hero card. No data leaves your machine.",
       "version": "0.1.0",
       "category": "analysis",
