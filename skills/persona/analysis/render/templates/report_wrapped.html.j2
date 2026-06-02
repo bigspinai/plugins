@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<title>The {{ view.title.archetype_name }} — Coding Archetype</title>
+<title>The {{ view.title.archetype_name }} — Coding Persona</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
@@ -648,7 +648,7 @@
     --card-bg: #F8F8F6;
     --card-ink: #070E08;
     --card-green: #93F099;
-    margin: 36px auto 0;
+    margin: 20px auto 0;
     width: min(92%, 432px);
     aspect-ratio: 4 / 5;
     background: var(--card-bg);
@@ -744,7 +744,7 @@
   }
   .share-card .card-footer .brand svg { display: block; width: 100%; height: auto; }
   .share-buttons {
-    margin-top: 32px;
+    margin-top: 12px;
     display: flex;
     gap: 12px;
     justify-content: center;
@@ -797,12 +797,33 @@
     border-color: var(--paper);
     color: var(--paper);
   }
+  /* Borderless icon-only button (e.g. copy card). No fill, no border —
+     just the glyph, with a subtle hover and a check-icon "done" state. */
+  .share-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    color: var(--paper);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: opacity 0.15s;
+  }
+  .share-icon-btn:hover { opacity: 0.65; }
+  .share-icon-btn:disabled { cursor: default; }
+  .share-icon-btn svg { display: block; width: 22px; height: 22px; }
+  .share-icon-btn .icon-check { display: none; color: var(--accent-soft); }
+  .share-icon-btn.is-done .icon-copy { display: none; }
+  .share-icon-btn.is-done .icon-check { display: block; }
   .share-buttons.learn-more-row {
     margin-top: 16px;
   }
   .share-subcopy {
-    margin: 12px auto 0;
-    max-width: 520px;
+    margin: 40px auto 0;
+    max-width: none;
+    white-space: nowrap;
     font-family: var(--sans);
     font-size: clamp(15px, 1.4vw, 18px);
     font-weight: 400;
@@ -820,7 +841,12 @@
   /* Footer strip at the bottom of the share slide — full-width band,
      small text, a "Learn more →" text-link. Lives outside the centered
      content stack so the share moment can breathe by itself. */
+  /* Anchor the share content near the top of the slide (not vertically
+     centered): header + card sit ~1in below the top, footer stays pinned
+     to the bottom. */
   .share-slide {
+    justify-content: flex-start;
+    padding-top: 96px;
     padding-bottom: 80px;
   }
   .share-footer {
@@ -829,8 +855,9 @@
     left: 0;
     right: 0;
     padding: 18px 32px;
-    border-top: 1px solid rgba(244, 243, 240, 0.10);
-    background: rgba(0, 0, 0, 0.18);
+    border-top: 1px solid rgba(7, 14, 8, 0.10);
+    /* Brand light purple (matches the steeze microsite this CTA links to). */
+    background: #BBAFFD;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -839,24 +866,26 @@
     font-family: var(--sans);
     font-size: 18px;
     line-height: 1.4;
-    color: var(--paper);
+    color: var(--ink);
     text-align: center;
   }
   .share-footer .share-footer-link {
-    color: var(--accent-soft);
+    color: var(--ink);
     text-decoration: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgba(7, 14, 8, 0.35);
     transition: border-color 0.15s, color 0.15s;
   }
   .share-footer .share-footer-link:hover {
-    color: var(--paper);
-    border-bottom-color: var(--paper);
+    color: #874FFF;
+    border-bottom-color: #874FFF;
   }
 
   @media (max-width: 640px) {
     .slide { padding: 40px 22px; }
     .reveal h1 { font-size: clamp(48px, 13vw, 80px); }
     .stand h2, .method h2, .moves h2, .share-slide h2 { font-size: clamp(28px, 8vw, 40px); }
+    /* Let the subcopy wrap on narrow screens — nowrap is desktop-only. */
+    .share-subcopy { white-space: normal; max-width: 90%; }
   }
 
   @media print {
@@ -1049,7 +1078,7 @@
         {% endfor %}
       </div>
 
-      <p class="buildup-sub">All of this adds up to an archetype — here's how yours came out.</p>
+      <p class="buildup-sub">All of this adds up to a persona — here's how yours came out.</p>
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
@@ -1058,7 +1087,7 @@
   <section class="slide reveal">
     <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
-      <div class="eyebrow">Your Claude Code archetype</div>
+      <div class="eyebrow">Your Claude Code persona</div>
       <h1>The <em>{{ view.title.archetype_name }}</em></h1>
       <p class="tagline">{{ you_taglines.get(primary_name, view.tagline) }}</p>
       <p class="blurb">{{ you_blurbs.get(primary_name, "A way of working with Claude Code that emerges across your sessions.") }}</p>
@@ -1150,7 +1179,7 @@
         </div>
         <div class="method-stat">
           <div class="num">7</div>
-          <div class="lbl">Archetypes scored from signals</div>
+          <div class="lbl">Personas scored from signals</div>
         </div>
         <div class="method-stat">
           <div class="num">{{ view.colophon.n_sessions }}</div>
@@ -1160,8 +1189,8 @@
 
       <ul class="method-list">
         <li>We tagged your local Claude Code history for things like whether you wrote a plan, whether you ran the tests, whether you checked the output before moving on, and whether you broke the work into steps.</li>
-        <li>Those signals were then compared to seven archetype profiles built from the 172-engineer baseline.</li>
-        <li>Your sessions were scored against each of the seven archetypes — that's the distribution you saw on slide 2.</li>
+        <li>Those signals were then compared to seven persona profiles built from the 172-engineer baseline.</li>
+        <li>Your sessions were scored against each of the seven personas — that's the distribution you saw on slide 2.</li>
         <li>Everything ran locally on your machine, and no transcripts left your laptop.</li>
       </ul>
     </div>
@@ -1195,7 +1224,7 @@
   <!-- ============== Slide 5: SHARE ============== -->
   <section class="slide share-slide">
     <div class="slide-inner">
-      <h2>Share your coding <em>archetype</em>.</h2>
+      <h2>Your persona</h2>
 
       {% set illustration_uri = ('assets/illustrations/' ~ view.title.archetype_name ~ '.png')|b64_asset %}
       <!-- @CARD_START -->
@@ -1223,15 +1252,24 @@
       </div>
       <!-- @CARD_END -->
 
+      <p class="share-subcopy">Share on LinkedIn/X and include <a href="https://github.com/bigspinai/plugins" target="_blank" rel="noopener">the repo</a> so others can uncover their persona too.</p>
+
       <div class="share-buttons">
         <button class="share-btn primary" id="share-card-btn">Download Card</button>
-        <button class="share-btn secondary" id="copy-card-btn">Copy Card</button>
+        <button class="share-icon-btn" id="copy-card-btn" data-icon-btn aria-label="Copy card to clipboard" title="Copy card">
+          <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+        </button>
       </div>
-      <p class="share-subcopy">Post to LinkedIn or X and share <a href="https://github.com/bigspinai/plugins" target="_blank" rel="noopener">this link</a> so others can find their persona too.</p>
     </div>
     <footer class="share-footer">
       <span>Want a report on your agent's conversations?</span>
-      <a class="share-footer-link" href="https://bigspin.ai/contact" target="_blank" rel="noopener noreferrer">Learn more →</a>
+      <a class="share-footer-link" href="https://steeze.bigspin.ai/" target="_blank" rel="noopener noreferrer">Learn more about the research →</a>
     </footer>
   </section>
 
@@ -1382,6 +1420,19 @@
       // Briefly swap a button's label to a status word, then revert it.
       function flashLabel(btn, msg, ms = 2000) {
         if (!btn) return;
+        // Icon-only buttons have no text label — rewriting textContent would
+        // wipe the SVG. Toggle a check-icon "done" state instead.
+        if (btn.dataset.iconBtn !== undefined) {
+          clearTimeout(btn._revertTimer);
+          btn.classList.toggle('is-done', msg.indexOf('✓') !== -1);
+          btn.disabled = true;
+          btn._revertTimer = setTimeout(() => {
+            btn.classList.remove('is-done');
+            btn.disabled = false;
+            btn._revertTimer = null;
+          }, ms);
+          return;
+        }
         if (!btn._revertTimer) btn.dataset.label = btn.textContent;
         clearTimeout(btn._revertTimer);
         btn.textContent = msg;
