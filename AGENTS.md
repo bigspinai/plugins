@@ -11,7 +11,7 @@ Follow [`skills/persona/SKILL.md`](skills/persona/SKILL.md) end to end. It's a 9
 1. **Plugin root** = this repo's root directory (the directory containing this file). If you're invoked outside the Claude Code plugin install path, set `BIGSPIN_PLUGIN_ROOT="$PWD"` before following the SKILL.md setup section.
 2. **Bootstrap** a Python venv via `skills/persona/scripts/bootstrap.sh`. Idempotent; first run installs `jinja2` + `jsonschema` into `~/.claude/bigspin/.venv`.
 3. **Smoke test** the renderer (`skills/persona/tests/smoke_test.py`) before any tagging work.
-4. **Pipeline**: preprocess → enrich → spawn 5× `persona-tagger` subagents in parallel for structured tagging → assemble + compute metrics → spawn 1× `persona-tagger` in open mode for behavioral findings → author `report_content.json` → render HTML + Markdown + hero card.
+4. **Pipeline**: preprocess → enrich → spawn 4× `persona-tagger` subagents in parallel for structured tagging → assemble + compute metrics → spawn 1× `persona-tagger` in open mode (reading ~12 of the exported transcripts) for behavioral findings → author `report_content.json` → render HTML + Markdown + hero card.
 5. **Outputs** land in `~/.claude/bigspin/<timestamp>/` on the user's machine. Nothing leaves the machine.
 6. **Deliver**: print `hero.md` inline, then open `report.html` in the user's browser via `skills/persona/scripts/open_report.sh`.
 

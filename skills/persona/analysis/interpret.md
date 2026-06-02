@@ -8,9 +8,9 @@ into three artifacts (HTML, CLI hero card, markdown):
   archetype scoring, within-cohort positioning, baseline comparisons.
   This is the source for **numbers** and the archetype label.
 - `report/findings.md` — the open behavioral track. A subagent's
-  schema-free read of ~20 sessions: distinctive patterns with session
-  anchors, sensitivity framing, two experiments. This is the source for
-  **prose** that needs genuine reading to land.
+  schema-free read of ~12 of the exported transcripts: distinctive
+  patterns with session anchors, sensitivity framing, two experiments.
+  This is the source for **prose** that needs genuine reading to land.
 
 The renderer enforces a JSON-Schema contract
 (`analysis/report_content.schema.json`) and looks up numbers from

@@ -61,15 +61,15 @@ You can audit the whole pipeline — it's ~4 K lines of Python plus markdown ski
 - **A Claude Code-compatible agent** for the structured tagging step. Claude Code itself is the reference target; the clone-and-run flow works with any agentic tool that can spawn subagents.
 - **Python 3.10+** OR **`uv`** (`curl -LsSf https://astral.sh/uv/install.sh | sh`). On first run, the pipeline auto-bootstraps a venv at `~/.claude/bigspin/.venv` and installs `jinja2` + `jsonschema` into it. Idempotent on subsequent runs.
 - **Some Claude Code history.** 30+ sessions makes positioning stable; 10–30 still works with reduced confidence; under 10 produces a graceful "small history" version of the report.
-- **Time.** ~5–10 minutes wall-clock for a 30-session run, almost all of it the structured tagging step where subagents read transcripts in parallel.
+- **Time.** ~4–8 minutes wall-clock for a 20-session run, almost all of it the structured tagging step where subagents read transcripts in parallel.
 
 ## How it works
 
 Three layers of analysis combine into one report:
 
 1. **Deterministic signals** (iteration count, tool diversity, course corrections, tests attempted, …) — computed from message structure in <1 second.
-2. **Structured interpretive tagging** — 5 `persona-tagger` subagents in parallel tag ~36 signals against a fixed taxonomy. Produces aggregated rates positioned against the corpus baseline.
-3. **Open behavioral observation** — one `persona-tagger` subagent in `open` mode reads ~20 sessions schema-free and writes the rich behavioral findings (distinctive patterns, sensitivity, suggested experiments).
+2. **Structured interpretive tagging** — 4 `persona-tagger` subagents in parallel tag ~36 signals against a fixed taxonomy. Produces aggregated rates positioned against the corpus baseline.
+3. **Open behavioral observation** — one `persona-tagger` subagent in `open` mode reads ~12 of the already-exported transcripts (a cross-project subset, schema-free) and writes the rich behavioral findings (distinctive patterns, sensitivity, suggested experiments).
 
 The two tracks synthesize into the final report: the structured side gives the archetype label and the comparison bars; the open side gives the recognition lines, the suggested moves, and the framing voice.
 

@@ -59,7 +59,7 @@ claude --plugin-dir ./
 2. Run renderer smoke test (`tests/smoke_test.py`).
 3. Preprocess `~/.claude/projects/` → `sessions.csv`.
 4. Enrich with deterministic signals → `sessions_enriched.csv`.
-5. Spawn 5 × `persona-tagger` subagents (mode: tag) → per-session JSON annotations.
+5. Spawn 4 × `persona-tagger` subagents (mode: tag) → per-session JSON annotations.
 6. Assemble + compute metrics → `metrics.json` (positioned against baselines).
 7. Spawn 1 × `persona-tagger` subagent (mode: open) → `findings.md`.
 8. Author `report_content.json` synthesizing both tracks (per `analysis/interpret.md` voice rules).

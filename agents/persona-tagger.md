@@ -20,7 +20,7 @@ The parent will pass:
 - **mode**: `tag` (structured tagging) or `open` (behavioral pass). Default `tag`.
 - **system prompt path** (`tag` mode only): absolute path to `tag_prompt.md` — the ~20 KB taxonomy + output contract, built from `taxonomy.json`. Read this end-to-end before tagging anything.
 - **transcript paths** (`tag` mode): a list of absolute paths to per-session `.txt` files to tag, plus the absolute path to the output annotations directory.
-- **session paths** (`open` mode): a list of absolute session paths under `~/.claude/projects/...`, sampled across projects (not just recent). Plus the absolute output path for `findings.md`.
+- **transcript paths** (`open` mode): a list of absolute paths to cleaned per-session `.txt` files under `tagging/transcripts/` — a cross-project subset of the transcripts already exported in `tag` mode (tool-output payloads stripped; the conversation is intact). Plus the absolute output path for `findings.md`.
 
 # Procedure — `tag` mode (default)
 
@@ -39,7 +39,7 @@ The parent will pass:
 
 # Procedure — `open` mode
 
-1. **Skim each session path** in the list. You don't need to read every line of every session; read enough to form a behavioral picture across all ~20.
+1. **Skim each transcript file** in the list (cleaned `.txt` exports, ~12 of them). Tool-output payloads are already stripped, so these are cheap to read; the user + assistant conversation — what behavioral characterization needs — is fully preserved. You don't need to read every line; read enough to form a behavioral picture across all of them. Each file is named `<session_id>.txt`, so the filename stem is the `session_id` you cite in anchors.
 
 2. **Look for what's distinctive about *this* user**, not what's generic-software-engineer-y. The goal is recognition the user will see themselves in, not flattery.
 

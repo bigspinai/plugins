@@ -43,10 +43,11 @@ The pipeline has **three** layers now, not two:
    four categorical fields. Tagged by Claude Code subagents reading each
    session against a fixed taxonomy. Produces aggregated rates that
    position the user against a 4,846-session corpus baseline.
-3. **Open behavioral observation** — one subagent reads ~20 sessions
-   without a schema and returns rich findings: co-occurrence patterns,
-   failure modes, session anchors. The schema can't represent these
-   because it didn't think to ask.
+3. **Open behavioral observation** — one subagent reads ~12 of the
+   already-exported transcripts (a cross-project subset) without a schema
+   and returns rich findings: co-occurrence patterns, failure modes,
+   session anchors. The schema can't represent these because it didn't
+   think to ask.
 
 The **structured track** gives the report its archetype label, fingerprint
 gauge, and within-cohort bars. The **open track** gives the report its
@@ -104,13 +105,18 @@ case. **If it fails, stop and surface the error to the user.**
 Confirm the user wants to proceed. Show them what you're about to do and
 ask if they want to override defaults:
 
-- **Default sample**: their **last 30 parent sessions** in `~/.claude/projects`
+- **Default sample**: their **last 20 parent sessions** in `~/.claude/projects`
   for the structured track. (Down from 50 in the old API path —
   subagents read sequentially within a batch, so smaller batches keep
-  wall-clock time reasonable.)
-- **Default open-pass sample**: 20 sessions, sampled across projects
-  (not just the most recent — the whole point of the open pass is
-  catching cross-context patterns).
+  wall-clock time and token usage reasonable. 20 is enough for a stable
+  archetype label; fewer sessions add statistical noise to the
+  within-cohort bars, not bias.)
+- **Default open-pass sample**: ~12 sessions, drawn as a cross-project
+  subset of the structured sample — the same transcripts already exported
+  in Step 4a, reused (not re-read from raw session files). When picking
+  the subset, maximize distinct `project` values from `_manifest.json` so
+  the open pass still spans contexts; if the recent sample clusters in one
+  project, that breadth is inherently limited and that's fine.
 - **Default sessions root**: `~/.claude/projects` (override with
   `CLAUDE_SESSIONS_ROOT` or a path arg).
 
@@ -150,7 +156,7 @@ four sub-steps; the helpers all live in `tagging/tag_sessions.py`.
 python tagging/tag_sessions.py --export-prompt tagging/tag_prompt.md
 python tagging/tag_sessions.py sessions_enriched.csv \
     --export-transcripts tagging/transcripts/ \
-    --limit 30
+    --limit 20
 ```
 
 The first line writes the ~20 KB system prompt (built from
@@ -160,10 +166,11 @@ plus a `_manifest.json` that the assembler reads later.
 
 ### 4b. Spawn subagents to tag
 
-Spawn N subagents in parallel — typically **5 subagents × 6 transcripts
-each** for a 30-session run. Use the `Explore` subagent type or
+Spawn N subagents in parallel — typically **4 subagents × 5 transcripts
+each** for a 20-session run. Use the `Explore` subagent type or
 `general-purpose`; they need read access to `tagging/transcripts/` and
-write access to `tagging/annotations/`.
+write access to `tagging/annotations/`. (`compute_metrics.py` assumes no
+fixed session count, so other splits are fine.)
 
 Each subagent's prompt:
 
@@ -227,20 +234,26 @@ consumes for numbers via `*_ref` paths.
 
 ## Step 6 — open behavioral pass
 
-This is the **new** track. Spawn **one** general-purpose subagent. Hand
-it 20 sessions sampled across projects, not just the most recent. The
-subagent's prompt:
+This is the **new** track. Spawn **one** general-purpose subagent (or the
+`persona-tagger` agent in `open` mode). Hand it ~12 of the cleaned
+transcript files **already exported in Step 4a** — pick a cross-project
+subset by maximizing distinct `project` values in
+`tagging/transcripts/_manifest.json`. Reusing those stripped transcripts
+(rather than re-reading raw `~/.claude/projects/*.jsonl`) is the main
+token saving: the open pass produces qualitative `findings.md` that is
+never positioned against the baseline, so reading the cleaned export
+can't move any calibrated number. The subagent's prompt:
 
 ```
 You're characterizing a user's Claude Code practice — what's distinctive
 about how they work, not what's generic-software-engineer-y. You have
-~20 session transcripts to read, listed below. Read enough of each to
-form a behavioral picture; you don't need to read every line of every
-session.
+~12 cleaned session transcripts to read, listed below (tool-output
+payloads are stripped; the conversation is intact). Read enough of each
+to form a behavioral picture; you don't need to read every line.
 
 Sessions:
-  <list of paths into ~/.claude/projects>
-  (sampled across projects, not just the most recent)
+  <list of paths to tagging/transcripts/<session_id>.txt>
+  (a cross-project subset of the exported transcripts)
 
 Return findings as markdown to `report/findings.md` with these sections:
 
@@ -358,8 +371,10 @@ reading `tagging/tag_sessions.py` and `analysis/compute_metrics.py`.
   un-tag-able (e.g., transcript truncation), leave it out — the
   metrics will compute on what remains.
 - **Open-pass findings shallow.** If `findings.md` reads as generic, the
-  subagent likely under-sampled or skimmed. Re-spawn with a smaller
-  batch (~10 sessions) and emphasize "specific session anchors required."
+  subagent likely under-sampled or skimmed. Re-spawn over the same ~12
+  transcripts and emphasize "specific session anchors required"; if the
+  subset clustered in one project, widen it to more distinct `project`
+  values from `_manifest.json`.
 - **Baselines missing.** `compute_metrics.py` runs anyway; the renderer
   drops cohort comparison bars; `interpret.md`'s edge-case section
   describes how to author content JSON when comparisons are
