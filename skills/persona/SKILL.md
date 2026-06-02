@@ -148,7 +148,7 @@ Surface the per-script summary — it lists the 14 column names added.
 ## Step 4 — structured tagging (subagents, local, no API key)
 
 This step replaces the old API call with Claude Code subagents. It has
-four sub-steps; the helpers all live in `tagging/tag_sessions.py`.
+five sub-steps; the helpers all live in `tagging/tag_sessions.py`.
 
 ### 4a. Export the prompt + per-session transcripts
 
@@ -164,7 +164,38 @@ The first line writes the ~20 KB system prompt (built from
 `<session_id>.txt` per selected session into `tagging/transcripts/`,
 plus a `_manifest.json` that the assembler reads later.
 
-### 4b. Spawn subagents to tag
+### 4b. Disclose token usage and get explicit consent (required gate)
+
+Everything up to here was free — local Python, no model tokens. Tagging is
+the **first step that spends tokens**, so stop here and get the user's
+explicit consent before going further.
+
+Run the estimate (still free, no tokens spent):
+
+```bash
+python tagging/tag_sessions.py --run-estimate tagging/transcripts/
+```
+
+It prints the structured sample size (call it **N**) and an estimated
+whole-run token band (call it **X–Y** million). Show the user this message,
+filling in `N` and `X–Y` from the command output verbatim:
+
+> `/persona` builds a personalized practice report by having Claude Code
+> subagents read your recent session transcripts locally. Nothing leaves
+> your machine. I've run an estimate and this run will analyze your last
+> **N** sessions. Estimated token usage: **~X–Y million tokens** for this
+> run (it runs in your Claude Code session). Reply **"yes, I understand
+> this will use ~X–Y tokens"** to proceed, or **"no"** to cancel.
+
+Then **STOP and wait for the user's reply.** Do **not** spawn any tagging
+subagent (4c) or run the open behavioral pass (Step 6) until the user
+replies with an explicit affirmative that acknowledges the token usage
+(e.g. *"yes, I understand…"*). A bare "ok", silence, or any reply that
+doesn't acknowledge the cost is **not** consent — re-ask or stop. If the
+user declines, stop here: the files written so far are local scratch and
+cost nothing.
+
+### 4c. Spawn subagents to tag
 
 Spawn N subagents in parallel — typically **4 subagents × 5 transcripts
 each** for a 20-session run. Use the `Explore` subagent type or
@@ -199,7 +230,7 @@ Return when all transcripts in the batch have annotation files written.
 The subagents work in parallel. Each session takes ~30–90 seconds of
 subagent time depending on transcript length.
 
-### 4c. Assemble
+### 4d. Assemble
 
 ```bash
 python tagging/tag_sessions.py \
@@ -213,7 +244,7 @@ This emits the canonical `tagged_sessions.csv` — same shape
 counts. If the missing count is > 10% of the batch, re-spawn a subagent
 to fill the gaps before continuing.
 
-### 4d. Validate
+### 4e. Validate
 
 A spot-check is worth doing: read 2–3 random files from
 `tagging/annotations/` and confirm they conform to the schema (all

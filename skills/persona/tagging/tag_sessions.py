@@ -52,6 +52,24 @@ CHARS_PER_TOKEN = 3.5
 # come in well under this even with 10+ signals fired.
 TYPICAL_OUTPUT_TOKENS = 1500
 
+# Sessions read by the open behavioral pass (a cross-project subset of the
+# structured sample). Used only to size the run estimate.
+OPEN_PASS_SESSIONS = 12
+
+# End-to-end multiplier band for the run estimate (--run-estimate).
+#
+# The content fed to subagents (structured transcripts + the open-pass
+# subset) is only a fraction of a run's total token consumption: the bulk
+# is the orchestrator re-reading its own growing context across the ~40
+# turns it takes to drive the nine-step pipeline (mostly cache reads). Two
+# internal end-to-end runs (default 20/12 sample) measured raw totals of
+# ~8.7M and ~12.2M tokens against ~0.6M and ~0.9M tokens of subagent input
+# — an end-to-end factor of ~14x and ~13x. We center the band there and
+# leave margin for run-to-run variance (turn count, history size) rather
+# than claiming false precision.
+END_TO_END_FACTOR_LOW = 10
+END_TO_END_FACTOR_HIGH = 18
+
 
 # =====================================================================
 # Prompt construction
@@ -286,6 +304,62 @@ def format_cost_quote(est: dict) -> str:
     )
 
 
+def estimate_run(transcripts_dir: Path, taxonomy: dict, model: str) -> dict:
+    """Estimate the WHOLE-RUN token usage for the consent gate, from the
+    already-exported transcripts. No API call.
+
+    Returns a dict with the structured sample size and a deliberately wide
+    end-to-end token band (millions), covering structured tagging + the open
+    pass + the orchestration overhead that dominates a real run. See the
+    END_TO_END_FACTOR_* comment for how the band is derived.
+    """
+    transcripts = [
+        p.read_text(encoding="utf-8", errors="replace")
+        for p in sorted(transcripts_dir.glob("*.txt"))
+    ]
+    n = len(transcripts)
+    if n == 0:
+        return {"n_structured": 0, "base_input_tokens": 0,
+                "total_low_millions": 0.0, "total_high_millions": 0.0}
+
+    # Structured tagging input (system prompt once + each transcript, caching).
+    system_prompt = build_system_prompt(taxonomy)
+    structured = estimate_cost(system_prompt, transcripts, model)
+
+    # Open pass re-reads a cross-project subset of the same transcripts,
+    # schema-free (no per-session system prompt). Size it conservatively from
+    # the largest OPEN_PASS_SESSIONS transcripts. This subset is deliberately
+    # counted again on top of the structured total (the open pass really does
+    # read those transcripts a second time) — a slight over-count that keeps
+    # the disclosed estimate on the safe side rather than understating usage.
+    largest = sorted((estimate_tokens(t) for t in transcripts), reverse=True)
+    open_input = sum(largest[:OPEN_PASS_SESSIONS])
+
+    base_input = structured["est_input_tokens"] + open_input
+    total_low = base_input * END_TO_END_FACTOR_LOW
+    total_high = base_input * END_TO_END_FACTOR_HIGH
+    return {
+        "n_structured": n,
+        "n_open": min(OPEN_PASS_SESSIONS, n),
+        "base_input_tokens": base_input,
+        "total_low_millions": round(total_low / 1_000_000, 1),
+        "total_high_millions": round(total_high / 1_000_000, 1),
+    }
+
+
+def format_run_estimate(est: dict) -> str:
+    return (
+        "=" * 64 + "\n"
+        "Run estimate (no tokens spent yet)\n"
+        + "=" * 64 + "\n"
+        f"  Sessions to analyze   : {est['n_structured']}\n"
+        f"  Estimated token usage : ~{est['total_low_millions']}-"
+        f"{est['total_high_millions']} million tokens for this run\n"
+        "  Runs in your Claude Code session; nothing leaves your machine.\n"
+        "  (estimate; actual usage varies with history size and analysis turns)"
+    )
+
+
 # =====================================================================
 # Tagging
 # =====================================================================
@@ -427,6 +501,26 @@ def _export_prompt(args) -> int:
     args.export_prompt.parent.mkdir(parents=True, exist_ok=True)
     args.export_prompt.write_text(prompt, encoding="utf-8")
     print(f"Wrote prompt ({len(prompt):,} chars) to {args.export_prompt}")
+    return 0
+
+
+def _run_estimate(args) -> int:
+    transcripts_dir: Path = args.run_estimate
+    if not transcripts_dir.is_dir():
+        log.error("--run-estimate needs the exported transcripts dir; "
+                  "%s is not a directory", transcripts_dir)
+        return 2
+    if not args.taxonomy.exists():
+        log.error("taxonomy file does not exist: %s", args.taxonomy)
+        return 2
+    taxonomy = json.loads(args.taxonomy.read_text(encoding="utf-8"))
+    est = estimate_run(transcripts_dir, taxonomy, args.model)
+    if est["n_structured"] == 0:
+        log.error("no transcripts found in %s — run --export-transcripts first",
+                  transcripts_dir)
+        return 1
+    print()
+    print(format_run_estimate(est))
     return 0
 
 
@@ -583,6 +677,11 @@ def main(argv: list[str] | None = None) -> int:
                         metavar="DIR",
                         help="Write per-session transcripts and _manifest.json "
                              "to DIR and exit. For subagent-based tagging.")
+    parser.add_argument("--run-estimate", type=Path, default=None,
+                        metavar="TRANSCRIPTS_DIR",
+                        help="Print a whole-run token-usage estimate from the "
+                             "exported transcripts in TRANSCRIPTS_DIR and exit. "
+                             "No API call. For the /persona consent gate.")
     parser.add_argument("--assemble", type=Path, default=None,
                         metavar="ANNOTATIONS_DIR",
                         help="Assemble per-session JSON annotations from "
@@ -606,6 +705,8 @@ def main(argv: list[str] | None = None) -> int:
         return _export_prompt(args)
     if args.export_transcripts:
         return _export_transcripts(args)
+    if args.run_estimate:
+        return _run_estimate(args)
     if args.assemble:
         if not args.manifest:
             log.error("--assemble requires --manifest")
