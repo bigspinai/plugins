@@ -15,6 +15,7 @@ retry. No network calls. The CSV is produced by compute_roi.py, not here.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import sys
 from pathlib import Path
@@ -25,6 +26,28 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 HERE = Path(__file__).resolve().parent
 SCHEMA_PATH = HERE / "roi_data.schema.json"
 TEMPLATES_DIR = HERE / "templates"
+
+# Brand assets (font, logos) are base64-embedded at render time so the report
+# is a single self-contained file with no external asset fetches. Mirrors the
+# persona renderer's b64_asset filter.
+_MIME_BY_EXT = {
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".webp": "image/webp",
+}
+
+
+def _b64_asset(rel_path: str) -> str:
+    """Return a data: URI for a file under templates/. Empty string if missing."""
+    p = TEMPLATES_DIR / rel_path
+    if not p.is_file():
+        return ""
+    mime = _MIME_BY_EXT.get(p.suffix.lower(), "application/octet-stream")
+    return f"data:{mime};base64,{base64.b64encode(p.read_bytes()).decode('ascii')}"
 
 # Make charts.py importable whether invoked as a script or a module.
 sys.path.insert(0, str(HERE))
@@ -119,6 +142,7 @@ def render_html(roi_data: dict) -> str:
         loader=FileSystemLoader(str(TEMPLATES_DIR)),
         autoescape=select_autoescape(["html", "xml"]),
     )
+    env.filters["b64_asset"] = _b64_asset
     template = env.get_template("roi_report.html.j2")
     return template.render(**build_context(roi_data))
 

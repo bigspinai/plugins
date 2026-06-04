@@ -19,14 +19,17 @@ import html
 import math
 from typing import Optional
 
-LOW_N_SHADE = "#FFCDD2"      # pink low-confidence week fill
-LOW_N_OUTLINE = "#D32F2F"    # red dashed outline / note border
-AXIS = "#444"
-GRID = "#E0E0E0"
-TEXT = "#222"
-MUTED = "#666"
-FONT = ("font-family=\"-apple-system,BlinkMacSystemFont,'Segoe UI',"
-        "Roboto,Helvetica,Arial,sans-serif\"")
+LOW_N_SHADE = "#FFCDD2"      # pink low-confidence week fill (semantic — keep)
+LOW_N_OUTLINE = "#D32F2F"    # red dashed outline / note border (semantic — keep)
+# Neutral chart chrome, aligned to the Bigspin brand palette (the same
+# :root tokens the report shell uses) so axes/labels read as one design.
+AXIS = "#4A554F"             # --text-2
+GRID = "#E3E1DB"             # warm light rule
+TEXT = "#1F2E24"             # --ink-soft
+MUTED = "#7A8581"            # --muted
+# DM Sans brand body font; the SVG is inlined in the page, so it inherits the
+# report's loaded webfont (system-sans fallback offline). Matches /persona.
+FONT = "font-family=\"'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif\""
 
 # Bucket colors that need white text on top (mirrors source `dark_colors`).
 DARK_COLORS = {"#0D47A1", "#1976D2", "#6A1B9A", "#1B5E20",
@@ -34,11 +37,14 @@ DARK_COLORS = {"#0D47A1", "#1976D2", "#6A1B9A", "#1B5E20",
 
 LOW_N_THRESHOLD_DEFAULT = 3
 
-# (col, label, color) — order/labels/colors must match my_token_roi.py
-# TREND_LINES. Duplicated here (rather than imported) so charts.py stays a
-# self-contained renderer with no dependency on the preprocessing package.
+# (col, label, color) — order/labels match my_token_roi.py TREND_LINES.
+# Duplicated here (rather than imported) so charts.py stays a self-contained
+# renderer with no dependency on the preprocessing package.
+# Color note: output_tokens uses the Bigspin accent-primary purple (#7760FB)
+# instead of the source's red — the red read too close to the low-N pink
+# shading (LOW_N_SHADE), which made the emphasized line hard to pick out.
 TREND_LINES = [
-    ("output_tokens",          "output tokens / session",   "#D32F2F"),
+    ("output_tokens",          "output tokens / session",   "#7760FB"),
     ("turn_count",             "turns / session",           "#5D4037"),
     ("duration_seconds",       "session duration (s)",      "#AD1457"),
     ("committed_lines",        "committed lines / session",  "#388E3C"),

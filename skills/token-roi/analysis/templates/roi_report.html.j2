@@ -3,9 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="dark light">
 <title>Your Claude Code — token ROI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'PP Neue Machina';
+    src: url('{{ "assets/fonts/PPNeueMachinaInktrap-Regular.woff2"|b64_asset }}') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
   :root {
     --paper: #F4F3F0;
     --card: #FFFFFF;
@@ -16,102 +26,398 @@
     --rule: rgba(7, 14, 8, 0.12);
     --accent: #3F784E;
     --accent-soft: #93F099;
-    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'PP Neue Machina', 'DM Sans', -apple-system, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
     font-family: var(--sans);
+    font-synthesis: none;
     -webkit-font-smoothing: antialiased;
-    line-height: 1.5;
+    line-height: 1.4;
+    height: 100%;
   }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 80px; }
-  header { border-bottom: 1px solid var(--rule); padding-bottom: 24px; margin-bottom: 36px; }
+  em { font-style: normal; }
+  body {
+    scroll-snap-type: y proximity;
+    overflow-y: scroll;
+    height: 100vh;
+  }
+  /* Subtle grain — blends to paper texture on light slides, gentle film grain on dark ones. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.16 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  }
+
+  .slide {
+    min-height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 72px 32px 64px;
+    position: relative;
+  }
+  .slide-inner { max-width: 880px; margin: 0 auto; width: 100%; }
+
   .eyebrow {
     display: inline-block;
+    font-family: var(--sans);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.14em;
     padding: 3px 10px;
     border-radius: 999px;
     background: var(--accent-soft);
     color: var(--ink);
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
-  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
-  .summary { margin-top: 14px; font-size: 15px; color: var(--text-2); max-width: 70ch; }
-  .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
-  .stat {
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 10px;
-    padding: 12px 16px;
-    min-width: 130px;
-  }
-  .stat .v { font-size: 20px; font-weight: 700; color: var(--ink); }
-  .stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-top: 2px; }
-  section.chart {
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    padding: 26px 26px 20px;
-    margin-bottom: 28px;
-  }
-  section.chart h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink-soft); }
-  section.chart .explainer { font-size: 13.5px; color: var(--text-2); margin: 6px 0 18px; max-width: 78ch; }
-  .svg-holder { width: 100%; overflow-x: auto; }
-  .svg-holder svg { display: block; }
-  footer {
-    margin-top: 40px;
-    padding-top: 22px;
-    border-top: 1px solid var(--rule);
-    font-size: 12.5px;
+  /* Light-slide eyebrows use a dark fill on the light background. */
+  .chart-slide .eyebrow { background: #1F3124; color: var(--paper); }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 28px;
+    right: 32px;
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
     color: var(--muted);
+    opacity: 0.7;
   }
-  footer .privacy { font-weight: 600; color: var(--accent); }
-  footer .caveat { margin-top: 10px; font-style: italic; }
+  .scroll-cue::after {
+    content: " ↓";
+    display: inline-block;
+    margin-left: 6px;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* Bigspin brand — corner logomark on chart slides, larger primary on title/outro. */
+  .brand-mark, .brand-primary {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    display: block;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .brand-mark { width: 22px; opacity: 0.55; }
+  .brand-primary { width: 132px; opacity: 0.92; }
+  .brand-mark svg, .brand-primary svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 640px) {
+    .brand-mark, .brand-primary { top: 20px; left: 20px; }
+    .brand-primary { width: 104px; }
+  }
+
+  /* ============== Slide 1: Title ============== */
+  .title { background: var(--ink); color: var(--paper); }
+  .title h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(40px, 7vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--paper);
+    max-width: 900px;
+  }
+  .title h1 em { color: var(--accent-soft); }
+  .title .tagline {
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.8vw, 24px);
+    line-height: 1.45;
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 28px;
+    max-width: 720px;
+  }
+  .title-stats {
+    margin-top: 52px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 26px 32px;
+    max-width: 840px;
+  }
+  .title-stat .num {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    color: var(--accent-soft);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .title-stat .lbl {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--paper);
+    opacity: 0.7;
+    margin-top: 12px;
+    line-height: 1.35;
+  }
+
+  /* ============== Slides 2–4: Charts ============== */
+  .chart-slide { background: var(--paper); color: var(--ink); }
+  .chart-slide h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 4.2vw, 50px);
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    color: var(--ink);
+    max-width: 760px;
+  }
+  .chart-slide .explainer {
+    font-family: var(--sans);
+    font-size: clamp(14px, 1.3vw, 17px);
+    line-height: 1.5;
+    color: var(--text-2);
+    margin-top: 14px;
+    max-width: 72ch;
+  }
+  .svg-holder {
+    margin: 30px auto 0;
+    width: 100%;
+    max-width: 840px;
+  }
+  .svg-holder svg { display: block; width: 100%; height: auto; }
+
+  /* ============== Slide 5: Outro ============== */
+  .outro { background: var(--ink); color: var(--paper); }
+  .outro .privacy {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(34px, 5.2vw, 66px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+    max-width: 820px;
+  }
+  .outro .privacy em { color: var(--accent-soft); }
+  .outro .caveat {
+    font-family: var(--sans);
+    font-size: clamp(12px, 1.1vw, 14px);
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: 36px;
+    max-width: 74ch;
+  }
+
+  @media print {
+    body { scroll-snap-type: none; overflow: visible; height: auto; }
+    .slide { min-height: auto; page-break-inside: avoid; }
+    .scroll-cue { display: none; }
+    body::after { display: none; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
+
+<!-- ============== Slide 1: Title ============== -->
+<section class="slide title">
+  <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
+  <div class="slide-inner">
     <span class="eyebrow">Bigspin · token-roi</span>
-    <h1>Your Claude Code — token ROI</h1>
-    <p class="summary">{{ summary_line }}</p>
-    <div class="stats">
+    <h1>Your Claude Code — <em>token ROI</em></h1>
+    <p class="tagline">{{ summary_line }}</p>
+    <div class="title-stats">
       {% for s in stat_cards %}
-      <div class="stat">
-        <div class="v">{{ s.value }}</div>
-        <div class="l">{{ s.label }}</div>
+      <div class="title-stat">
+        <div class="num" data-count-up>{{ s.value }}</div>
+        <div class="lbl">{{ s.label }}</div>
       </div>
       {% endfor %}
     </div>
-  </header>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
 
-  <section class="chart">
+<!-- ============== Slide 2: Weekly trend ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">01 · Trend</span>
     <h2>Weekly trend</h2>
     <p class="explainer">Each line is the weekly median per session, indexed to your first two confident weeks (= 1.0×) on a log scale — so you can see whether output tokens, activity, and engineering outcomes are moving together or apart. Pink weeks had too few sessions to trust.</p>
     <div class="svg-holder">{{ trend_svg | safe }}</div>
-  </section>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
 
-  <section class="chart">
+<!-- ============== Slide 3: Weekly outcome distributions ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">02 · Distributions</span>
     <h2>Weekly outcome distributions</h2>
     <p class="explainer">For each outcome, the share of sessions per week that landed in each bucket (committed lines, agent-attributed lines, drafts, files touched, PRs). Red-dashed weeks are low-N and noisy.</p>
     <div class="svg-holder">{{ buckets_svg | safe }}</div>
-  </section>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
 
-  <section class="chart">
+<!-- ============== Slide 4: Token cost per unit of work ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">03 · Cost</span>
     <h2>Token cost per unit of work</h2>
     <p class="explainer">Tokens spent per PR, per committed line, per draft line, and per turn — computed weekly as sum(tokens) / sum(denominator), on a log scale. Weeks with no PRs or no git data drop out of the relevant line. Dashed reference lines show the SWE-chat opus-4-6 baseline.</p>
     <div class="svg-holder">{{ cost_ratios_svg | safe }}</div>
-  </section>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
 
-  <footer>
-    <p class="privacy">Everything runs locally. No upload, no telemetry.</p>
+<!-- ============== Slide 5: Outro ============== -->
+<section class="slide outro">
+  <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Private by design</span>
+    <p class="privacy">Everything runs locally.<br><em>No upload, no telemetry.</em></p>
     <p class="caveat">{{ reference.label }} — tokens/PR ~{{ "{:,}".format(reference.tokens_per_pr|int) }}, tokens/committed line ~{{ reference.tokens_per_committed_line|int }}, median session output tokens ~{{ "{:,}".format(reference.median_session_output_tokens|int) }}, median agent committed lines ~{{ reference.median_agent_committed_lines|int }}, median turns ~{{ reference.median_turns_per_session|int }}. {{ reference.caveat }}</p>
-  </footer>
-</div>
+  </div>
+</section>
+
+<script>
+  // ===== Count-up animation on numbers entering viewport =====
+  (function () {
+    const counters = document.querySelectorAll('[data-count-up]');
+    if (!counters.length || !('IntersectionObserver' in window)) return;
+    const targets = new Map();
+    counters.forEach(el => {
+      const raw = el.textContent.trim();
+      const n = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+      // Leave non-numeric values (e.g. "—") exactly as authored.
+      if (Number.isNaN(n)) return;
+      targets.set(el, n);
+      el.textContent = '0';
+    });
+    function animateCount(el) {
+      const target = targets.get(el);
+      if (target === undefined) return;
+      const duration = 1100;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    targets.forEach((_, el) => obs.observe(el));
+  })();
+
+  // ===== Slide snap navigation =====
+  // One wheel gesture / arrow / page-down animates to one slide. Trackpad
+  // inertia is filtered: after a jump fires, events small relative to the
+  // gesture peak are presumed inertia tail and dropped; a fresh strong swipe
+  // breaks through. Tall slides scroll natively until the boundary.
+  (function () {
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    if (slides.length < 2) return;
+
+    const ANIM_LOCK_MS = 500;
+    const INERTIA_WINDOW_MS = 1500;
+    const INERTIA_RATIO = 0.5;
+    const GESTURE_RESET_MS = 250;
+    let lastJumpTime = -Infinity;
+    let lastEventTime = 0;
+    let recentPeakDelta = 0;
+
+    function currentIndex() {
+      let best = 0, bestDist = Infinity;
+      for (let i = 0; i < slides.length; i++) {
+        const rect = slides[i].getBoundingClientRect();
+        const dist = Math.abs(rect.top);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      }
+      return best;
+    }
+
+    function jumpToSlide(idx) {
+      if (idx < 0 || idx >= slides.length) return;
+      const now = performance.now();
+      if (now - lastJumpTime < ANIM_LOCK_MS) return;
+      lastJumpTime = now;
+      slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.addEventListener('wheel', (e) => {
+      if (e.deltaY === 0) return;
+
+      const idx = currentIndex();
+      const slide = slides[idx];
+      const rect = slide.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      const slideOverflows = slide.offsetHeight > viewH + 4;
+      if (slideOverflows) {
+        const dir = e.deltaY > 0 ? 1 : -1;
+        if (dir > 0 && rect.bottom > viewH + 4) return; // room to scroll down
+        if (dir < 0 && rect.top < -4) return;            // room to scroll up
+      }
+
+      e.preventDefault();
+      const now = performance.now();
+      const absDelta = Math.abs(e.deltaY);
+
+      if (now - lastEventTime > GESTURE_RESET_MS) recentPeakDelta = 0;
+      lastEventTime = now;
+      recentPeakDelta = Math.max(recentPeakDelta, absDelta);
+
+      const sinceJump = now - lastJumpTime;
+      if (sinceJump < ANIM_LOCK_MS) return;
+      if (sinceJump < INERTIA_WINDOW_MS
+          && absDelta < recentPeakDelta * INERTIA_RATIO) {
+        return;
+      }
+
+      jumpToSlide(currentIndex() + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      const c = e.code;
+      const idx = currentIndex();
+      if (c === 'ArrowDown' || c === 'PageDown' || c === 'Space' || c === 'ArrowRight') {
+        e.preventDefault(); jumpToSlide(idx + 1);
+      } else if (c === 'ArrowUp' || c === 'PageUp' || c === 'ArrowLeft') {
+        e.preventDefault(); jumpToSlide(idx - 1);
+      } else if (c === 'Home') {
+        e.preventDefault(); jumpToSlide(0);
+      } else if (c === 'End') {
+        e.preventDefault(); jumpToSlide(slides.length - 1);
+      }
+    });
+  })();
+</script>
 </body>
 </html>
