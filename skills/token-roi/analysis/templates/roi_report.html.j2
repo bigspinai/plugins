@@ -123,6 +123,24 @@
   @media (max-width: 640px) {
     .brand-mark, .brand-primary { top: 20px; left: 20px; }
     .brand-primary { width: 104px; }
+    .slide { padding: 56px 18px 56px; }
+    .scroll-cue { right: 18px; bottom: 20px; }
+    .eyebrow { margin-bottom: 18px; }
+    /* Title slide */
+    .title-stats { margin-top: 36px; gap: 22px 24px; }
+    /* Chart slides: keep charts legible — never shrink labels below ~readable;
+       overflow-x on .svg-holder lets the user pan a chart wider than the screen. */
+    .svg-holder { margin-top: 22px; }
+    .svg-holder svg { min-width: 600px; }
+    .chart-slide .explainer { margin-top: 12px; }
+    /* Outro / install CTA */
+    .install-grid { gap: 32px; }
+    .install-copy { margin-top: 16px; }
+    .install-points { margin-top: 24px; }
+    .repo-card { padding: 22px; }
+    .repo-name { font-size: 22px; margin-top: 20px; }
+    .repo-desc, .repo-link { margin-top: 20px; }
+    .outro .caveat { margin-top: 36px; }
   }
 
   /* ============== Slide 1: Title ============== */
@@ -198,6 +216,10 @@
     margin: 30px auto 0;
     width: 100%;
     max-width: 840px;
+    /* On narrow screens the chart keeps a legible min-width and scrolls
+       horizontally rather than shrinking its labels into an unreadable blur. */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .svg-holder svg { display: block; width: 100%; height: auto; }
 
@@ -221,6 +243,116 @@
     margin-top: 36px;
     max-width: 74ch;
   }
+  /* Install CTA — mirrors the closing section of steeze.bigspin.ai:
+     headline + copy + bullets on the left, a clickable repo card on the
+     right. Wider container than the chart slides so the two columns breathe. */
+  .outro .slide-inner { max-width: 1080px; }
+  .install-grid { display: grid; gap: 44px; align-items: start; }
+  @media (min-width: 860px) {
+    .install-grid { grid-template-columns: 1fr 1fr; gap: 64px; }
+  }
+  .install-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 3.6vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+  }
+  .install-copy {
+    font-family: var(--sans);
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 1.6;
+    color: rgba(244, 243, 240, 0.80);
+    margin-top: 20px;
+    max-width: 52ch;
+  }
+  .install-points {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(244, 243, 240, 0.75);
+  }
+  .install-points li { display: flex; align-items: baseline; gap: 12px; }
+  .install-points .marker { color: var(--accent-soft); }
+  /* Right column: one big clickable card pointing at the repo README. */
+  .repo-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 16px;
+    border: 1px solid rgba(244, 243, 240, 0.15);
+    background: rgba(244, 243, 240, 0.04);
+    padding: 32px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .repo-card:hover {
+    border-color: rgba(244, 243, 240, 0.40);
+    background: rgba(244, 243, 240, 0.06);
+  }
+  .repo-head { display: flex; align-items: center; gap: 12px; }
+  .repo-icon {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(244, 243, 240, 0.10);
+    color: var(--paper);
+    flex-shrink: 0;
+  }
+  .repo-icon svg { display: block; width: 22px; height: 22px; }
+  .repo-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-soft);
+  }
+  .repo-name {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    margin-top: 24px;
+  }
+  .repo-desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(244, 243, 240, 0.80);
+    margin-top: 24px;
+  }
+  .repo-desc code {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--accent-soft);
+    background: rgba(147, 240, 153, 0.10);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .repo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--paper);
+  }
+  .repo-link .arrow { transition: transform 0.15s; }
+  .repo-card:hover .repo-link .arrow { transform: translateX(2px); }
+  .outro .caveat { margin-top: 56px; }
 
   @media print {
     body { scroll-snap-type: none; overflow: visible; height: auto; }
@@ -291,8 +423,26 @@
 <section class="slide outro">
   <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
   <div class="slide-inner">
-    <span class="eyebrow">Private by design</span>
-    <p class="privacy">Everything runs locally.<br><em>No upload, no telemetry.</em></p>
+    <div class="install-grid">
+      <div>
+        <h2 class="install-title">Want to see your token ROI?</h2>
+        <p class="install-copy">Open a new Claude Code session and follow our SKILL.md walkthrough. About 15 minutes later, you'll have a local report charting your token-vs-outcome ROI over time. Everything runs on your machine — no API key, no upload, no telemetry. Your session history is read locally and never leaves your computer.</p>
+        <ul class="install-points">
+          <li><span class="marker" aria-hidden="true">›</span>No data sharing, 100% local on your device</li>
+        </ul>
+      </div>
+      <a class="repo-card" href="https://github.com/bigspinai/plugins" target="_blank" rel="noopener">
+        <div class="repo-head">
+          <span class="repo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.13c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.47.11-3.07 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39s1.98.13 2.9.39c2.21-1.49 3.18-1.18 3.18-1.18.62 1.6.23 2.78.11 3.07.73.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.66.8.55C20.21 21.38 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+          </span>
+          <span class="repo-eyebrow">bigspin plugin on GitHub</span>
+        </div>
+        <p class="repo-name">bigspinai/plugins</p>
+        <p class="repo-desc">Plugin source, SKILL.md, and the full README with setup steps, requirements, and the <code>/token-roi</code> slash command.</p>
+        <span class="repo-link">View on GitHub <span class="arrow" aria-hidden="true">→</span></span>
+      </a>
+    </div>
     <p class="caveat">{{ reference.label }} — tokens/PR ~{{ "{:,}".format(reference.tokens_per_pr|int) }}, tokens/committed line ~{{ reference.tokens_per_committed_line|int }}, median session output tokens ~{{ "{:,}".format(reference.median_session_output_tokens|int) }}, median agent committed lines ~{{ reference.median_agent_committed_lines|int }}, median turns ~{{ reference.median_turns_per_session|int }}. {{ reference.caveat }}</p>
   </div>
 </section>
