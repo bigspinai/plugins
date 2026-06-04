@@ -1,6 +1,11 @@
 # bigspin
 
-A Claude Code plugin that analyzes your local session history and renders a personal "practice mirror" — your archetype, your signature moves, and how you compare against a measured baseline of 4,846 real sessions from 172 Claude Code users. Everything runs on your machine, with no API key required. No data ever leaves your laptop.
+A Claude Code plugin that analyzes your local session history and renders personal reports from it. Two commands ship today:
+
+- **`/persona`** — a "practice mirror": your archetype, your signature moves, and how you compare against a measured baseline of 4,846 real sessions from 172 Claude Code users.
+- **`/token-roi`** — a token-vs-outcome ROI report: weekly trends of token usage against engineering outcomes (committed lines, PRs, agent draft lines) and your tokens-per-unit-of-work cost ratios over time.
+
+Everything runs on your machine, with no API key required. No data ever leaves your laptop.
 
 ## Two ways to run this
 
@@ -15,6 +20,7 @@ Once it finishes running, you'll receive an HTML report that opens automatically
 /plugin marketplace add bigspinai/plugins
 /plugin install bigspin@bigspinai
 /persona
+/token-roi
 ```
 
 ### Option B — from a local clone
@@ -45,6 +51,29 @@ The `/persona` slash command (or the clone-and-run prompt) reads `~/.claude/proj
 ## Report style
 
 One HTML report ships with the plugin: a Bigspin-branded slide reveal with build-up cards and per-archetype illustrations, rendered from `report_content.json`. Best for sharing on social or one-screen-at-a-time discovery.
+
+## Token-ROI report (`/token-roi`)
+
+`/token-roi` is a separate report focused on **cost-efficiency over time**
+rather than style. It reads the same `~/.claude/projects/` history, computes
+weekly per-session metrics (output/input/cache tokens, turns, tool calls,
+duration; agent draft lines via Edit/Write/MultiEdit; files touched; PRs
+opened; and — when local `git` is available — committed lines and a
+conservative *agent-attributed* committed-line lower bound), and renders an
+HTML report with three inline-SVG charts:
+
+- **Weekly trend** — token usage vs activity vs engineering outcomes, each
+  indexed to your first two weeks on a log scale.
+- **Outcome distributions** — how your per-session outcomes bucket each week.
+- **Cost ratios** — tokens per PR, per committed line, per agent draft line,
+  per turn, week over week.
+
+Flags: `--days N` (lookback window, default 90) and `--no-git` (skip the
+git-based committed-line enrichment). Output lands in
+`~/.claude/bigspin/roi-<timestamp>/` (`report.html`, `roi.csv`, `hero.md`)
+and opens automatically. Like `/persona`, it's fully local and uses no API
+key — all charts are computed and drawn with the Python standard library plus
+the same `jinja2`/`jsonschema` venv.
 
 ## Privacy
 

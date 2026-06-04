@@ -1,0 +1,271 @@
+{
+  "meta": {
+    "projects_dir": "~/.claude/projects",
+    "days": 90,
+    "window_start": "2026-04-01",
+    "window_end": "2026-05-12",
+    "n_sessions": 71,
+    "git_enabled": true,
+    "low_n_threshold": 3
+  },
+  "summary": {
+    "date_range": { "earliest": "2026-04-01", "latest": "2026-05-12" },
+    "models": {
+      "claude-opus-4-7": 41,
+      "claude-sonnet-4-7": 22,
+      "claude-opus-4-6": 8
+    },
+    "median_output_tokens": 21450,
+    "median_turns": 13
+  },
+  "trend": [
+    {
+      "week": "2026-04-01",
+      "n": 14,
+      "confident": true,
+      "output_tokens": 18200,
+      "turn_count": 11,
+      "duration_seconds": 1820,
+      "committed_lines": 64,
+      "pr_count": 1,
+      "agent_committed_lines": 22,
+      "agent_total_edit_lines": 180
+    },
+    {
+      "week": "2026-04-08",
+      "n": 16,
+      "confident": true,
+      "output_tokens": 19800,
+      "turn_count": 12,
+      "duration_seconds": 2010,
+      "committed_lines": 88,
+      "pr_count": 1,
+      "agent_committed_lines": 31,
+      "agent_total_edit_lines": 240
+    },
+    {
+      "week": "2026-04-15",
+      "n": 2,
+      "confident": false,
+      "output_tokens": 31000,
+      "turn_count": 18,
+      "duration_seconds": 3400,
+      "committed_lines": null,
+      "pr_count": 0,
+      "agent_committed_lines": null,
+      "agent_total_edit_lines": 410
+    },
+    {
+      "week": "2026-04-22",
+      "n": 13,
+      "confident": true,
+      "output_tokens": 24600,
+      "turn_count": 14,
+      "duration_seconds": 2450,
+      "committed_lines": 120,
+      "pr_count": 2,
+      "agent_committed_lines": 44,
+      "agent_total_edit_lines": 320
+    },
+    {
+      "week": "2026-04-29",
+      "n": 1,
+      "confident": false,
+      "output_tokens": 9000,
+      "turn_count": 6,
+      "duration_seconds": 900,
+      "committed_lines": null,
+      "pr_count": 0,
+      "agent_committed_lines": null,
+      "agent_total_edit_lines": 70
+    },
+    {
+      "week": "2026-05-06",
+      "n": 25,
+      "confident": true,
+      "output_tokens": 27300,
+      "turn_count": 15,
+      "duration_seconds": 2680,
+      "committed_lines": 150,
+      "pr_count": 2,
+      "agent_committed_lines": 58,
+      "agent_total_edit_lines": 380
+    }
+  ],
+  "buckets": [
+    {
+      "col": "committed_lines",
+      "title": "Committed lines per session (any author)",
+      "buckets": [
+        { "label": "0", "color": "#ECEFF1" },
+        { "label": "1–10", "color": "#B0BEC5" },
+        { "label": "11–100", "color": "#64B5F6" },
+        { "label": "101–1000", "color": "#1976D2" },
+        { "label": "1000+", "color": "#0D47A1" }
+      ],
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "shares": { "0": 21.4, "1–10": 14.3, "11–100": 50.0, "101–1000": 14.3, "1000+": 0.0 } },
+        { "week": "2026-04-08", "n": 16, "shares": { "0": 12.5, "1–10": 18.8, "11–100": 50.0, "101–1000": 18.8, "1000+": 0.0 } },
+        { "week": "2026-04-15", "n": 2, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 0.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-04-22", "n": 13, "shares": { "0": 7.7, "1–10": 15.4, "11–100": 46.2, "101–1000": 30.8, "1000+": 0.0 } },
+        { "week": "2026-04-29", "n": 1, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 0.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-05-06", "n": 25, "shares": { "0": 8.0, "1–10": 12.0, "11–100": 44.0, "101–1000": 32.0, "1000+": 4.0 } }
+      ]
+    },
+    {
+      "col": "agent_committed_lines",
+      "title": "Agent-attributed committed lines",
+      "buckets": [
+        { "label": "0", "color": "#ECEFF1" },
+        { "label": "1–10", "color": "#FFE0B2" },
+        { "label": "11–100", "color": "#FFB74D" },
+        { "label": "101–1000", "color": "#F57C00" },
+        { "label": "1000+", "color": "#BF360C" }
+      ],
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "shares": { "0": 28.6, "1–10": 21.4, "11–100": 50.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-04-08", "n": 16, "shares": { "0": 18.8, "1–10": 25.0, "11–100": 56.2, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-04-15", "n": 2, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 0.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-04-22", "n": 13, "shares": { "0": 15.4, "1–10": 23.1, "11–100": 61.5, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-04-29", "n": 1, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 0.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-05-06", "n": 25, "shares": { "0": 12.0, "1–10": 20.0, "11–100": 64.0, "101–1000": 4.0, "1000+": 0.0 } }
+      ]
+    },
+    {
+      "col": "agent_total_edit_lines",
+      "title": "Agent draft lines total (Edit/Write/MultiEdit)",
+      "buckets": [
+        { "label": "0", "color": "#ECEFF1" },
+        { "label": "1–10", "color": "#FFE0B2" },
+        { "label": "11–100", "color": "#FFB74D" },
+        { "label": "101–1000", "color": "#F57C00" },
+        { "label": "1000+", "color": "#BF360C" }
+      ],
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "shares": { "0": 7.1, "1–10": 7.1, "11–100": 42.9, "101–1000": 42.9, "1000+": 0.0 } },
+        { "week": "2026-04-08", "n": 16, "shares": { "0": 6.2, "1–10": 6.2, "11–100": 37.5, "101–1000": 50.0, "1000+": 0.0 } },
+        { "week": "2026-04-15", "n": 2, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 0.0, "101–1000": 100.0, "1000+": 0.0 } },
+        { "week": "2026-04-22", "n": 13, "shares": { "0": 0.0, "1–10": 7.7, "11–100": 30.8, "101–1000": 53.8, "1000+": 7.7 } },
+        { "week": "2026-04-29", "n": 1, "shares": { "0": 0.0, "1–10": 0.0, "11–100": 100.0, "101–1000": 0.0, "1000+": 0.0 } },
+        { "week": "2026-05-06", "n": 25, "shares": { "0": 4.0, "1–10": 4.0, "11–100": 32.0, "101–1000": 52.0, "1000+": 8.0 } }
+      ]
+    },
+    {
+      "col": "n_files_touched",
+      "title": "Files touched per session",
+      "buckets": [
+        { "label": "0", "color": "#ECEFF1" },
+        { "label": "1", "color": "#A5D6A7" },
+        { "label": "2–5", "color": "#66BB6A" },
+        { "label": "6–20", "color": "#388E3C" },
+        { "label": "21+", "color": "#1B5E20" }
+      ],
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "shares": { "0": 14.3, "1": 21.4, "2–5": 42.9, "6–20": 21.4, "21+": 0.0 } },
+        { "week": "2026-04-08", "n": 16, "shares": { "0": 12.5, "1": 18.8, "2–5": 43.8, "6–20": 25.0, "21+": 0.0 } },
+        { "week": "2026-04-15", "n": 2, "shares": { "0": 0.0, "1": 0.0, "2–5": 50.0, "6–20": 50.0, "21+": 0.0 } },
+        { "week": "2026-04-22", "n": 13, "shares": { "0": 7.7, "1": 15.4, "2–5": 38.5, "6–20": 30.8, "21+": 7.7 } },
+        { "week": "2026-04-29", "n": 1, "shares": { "0": 0.0, "1": 100.0, "2–5": 0.0, "6–20": 0.0, "21+": 0.0 } },
+        { "week": "2026-05-06", "n": 25, "shares": { "0": 8.0, "1": 12.0, "2–5": 40.0, "6–20": 32.0, "21+": 8.0 } }
+      ]
+    },
+    {
+      "col": "pr_count",
+      "title": "PRs opened per session",
+      "buckets": [
+        { "label": "0", "color": "#ECEFF1" },
+        { "label": "1", "color": "#81C784" },
+        { "label": "2+", "color": "#1B5E20" }
+      ],
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "shares": { "0": 64.3, "1": 28.6, "2+": 7.1 } },
+        { "week": "2026-04-08", "n": 16, "shares": { "0": 62.5, "1": 31.2, "2+": 6.2 } },
+        { "week": "2026-04-15", "n": 2, "shares": { "0": 100.0, "1": 0.0, "2+": 0.0 } },
+        { "week": "2026-04-22", "n": 13, "shares": { "0": 53.8, "1": 38.5, "2+": 7.7 } },
+        { "week": "2026-04-29", "n": 1, "shares": { "0": 100.0, "1": 0.0, "2+": 0.0 } },
+        { "week": "2026-05-06", "n": 25, "shares": { "0": 48.0, "1": 40.0, "2+": 12.0 } }
+      ]
+    }
+  ],
+  "cost_ratios": [
+    {
+      "num": "output_tokens",
+      "den": "pr_count",
+      "label": "tokens / PR",
+      "color": "#1B5E20",
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "num_sum": 254800, "den_sum": 4 },
+        { "week": "2026-04-08", "n": 16, "num_sum": 316800, "den_sum": 5 },
+        { "week": "2026-04-15", "n": 2, "num_sum": 62000, "den_sum": 0 },
+        { "week": "2026-04-22", "n": 13, "num_sum": 319800, "den_sum": 6 },
+        { "week": "2026-04-29", "n": 1, "num_sum": 9000, "den_sum": 0 },
+        { "week": "2026-05-06", "n": 25, "num_sum": 682500, "den_sum": 11 }
+      ]
+    },
+    {
+      "num": "output_tokens",
+      "den": "agent_committed_lines",
+      "label": "tokens / agent-committed line",
+      "color": "#E65100",
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "num_sum": 254800, "den_sum": 308 },
+        { "week": "2026-04-08", "n": 16, "num_sum": 316800, "den_sum": 496 },
+        { "week": "2026-04-15", "n": 2, "num_sum": 62000, "den_sum": 0 },
+        { "week": "2026-04-22", "n": 13, "num_sum": 319800, "den_sum": 572 },
+        { "week": "2026-04-29", "n": 1, "num_sum": 9000, "den_sum": 0 },
+        { "week": "2026-05-06", "n": 25, "num_sum": 682500, "den_sum": 1450 }
+      ]
+    },
+    {
+      "num": "output_tokens",
+      "den": "committed_lines",
+      "label": "tokens / committed line (any author)",
+      "color": "#388E3C",
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "num_sum": 254800, "den_sum": 896 },
+        { "week": "2026-04-08", "n": 16, "num_sum": 316800, "den_sum": 1408 },
+        { "week": "2026-04-15", "n": 2, "num_sum": 62000, "den_sum": 0 },
+        { "week": "2026-04-22", "n": 13, "num_sum": 319800, "den_sum": 1560 },
+        { "week": "2026-04-29", "n": 1, "num_sum": 9000, "den_sum": 0 },
+        { "week": "2026-05-06", "n": 25, "num_sum": 682500, "den_sum": 3750 }
+      ]
+    },
+    {
+      "num": "output_tokens",
+      "den": "agent_total_edit_lines",
+      "label": "tokens / agent draft line (Edit/Write)",
+      "color": "#F57C00",
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "num_sum": 254800, "den_sum": 2520 },
+        { "week": "2026-04-08", "n": 16, "num_sum": 316800, "den_sum": 3840 },
+        { "week": "2026-04-15", "n": 2, "num_sum": 62000, "den_sum": 820 },
+        { "week": "2026-04-22", "n": 13, "num_sum": 319800, "den_sum": 4160 },
+        { "week": "2026-04-29", "n": 1, "num_sum": 9000, "den_sum": 70 },
+        { "week": "2026-05-06", "n": 25, "num_sum": 682500, "den_sum": 9500 }
+      ]
+    },
+    {
+      "num": "output_tokens",
+      "den": "turn_count",
+      "label": "tokens / turn",
+      "color": "#5D4037",
+      "weeks": [
+        { "week": "2026-04-01", "n": 14, "num_sum": 254800, "den_sum": 154 },
+        { "week": "2026-04-08", "n": 16, "num_sum": 316800, "den_sum": 192 },
+        { "week": "2026-04-15", "n": 2, "num_sum": 62000, "den_sum": 36 },
+        { "week": "2026-04-22", "n": 13, "num_sum": 319800, "den_sum": 182 },
+        { "week": "2026-04-29", "n": 1, "num_sum": 9000, "den_sum": 6 },
+        { "week": "2026-05-06", "n": 25, "num_sum": 682500, "den_sum": 375 }
+      ]
+    }
+  ],
+  "reference": {
+    "label": "SWE-chat opus-4-6 reference (phase D = high-effort restored, Apr 7-19 2026)",
+    "tokens_per_pr": 63874,
+    "tokens_per_committed_line": 169,
+    "median_session_output_tokens": 19114,
+    "median_agent_committed_lines": 19,
+    "median_turns_per_session": 11,
+    "caveat": "SWE-chat is opus-4-6. If you're on 4-7 or 4-8 these numbers are not a fair baseline — treat them as a historical reference point, not a target."
+  }
+}

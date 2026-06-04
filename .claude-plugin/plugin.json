@@ -1,12 +1,12 @@
 {
   "name": "bigspin",
   "version": "0.1.0",
-  "description": "Render a personal Claude Code practice report from your local session history.",
+  "description": "Render personal Claude Code reports from your local session history — a practice/archetype mirror (/persona) and a token-vs-outcome ROI report (/token-roi).",
   "author": {
     "name": "Bigspin",
     "url": "https://bigspin.ai"
   },
   "homepage": "https://github.com/bigspinai/plugins",
   "license": "MIT",
-  "keywords": ["analytics", "claude-code", "practice"]
+  "keywords": ["analytics", "claude-code", "practice", "roi", "tokens"]
 }

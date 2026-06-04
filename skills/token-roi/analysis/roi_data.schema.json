@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bigspin.ai/schemas/token-roi/roi_data.schema.json",
+  "title": "token-roi roi_data.json",
+  "description": "Contract for the data JSON emitted by compute_roi.py and consumed by render_report.py / charts.py. Git-derived metrics may be null.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "summary", "trend", "buckets", "cost_ratios", "reference"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["projects_dir", "days", "n_sessions", "git_enabled"],
+      "properties": {
+        "projects_dir": { "type": "string" },
+        "days": { "type": "integer", "minimum": 1 },
+        "window_start": { "type": ["string", "null"] },
+        "window_end": { "type": ["string", "null"] },
+        "n_sessions": { "type": "integer", "minimum": 0 },
+        "git_enabled": { "type": "boolean" },
+        "low_n_threshold": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date_range", "models", "median_output_tokens", "median_turns"],
+      "properties": {
+        "date_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["earliest", "latest"],
+          "properties": {
+            "earliest": { "type": ["string", "null"] },
+            "latest": { "type": ["string", "null"] }
+          }
+        },
+        "models": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "median_output_tokens": { "type": ["number", "null"] },
+        "median_turns": { "type": ["number", "null"] }
+      }
+    },
+    "trend": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["week", "n", "confident"],
+        "properties": {
+          "week": { "type": "string" },
+          "n": { "type": "integer", "minimum": 0 },
+          "confident": { "type": "boolean" },
+          "output_tokens": { "type": ["number", "null"] },
+          "turn_count": { "type": ["number", "null"] },
+          "duration_seconds": { "type": ["number", "null"] },
+          "committed_lines": { "type": ["number", "null"] },
+          "pr_count": { "type": ["number", "null"] },
+          "agent_committed_lines": { "type": ["number", "null"] },
+          "agent_total_edit_lines": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "buckets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["col", "title", "buckets", "weeks"],
+        "properties": {
+          "col": { "type": "string" },
+          "title": { "type": "string" },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "color"],
+              "properties": {
+                "label": { "type": "string" },
+                "color": { "type": "string" }
+              }
+            }
+          },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["week", "n", "shares"],
+              "properties": {
+                "week": { "type": "string" },
+                "n": { "type": "integer", "minimum": 0 },
+                "shares": {
+                  "type": "object",
+                  "additionalProperties": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "cost_ratios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["num", "den", "label", "color", "weeks"],
+        "properties": {
+          "num": { "type": "string" },
+          "den": { "type": "string" },
+          "label": { "type": "string" },
+          "color": { "type": "string" },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["week", "n", "num_sum", "den_sum"],
+              "properties": {
+                "week": { "type": "string" },
+                "n": { "type": "integer", "minimum": 0 },
+                "num_sum": { "type": "number" },
+                "den_sum": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label", 
+        "tokens_per_pr", 
+        "tokens_per_committed_line",
+        "median_session_output_tokens", 
+        "median_agent_committed_lines",
+        "median_turns_per_session", 
+        "caveat"
+      ],
+      "properties": {
+        "label": { "type": "string" },
+        "tokens_per_pr": { "type": "number" },
+        "tokens_per_committed_line": { "type": "number" },
+        "median_session_output_tokens": { "type": "number" },
+        "median_agent_committed_lines": { "type": "number" },
+        "median_turns_per_session": { "type": "number" },
+        "caveat": { "type": "string" }
+      }
+    }
+  }
+}

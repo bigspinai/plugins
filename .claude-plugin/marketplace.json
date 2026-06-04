@@ -8,10 +8,10 @@
     {
       "name": "bigspin",
       "source": "./",
-      "description": "Local Claude Code practice mirror — analyzes your ~/.claude/projects history and renders an HTML report + hero card. No data leaves your machine.",
+      "description": "Local Claude Code reports — a practice/archetype mirror (/persona) and a token-vs-outcome ROI report (/token-roi). Analyzes your ~/.claude/projects history and renders self-contained HTML. No data leaves your machine.",
       "version": "0.1.0",
       "category": "analysis",
-      "keywords": ["claude-code", "analytics", "practice", "report"]
+      "keywords": ["claude-code", "analytics", "practice", "report", "roi", "tokens"]
     }
   ]
 }
