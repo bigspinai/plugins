@@ -1,20 +1,25 @@
 # bigspin
 
-A Claude Code plugin that analyzes your local session history and renders personal reports from it. Two commands ship today:
+A Claude Code plugin that turns your local session history into personal reports. Everything runs on your machine — no API key required, and no data ever leaves your laptop.
 
-- **`/persona`** — a "practice mirror": your archetype, your signature moves, and how you compare against a measured baseline of 4,846 real sessions from 172 Claude Code users.
-- **`/token-roi`** — a token-vs-outcome ROI report: weekly trends of token usage against engineering outcomes (committed lines, PRs, agent draft lines) and your tokens-per-unit-of-work cost ratios over time.
+Two reports ship today:
 
-Everything runs on your machine, with no API key required. No data ever leaves your laptop.
+| Command | What it tells you |
+| --- | --- |
+| **`/persona`** | Your **practice archetype** — your signature moves and how you compare against a measured baseline of 4,846 real sessions from 172 Claude Code users. |
+| **`/token-roi`** | Your **token-vs-outcome ROI** — weekly trends of token usage against engineering outcomes (committed lines, PRs, agent draft lines) and your tokens-per-unit-of-work cost ratios over time. |
 
-## Two ways to run this
+Both read the session transcripts Claude Code already stores in `~/.claude/projects/` and write a self-contained HTML report (plus a short inline summary) under `~/.claude/bigspin/`.
+
+> Curious what `/persona` looks like before running the full pipeline? `/sample-persona-report` renders a demo from checked-in sample data in ~500ms — no analysis, no session access.
+
+## Two ways to run
+
+Both paths produce the same artifacts in the same place — pick whichever fits your setup.
 
 ### Option A — as a Claude Code plugin
 
-This works best from CLI. We do not recommend using the Claude desktop app.
-
-Open Claude Code and start a new session. Paste each slash command, one at a time. 
-Once it finishes running, you'll receive an HTML report that opens automatically.
+Works best from the CLI; we don't recommend the Claude desktop app for this. Open Claude Code and run, one command at a time:
 
 ```
 /plugin marketplace add bigspinai/plugins
@@ -23,86 +28,82 @@ Once it finishes running, you'll receive an HTML report that opens automatically
 /token-roi
 ```
 
+Each command finishes by opening its HTML report in your browser automatically.
+
 ### Option B — from a local clone
 
-Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill. If unfamiliar with cloning a repo, you can simply ask your agentic coding tool to do it for you, then continue with the following instructions. From the repo root, paste this prompt:
+Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copilot, …) to follow the skill you want. If you're not sure how to clone, just ask your tool to do it for you, then — from the repo root — paste one of the prompts below.
+
+**For the practice mirror (`/persona`):**
 
 ```
-I want to discover my Claude Code archetype.
-
 I've cloned https://github.com/bigspinai/plugins and am running from the repo root.
 
-Please follow `skills/persona/SKILL.md` end to end. The skill will analyze my local session history in ~/.claude/projects against the project's measured baseline corpus and produce the report. SKILL.md handles opening report.html in my browser when it's ready.
+Please follow `skills/persona/SKILL.md` end to end. It will analyze my local
+session history in ~/.claude/projects against the project's measured baseline
+corpus and produce the report. SKILL.md handles opening report.html in my
+browser when it's ready.
 ```
 
-Note: This is a better experience when Auto mode is turned on so you don't have to accept each item. But we leave that choice up to you. 
+**For the token-ROI report (`/token-roi`):**
 
-Either path produces the same artifacts at the same location — see below.
+```
+I've cloned https://github.com/bigspinai/plugins and am running from the repo root.
 
-## What you get
+Please follow `skills/token-roi/SKILL.md` end to end. It will analyze my local
+session history in ~/.claude/projects and produce the token-ROI report. SKILL.md
+handles opening report.html in my browser when it's ready.
+```
 
-The `/persona` slash command (or the clone-and-run prompt) reads `~/.claude/projects/` (where Claude Code already keeps your session history), runs a nine-step analysis pipeline, and writes a fresh batch of artifacts to `~/.claude/bigspin/<timestamp>/`:
+Tip: this is a smoother experience with Auto mode on, so you don't have to approve each step — but that's your call.
 
-- **`report.html`** — the full slide-style report. Opens automatically in your default browser. Mobile-vertical, screenshot-friendly.
-- **`report.md`** — the same report as markdown. Portable, no images, can be pasted back into Claude Code.
-- **`hero.md`** — a tight summary (~10 lines) printed inline in the chat right after the run finishes. The thing you actually read first.
-- **`hero_card.txt`** + **`hero_card.plain.txt`** — CLI hero card with and without ANSI color.
+## What each command produces
 
-## Report style
+All artifacts land under `~/.claude/bigspin/<run-id>/` on your machine.
 
-One HTML report ships with the plugin: a Bigspin-branded slide reveal with build-up cards and per-archetype illustrations, rendered from `report_content.json`. Best for sharing on social or one-screen-at-a-time discovery.
+**`/persona`** → `~/.claude/bigspin/<timestamp>/`
 
-## Token-ROI report (`/token-roi`)
+- `report.html` — the full slide-style report (Bigspin-branded, mobile-vertical, screenshot-friendly). Opens automatically.
+- `report.md` — the same report as portable markdown.
+- `hero.md` — a tight ~10-line summary printed inline in the chat. The thing you read first.
+- `hero_card.txt` + `hero_card.plain.txt` — CLI hero card, with and without ANSI color.
 
-`/token-roi` is a separate report focused on **cost-efficiency over time**
-rather than style. It reads the same `~/.claude/projects/` history, computes
-weekly per-session metrics (output/input/cache tokens, turns, tool calls,
-duration; agent draft lines via Edit/Write/MultiEdit; files touched; PRs
-opened; and — when local `git` is available — committed lines and a
-conservative *agent-attributed* committed-line lower bound), and renders an
-HTML report with three inline-SVG charts:
+**`/token-roi`** → `~/.claude/bigspin/roi-<timestamp>/`
 
-- **Weekly trend** — token usage vs activity vs engineering outcomes, each
-  indexed to your first two weeks on a log scale.
-- **Outcome distributions** — how your per-session outcomes bucket each week.
-- **Cost ratios** — tokens per PR, per committed line, per agent draft line,
-  per turn, week over week.
+- `report.html` — three inline-SVG charts: weekly trend (indexed, log scale), per-session outcome distributions, and tokens-per-unit-of-work cost ratios. Opens automatically.
+- `roi.csv` — anonymized per-week aggregates.
+- `hero.md` — a tight inline summary.
 
-Flags: `--days N` (lookback window, default 90) and `--no-git` (skip the
-git-based committed-line enrichment). Output lands in
-`~/.claude/bigspin/roi-<timestamp>/` (`report.html`, `roi.csv`, `hero.md`)
-and opens automatically. Like `/persona`, it's fully local and uses no API
-key — all charts are computed and drawn with the Python standard library plus
-the same `jinja2`/`jsonschema` venv.
+`/token-roi` accepts two flags: `--days N` (lookback window, default 90) and `--no-git` (skip the local-git committed-line attribution).
 
 ## Privacy
 
 Everything runs locally on your machine. No upload, no telemetry, no third-party request.
 
-- Session data: read from `~/.claude/projects/` (where Claude Code already stores it). Never copied off-disk.
-- Analysis: a Python pipeline + Claude Code subagents you spawn yourself. Subagents inherit your Claude Code session — no separate API key, no separate vendor.
-- Output: written to `~/.claude/bigspin/<timestamp>/` on your machine.
+- **Session data** is read from `~/.claude/projects/` (where Claude Code already stores it) and never copied off-disk.
+- **Analysis** is a Python pipeline. `/persona` additionally uses Claude Code subagents you spawn yourself — they inherit your session, so there's no separate API key and no separate vendor. `/token-roi` uses no subagents and no model calls at all.
+- **Output** is written only to `~/.claude/bigspin/<run-id>/`.
 
-You can audit the whole pipeline — it's ~4 K lines of Python plus markdown skill instructions, all bundled in the plugin.
+You can audit the whole thing — it's Python plus markdown skill instructions, all bundled in the plugin.
 
 ## Requirements
 
-- **A Claude Code-compatible agent** for the structured tagging step. Claude Code itself is the reference target; the clone-and-run flow works with any agentic tool that can spawn subagents.
-- **Python 3.10+** OR **`uv`** (`curl -LsSf https://astral.sh/uv/install.sh | sh`). On first run, the pipeline auto-bootstraps a venv at `~/.claude/bigspin/.venv` and installs `jinja2` + `jsonschema` into it. Idempotent on subsequent runs.
-- **Some Claude Code history.** 30+ sessions makes positioning stable; 10–30 still works with reduced confidence; under 10 produces a graceful "small history" version of the report.
-- **Time.** ~4–8 minutes wall-clock for a 20-session run, almost all of it the structured tagging step where subagents read transcripts in parallel.
+- **Claude Code** — or, for the clone-and-run flow, any agentic tool that can spawn subagents (needed for `/persona`'s tagging step).
+- **Python 3.10+** or **`uv`** (`curl -LsSf https://astral.sh/uv/install.sh | sh`). On first run the pipeline auto-bootstraps a venv at `~/.claude/bigspin/.venv` and installs `jinja2` + `jsonschema`. Both commands share this one venv.
+- **Some Claude Code history.** For `/persona`, 30+ sessions makes positioning stable; 10–30 still works with reduced confidence; under 10 produces a graceful "small history" version. `/token-roi` works with whatever sessions fall in its lookback window.
+- **Time.** `/persona` takes ~4–8 minutes for a 20-session run (mostly the parallel subagent tagging). `/token-roi` runs in seconds to a couple of minutes — the optional git pass dominates, and `--no-git` is near-instant.
 
 ## How it works
 
-Three layers of analysis combine into one report:
+**`/persona`** combines three layers into one report:
 
-1. **Deterministic signals** (iteration count, tool diversity, course corrections, tests attempted, …) — computed from message structure in <1 second.
-2. **Structured interpretive tagging** — 4 `persona-tagger` subagents in parallel tag ~36 signals against a fixed taxonomy. Produces aggregated rates positioned against the corpus baseline.
-3. **Open behavioral observation** — one `persona-tagger` subagent in `open` mode reads ~12 of the already-exported transcripts (a cross-project subset, schema-free) and writes the rich behavioral findings (distinctive patterns, sensitivity, suggested experiments).
+1. **Deterministic signals** (iteration count, tool diversity, course corrections, tests attempted, …) — computed from message structure in under a second.
+2. **Structured interpretive tagging** — 4 `persona-tagger` subagents tag ~36 signals against a fixed taxonomy, producing rates positioned against the corpus baseline.
+3. **Open behavioral observation** — one `persona-tagger` subagent reads ~12 exported transcripts schema-free and writes the distinctive patterns, sensitivity, and suggested experiments.
 
-The two tracks synthesize into the final report: the structured side gives the archetype label and the comparison bars; the open side gives the recognition lines, the suggested moves, and the framing voice.
+Full methodology lives in [`skills/persona/analysis/interpret.md`](skills/persona/analysis/interpret.md); the corpus baseline (measured 2026-05-01) is documented in [`skills/persona/baselines/README.md`](skills/persona/baselines/README.md).
 
-Full methodology lives in [`skills/persona/analysis/interpret.md`](skills/persona/analysis/interpret.md). The corpus baseline (measured 2026-05-01) is documented in [`skills/persona/baselines/README.md`](skills/persona/baselines/README.md).
+**`/token-roi`** is purely deterministic — no subagents, no model calls. It parses each session's tokens, turns, tool calls, agent draft lines (Edit/Write/MultiEdit), files touched, and PRs opened, and — when local `git` is available — attributes committed lines, including a conservative exact-match "agent-attributed" lower bound. It rolls these into weekly buckets and draws the charts with the Python standard library (no matplotlib/pandas/numpy).
 
 ## Contributing
 
