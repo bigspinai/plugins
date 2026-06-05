@@ -211,6 +211,7 @@
       "required": ["n_sessions_ref", "footnote"],
       "properties": {
         "n_sessions_ref": { "type": "string" },
+        "n_sessions_seen_ref": { "type": "string" },
         "date_earliest_ref": { "type": "string" },
         "date_latest_ref": { "type": "string" },
         "footnote": { "type": "string" }

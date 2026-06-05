@@ -365,9 +365,18 @@ the archetype's blind spot. The renderer reads them directly.
 
 ### Colophon
 
-`n_sessions_ref`, `date_earliest_ref`, `date_latest_ref` are
-straightforward refs into `metrics.json`. The footnote is the only
-authored copy.
+`n_sessions_ref`, `n_sessions_seen_ref`, `date_earliest_ref`,
+`date_latest_ref` are straightforward refs into `metrics.json`. The
+footnote is the only authored copy.
+
+`n_sessions_ref` is the sample we read in depth (the most-recent ~20 —
+our cap), while `n_sessions_seen_ref` (`n_sessions_seen`) is how many
+sessions are actually in the user's local history. The report leads with
+the *seen* count and discloses the sample as a deliberate choice, so the
+build-up slide never presents our 20-session cap as if it were an
+observation. Keep `n_sessions_seen_ref` pointed at `n_sessions_seen`; if
+omitted, the renderer falls back to the analyzed count and shows no
+sampling framing.
 
 ## Italic emphasis in headings
 

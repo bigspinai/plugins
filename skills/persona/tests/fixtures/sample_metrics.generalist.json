@@ -1,7 +1,8 @@
 {
-  "schema_version": "2.3",
+  "schema_version": "2.4",
   "n_sessions_tagged": 12,
   "n_sessions_total": 14,
+  "n_sessions_seen": 12,
   "structural": {
     "pr_rate_pct": 14.5,
     "date_range": {

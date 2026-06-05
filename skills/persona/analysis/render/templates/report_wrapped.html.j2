@@ -1046,15 +1046,24 @@
   <section class="slide buildup">
     <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
     <div class="slide-inner">
-      <div class="eyebrow">Across your last 30 days</div>
+      {# analyzed = the sample we read in depth (our cap, ~20). seen = how many
+         sessions you actually have locally. Presenting the cap as "what we
+         noticed" is dishonest — 20 is our setting, not an observation — so the
+         headline is the real count and the sample is disclosed as a choice. #}
+      {% set analyzed = view.colophon.n_sessions %}
+      {% set seen = view.colophon.n_sessions_seen or analyzed %}
+      {% set sampled = seen and analyzed and seen > analyzed %}
+      <div class="eyebrow">Across your Claude Code history</div>
       <h2 class="buildup-h">Here's what we noticed.</h2>
 
       <div class="buildup-stats">
         <div class="buildup-stat">
-          <div class="num" data-count-up>{{ view.colophon.n_sessions }}</div>
+          <div class="num" data-count-up>{{ seen }}</div>
           <div class="lbl">coding sessions</div>
         </div>
-        {% set total = view.colophon.n_sessions %}
+        {# Derived signal counts are what we actually observed in the sample we
+           read, so they stay scaled to the analyzed count, not the full history. #}
+        {% set total = analyzed %}
         {% set traits_view = view.section_identity.traits_view or [] %}
         {% set traits_raw  = view.section_identity.traits or [] %}
         {% set shown = namespace(n=0) %}
@@ -1078,7 +1087,11 @@
         {% endfor %}
       </div>
 
+      {% if sampled %}
+      <p class="buildup-sub">We read your {{ analyzed }} most recent sessions in depth to build your persona — here's how it came out.</p>
+      {% else %}
       <p class="buildup-sub">All of this adds up to a persona — here's how yours came out.</p>
+      {% endif %}
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
@@ -1168,6 +1181,9 @@
   <section class="slide method">
     <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
+      {% set analyzed = view.colophon.n_sessions %}
+      {% set seen = view.colophon.n_sessions_seen or analyzed %}
+      {% set sampled = seen and analyzed and seen > analyzed %}
       <div class="eyebrow">Methodology</div>
       <h2>How we got to these numbers.</h2>
       <p class="method-sub">The whole analysis ran on your machine. We compared your sessions against a baseline of 172 engineers and 4,846 real Claude Code sessions, and nothing left your laptop.</p>
@@ -1182,12 +1198,19 @@
           <div class="lbl">Personas scored from signals</div>
         </div>
         <div class="method-stat">
-          <div class="num">{{ view.colophon.n_sessions }}</div>
+          <div class="num">{{ analyzed }}</div>
+          {% if sampled %}
+          <div class="lbl">Most recent sessions we read, sampled from {{ seen }}</div>
+          {% else %}
           <div class="lbl">Of your sessions analyzed</div>
+          {% endif %}
         </div>
       </div>
 
       <ul class="method-list">
+        {% if sampled %}
+        <li>You have {{ seen }} sessions in your local Claude Code history. We read your {{ analyzed }} most recent in depth for this report — the {{ analyzed }} is our sampling choice, not a limit on how much you've coded.</li>
+        {% endif %}
         <li>We tagged your local Claude Code history for things like whether you wrote a plan, whether you ran the tests, whether you checked the output before moving on, and whether you broke the work into steps.</li>
         <li>Those signals were then compared to seven persona profiles built from the 172-engineer baseline.</li>
         <li>Your sessions were scored against each of the seven personas — that's the distribution you saw on slide 2.</li>

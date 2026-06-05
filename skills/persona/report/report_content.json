@@ -143,6 +143,7 @@
 
   "colophon": {
     "n_sessions_ref": "n_sessions_tagged",
+    "n_sessions_seen_ref": "n_sessions_seen",
     "date_earliest_ref": "structural.date_range.earliest",
     "date_latest_ref": "structural.date_range.latest",
     "footnote": "Out-of-session work — your CLAUDE.md, hooks, async review — isn't visible here. Re-run in a few weeks to see motion."

@@ -119,6 +119,7 @@
 
   "colophon": {
     "n_sessions_ref": "n_sessions_tagged",
+    "n_sessions_seen_ref": "n_sessions_seen",
     "date_earliest_ref": "structural.date_range.earliest",
     "date_latest_ref": "structural.date_range.latest",
     "footnote": "Multi-Mode Journeyman is a positive label, not a fallback. Re-run monthly to watch for motion."

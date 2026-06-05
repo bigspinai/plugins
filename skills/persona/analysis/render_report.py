@@ -500,8 +500,17 @@ def reflection_prompts_view(content: dict, metrics: dict) -> list[str]:
 
 def colophon_view(content: dict, metrics: dict) -> dict:
     c = content["colophon"]
+    n_sessions = resolve_optional(metrics, c.get("n_sessions_ref"))
+    # Total parent sessions in the user's local history. The report reads a
+    # recent sample (n_sessions); n_sessions_seen is how many they actually
+    # have. Optional ref — falls back to the analyzed count for older content
+    # JSON that predates the field, so no sampling framing is shown then.
+    n_sessions_seen = resolve_optional(metrics, c.get("n_sessions_seen_ref"))
+    if not n_sessions_seen:
+        n_sessions_seen = n_sessions
     return {
-        "n_sessions": resolve_optional(metrics, c.get("n_sessions_ref")),
+        "n_sessions": n_sessions,
+        "n_sessions_seen": n_sessions_seen,
         "earliest": resolve_optional(metrics, c.get("date_earliest_ref")),
         "latest": resolve_optional(metrics, c.get("date_latest_ref")),
         "footnote": c.get("footnote", ""),

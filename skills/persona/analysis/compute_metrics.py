@@ -1105,6 +1105,26 @@ def structural_metrics(rows: list[dict]) -> dict:
     }
 
 
+def history_parent_count(full_rows: list[dict] | None, floor: int = 0) -> int:
+    """Count of parent (non-subagent) sessions in the user's full local history.
+
+    The report analyzes a recent *sample* (the most-recent N parents — 20 by
+    default), but the user's local history is usually larger. This is the
+    honest "how many sessions you actually have" number, distinct from the
+    sampled count we read in depth. Presenting the sample cap as if it were an
+    observation ("20 sessions") is the bug this fixes: 20 is our setting, not
+    something we noticed.
+
+    ``full_rows`` is the raw ``sessions.csv`` (parents + subagents) passed via
+    ``--raw``. When it isn't provided we can't know the history size, so we
+    fall back to ``floor`` (the tagged count) and no sampling framing is shown.
+    """
+    if not full_rows:
+        return floor
+    seen = sum(1 for r in full_rows if r.get("is_subagent") != "true")
+    return max(seen, floor)
+
+
 def subagent_metrics(parent_rows: list[dict],
                      full_rows: list[dict] | None) -> dict:
     """Subagent usage stats. Needs the full (un-filtered) raw CSV.
@@ -1311,6 +1331,7 @@ def main(argv: list[str] | None = None) -> int:
     rc = reality_contact_summary(pairs)
     structural = structural_metrics(rows)
     subagents = subagent_metrics(rows, full_rows)
+    n_sessions_seen = history_parent_count(full_rows, floor=len(pairs))
 
     baselines = load_baselines(args.baselines)
     comparison = compare_to_baselines(signals, cats, engagement, style, baselines)
@@ -1366,9 +1387,10 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     metrics = {
-        "schema_version": "2.3",
+        "schema_version": "2.4",
         "n_sessions_tagged": len(pairs),
         "n_sessions_total": len(rows),
+        "n_sessions_seen": n_sessions_seen,
         "user_archetype": user_archetype,
         "signal_effect_sizes": effect_sizes,
         "shapes": shape_data,
@@ -1394,6 +1416,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Wrote metrics to {args.out}")
     print("=" * 64)
     print(f"  sessions tagged: {len(pairs)} / {len(rows)}")
+    print(f"  sessions seen (local history): {n_sessions_seen}")
     if user_archetype.get("available"):
         ua = user_archetype
         sec = (f", secondary {ua['secondary']} ({ua['secondary_score']})"
