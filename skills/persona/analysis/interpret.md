@@ -361,7 +361,8 @@ Set `include: false` only when:
 `reflection_prompts_ref` points at
 `user_archetype.baseline.reflection_prompts` (from research-authored
 `archetype_profiles.json`). Three prompts, second-person, anchored to
-the archetype's blind spot. The renderer reads them directly.
+the archetype's blind spot. The renderer reads them directly for the
+Markdown export.
 
 ### Colophon
 

@@ -88,7 +88,8 @@
   }
   /* Light-slide eyebrows use a dark fill on the light background. */
   .stand .eyebrow,
-  .method .eyebrow {
+  .method .eyebrow,
+  .dimensions .eyebrow {
     background: #1F3124;
     color: var(--paper);
   }
@@ -247,11 +248,60 @@
     letter-spacing: 0;
     font-size: 14px;
   }
+  .reveal .research-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    font-family: var(--sans);
+    font-size: clamp(14px, 1.2vw, 16px);
+    font-weight: 500;
+    color: var(--accent-soft);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.18s ease, gap 0.18s ease;
+  }
+  .reveal .research-link span { transition: transform 0.18s ease; }
+  .reveal .research-link:hover { border-bottom-color: var(--accent-soft); }
+  .reveal .research-link:hover span { transform: translateX(3px); }
+  /* Reveal: text left, persona card right. */
+  .reveal .slide-inner { max-width: 1100px; }
+  .reveal-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(240px, 28vw, 330px);
+    align-items: center;
+    gap: clamp(28px, 4vw, 56px);
+  }
+  .reveal-text h1 { font-size: clamp(40px, 6vw, 76px); }
+  .reveal-card {
+    background: #F8F8F6;
+    border-radius: 28px;
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 5;
+    box-shadow: 0 28px 64px rgba(0, 0, 0, 0.4);
+  }
+  .reveal-card img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  @media (max-width: 860px) {
+    .reveal-grid { grid-template-columns: 1fr; gap: 36px; }
+    .reveal-card { max-width: 320px; margin: 0 auto; }
+  }
 
   /* ============== Slide 2: Where you stand ============== */
   .stand {
     background: var(--paper);
     color: var(--ink);
+    padding-top: clamp(24px, 4vh, 56px);
+    padding-bottom: clamp(24px, 4vh, 56px);
   }
   .stand h2 {
     font-family: var(--display);
@@ -274,8 +324,8 @@
     line-height: 1.5;
   }
   .compare-line {
-    margin-top: 22px;
-    padding: 16px 22px;
+    margin-top: clamp(14px, 2vh, 22px);
+    padding: clamp(12px, 1.6vh, 16px) 22px;
     background: rgba(147, 240, 153, 0.20);
     font-family: var(--sans);
     font-size: clamp(15px, 1.4vw, 18px);
@@ -291,7 +341,7 @@
   }
   /* ============== Archetype distribution bars ============== */
   .distribution {
-    margin-top: 72px;
+    margin-top: clamp(14px, 2.4vh, 40px);
     max-width: 780px;
   }
   .distribution-caption {
@@ -301,15 +351,15 @@
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: var(--ink);
-    padding-bottom: 14px;
+    padding-bottom: clamp(8px, 1.4vh, 14px);
     border-bottom: 1px solid rgba(7, 14, 8, 0.10);
-    margin-bottom: 20px;
+    margin-bottom: clamp(12px, 2vh, 20px);
   }
   .bars {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: clamp(7px, 1.1vh, 16px);
   }
   .bar-row {
     display: grid;
@@ -370,7 +420,7 @@
   .bar-row.is-you .bar-label { font-weight: 700; }
   .bar-track {
     position: relative;
-    height: 36px;
+    height: clamp(21px, 2.7vh, 36px);
     background: #E7E5DF;
     border-radius: 12px;
     overflow: hidden;
@@ -393,10 +443,10 @@
     background: transparent;
     border: 1.5px dashed var(--ink);
     box-sizing: border-box;
-    /* Ensure the dashed pill is wide enough to fit the SHADOW label even
+    /* Ensure the dashed pill is wide enough to fit the YOUR OPPOSITE label even
        when the user's shadow score is 0%. Visual category, not a data lie:
        the actual % still reads on the right of the row. */
-    min-width: 108px;
+    min-width: 156px;
   }
   .bar-tag {
     position: absolute;
@@ -421,13 +471,36 @@
     font-variant-numeric: tabular-nums;
   }
   .bar-row.is-you .bar-value { font-weight: 700; }
+  .stand .shadow-note {
+    margin-top: clamp(14px, 2vh, 24px);
+    padding: clamp(11px, 1.5vh, 15px) 20px;
+    background: rgba(7, 14, 8, 0.04);
+    border: 0.5px solid var(--rule);
+    border-radius: 14px;
+    font-family: var(--sans);
+    font-size: clamp(13.5px, 1.15vw, 15px);
+    line-height: 1.45;
+    color: var(--ink-soft);
+    max-width: 760px;
+  }
+  .stand .shadow-note strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
   .stand .stand-footer {
     font-family: var(--sans);
     font-size: 14px;
     font-weight: 400;
     line-height: 1.4;
     color: #585C56;
-    margin-top: 32px;
+    margin-top: clamp(12px, 1.8vh, 22px);
+  }
+  /* Short laptop screens (e.g. 1366×768): compress the fixed-size headline
+     and lede so the whole slide — through the footnote — stays above the
+     fold. The bars already scale with vh; the display type does not. */
+  @media (max-height: 800px) {
+    .stand h2 { font-size: clamp(30px, 4vw, 44px); }
+    .stand .lede { font-size: clamp(16px, 1.5vw, 19px); margin-top: 10px; }
   }
   @media (max-width: 640px) {
     .bar-row {
@@ -437,7 +510,184 @@
     .bar-label { font-size: 14px; }
     .bar-value { font-size: 14px; }
     .bar-track { height: 30px; }
-    .bar-row.is-shadow .bar-fill { min-width: 92px; }
+    .bar-row.is-shadow .bar-fill { min-width: 132px; }
+  }
+
+  /* ============== Slide: Signature (you'll know this is you if…) ============== */
+  .signature {
+    background: var(--ink);
+    color: var(--paper);
+    padding-top: clamp(24px, 4vh, 56px);
+    padding-bottom: clamp(24px, 4vh, 56px);
+  }
+  .signature .slide-inner { max-width: 820px; }
+  .signature .eyebrow { margin-bottom: clamp(18px, 2.6vh, 30px); }
+  .recognition-heading {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: var(--paper);
+    margin-bottom: clamp(28px, 4vh, 48px);
+  }
+  .recognition-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2.4vh, 28px);
+  }
+  .recognition-list li {
+    position: relative;
+    padding-left: 30px;
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.7vw, 23px);
+    line-height: 1.5;
+    color: var(--paper);
+    opacity: 0.86;
+  }
+  .recognition-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent-soft);
+    font-weight: 700;
+    opacity: 1;
+  }
+  @media (max-height: 800px) {
+    .recognition-heading { font-size: clamp(28px, 4vw, 48px); }
+    .recognition-list li { font-size: clamp(16px, 1.5vw, 20px); }
+  }
+
+  /* ============== Slide: Three dimensions (Section I) ============== */
+  .dimensions {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .dimensions h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--ink);
+    max-width: 720px;
+  }
+  .dimensions h2 em {
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .dimensions .lede {
+    font-size: clamp(16px, 1.5vw, 20px);
+    color: var(--ink-soft);
+    margin-top: 14px;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+  .dimensions .slide-inner { max-width: 1080px; }
+  .dim-list {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+  .dim-card {
+    padding: 20px;
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .dim-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(18px, 1.7vw, 21px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .dim-desc {
+    font-family: var(--sans);
+    font-size: clamp(14px, 1.2vw, 15.5px);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+  .dim-bars {
+    margin-top: auto;
+    padding-top: 16px;
+    gap: 10px;
+  }
+  .dim-bars .bar-row {
+    grid-template-columns: 52px 1fr 40px;
+    column-gap: 10px;
+  }
+  .dim-bars .bar-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .dim-bars .bar-row.is-you .bar-label { color: var(--ink); }
+  .dim-bars .bar-track { height: 12px; border-radius: 7px; }
+  .dim-bars .bar-fill { border-radius: 7px; }
+  .dim-bars .bar-value { font-size: 14px; }
+  @media (max-width: 860px) {
+    .dimensions .slide-inner { max-width: 880px; }
+    .dim-list { grid-template-columns: 1fr; }
+    .dim-bars { margin-top: 18px; }
+    .dim-bars .bar-row { grid-template-columns: 64px 1fr 46px; column-gap: 14px; }
+  }
+
+  /* ============== Slide: Reflection — questions to carry (dark) ============== */
+  .reflect {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .reflect h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--paper);
+    max-width: 760px;
+  }
+  .reflect h2 em {
+    font-weight: 400;
+    color: var(--accent-soft);
+  }
+  .reflect-list {
+    margin-top: 40px;
+    list-style: none;
+    counter-reset: r;
+    max-width: 760px;
+  }
+  .reflect-list li {
+    counter-increment: r;
+    position: relative;
+    padding: 22px 0 22px 52px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.14);
+    font-family: var(--sans);
+    font-size: clamp(16px, 1.6vw, 20px);
+    line-height: 1.5;
+    color: var(--paper);
+    opacity: 0.92;
+  }
+  .reflect-list li:last-child { border-bottom: none; }
+  .reflect-list li::before {
+    content: counter(r, lower-roman) ".";
+    position: absolute;
+    left: 8px;
+    top: 22px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-soft);
   }
 
   /* ============== Slide 3: Methodology ============== */
@@ -1043,73 +1293,89 @@
   {% set primary_name = "The " + view.title.archetype_name %}
 
   <!-- ============== Slide 0: BUILD-UP — earn the reveal with specific facts ============== -->
-  <section class="slide buildup">
-    <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
-    <div class="slide-inner">
-      {# analyzed = the sample we read in depth (our cap, ~20). seen = how many
-         sessions you actually have locally. Presenting the cap as "what we
-         noticed" is dishonest — 20 is our setting, not an observation — so the
-         headline is the real count and the sample is disclosed as a choice. #}
-      {% set analyzed = view.colophon.n_sessions %}
-      {% set seen = view.colophon.n_sessions_seen or analyzed %}
-      {% set sampled = seen and analyzed and seen > analyzed %}
-      <div class="eyebrow">Across your Claude Code history</div>
-      <h2 class="buildup-h">Here's what we noticed.</h2>
-
-      <div class="buildup-stats">
-        <div class="buildup-stat">
-          <div class="num" data-count-up>{{ seen }}</div>
-          <div class="lbl">coding sessions</div>
-        </div>
-        {# Derived signal counts are what we actually observed in the sample we
-           read, so they stay scaled to the analyzed count, not the full history. #}
-        {% set total = analyzed %}
-        {% set traits_view = view.section_identity.traits_view or [] %}
-        {% set traits_raw  = view.section_identity.traits or [] %}
-        {% set shown = namespace(n=0) %}
-        {% for i in range(traits_view|length) %}
-          {% set t = traits_view[i] %}
-          {% set raw = traits_raw[i] if i < traits_raw|length else None %}
-          {% if t.kind == 'high' and shown.n < 2 and raw %}
-            {% if raw.data.kind == 'signal' %}
-              {% set sig = raw.data.signal %}
-            {% else %}
-              {% set sig = raw.data.field ~ ':' ~ raw.data.bucket %}
-            {% endif %}
-            {% set noun = signal_nouns.get(sig, sig|humanize) %}
-            {% set count = ((t.you_pct / 100) * total)|round|int %}
-            <div class="buildup-stat">
-              <div class="num" data-count-up>{{ count }}</div>
-              <div class="lbl">{{ noun }}</div>
-            </div>
-            {% set shown.n = shown.n + 1 %}
-          {% endif %}
-        {% endfor %}
-      </div>
-
-      {% if sampled %}
-      <p class="buildup-sub">We read your {{ analyzed }} most recent sessions in depth to build your persona — here's how it came out.</p>
-      {% else %}
-      <p class="buildup-sub">All of this adds up to a persona — here's how yours came out.</p>
-      {% endif %}
-    </div>
-    <div class="scroll-cue">Scroll</div>
-  </section>
-
   <!-- ============== Slide 1: REVEAL ============== -->
   <section class="slide reveal">
     <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
     <div class="slide-inner">
-      <div class="eyebrow">Your Claude Code persona</div>
-      <h1>The <em>{{ view.title.archetype_name }}</em></h1>
-      <p class="tagline">{{ you_taglines.get(primary_name, view.tagline) }}</p>
-      <p class="blurb">{{ you_blurbs.get(primary_name, "A way of working with Claude Code that emerges across your sessions.") }}</p>
-      <div class="badge-row">
-        <span class="pill">{{ view.colophon.n_sessions }} of your sessions analyzed</span>
+      {% set reveal_illustration_uri = ('assets/illustrations/' ~ view.title.archetype_name ~ '.png')|b64_asset %}
+      <div class="reveal-grid">
+        <div class="reveal-text">
+          <div class="eyebrow">Your Claude Code persona</div>
+          <h1>The <em>{{ view.title.archetype_name }}</em></h1>
+          <p class="tagline">{{ you_taglines.get(primary_name, view.tagline) }}</p>
+          <p class="blurb">{{ you_blurbs.get(primary_name, "A way of working with Claude Code that emerges across your sessions.") }}</p>
+          <div class="badge-row">
+            <span class="pill">{{ view.colophon.n_sessions }} of your sessions analyzed</span>
+          </div>
+          <a class="research-link" href="https://steeze.bigspin.ai/" target="_blank" rel="noopener noreferrer">Learn more about this research <span aria-hidden="true">&rarr;</span></a>
+        </div>
+        {% if reveal_illustration_uri %}
+        <div class="reveal-card">
+          <img src="{{ reveal_illustration_uri }}" alt="The {{ view.title.archetype_name }} persona illustration">
+        </div>
+        {% endif %}
       </div>
     </div>
     <div class="scroll-cue">Scroll</div>
   </section>
+
+  <!-- ============== Slide: SIGNATURE — you'll know this is you if… ============== -->
+  {% set tells = view.section_identity.recognition_lines or [] %}
+  {% if tells %}
+  <section class="slide signature">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+    <div class="slide-inner">
+      <div class="eyebrow">Your signature</div>
+      <h2 class="recognition-heading">You'll know this is you if&hellip;</h2>
+      <ul class="recognition-list">
+        {% for line in tells %}
+        <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+  {% endif %}
+
+  <!-- ============== Slide: THREE DIMENSIONS (Section I) ============== -->
+  {% set dims = view.section_identity.traits_view or [] %}
+  {% if dims %}
+  <section class="slide dimensions">
+    <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+    <div class="slide-inner">
+      <div class="eyebrow">Key insights</div>
+      <h2>3 dimensions that shape your <em>working style</em></h2>
+      <p class="lede">A few habits show up again and again across your sessions — here's how three of the strongest compare to your cohort.</p>
+      <div class="dim-list">
+        {% for t in dims %}
+        <div class="dim-card">
+          <div class="dim-name">{{ t.name_em }}</div>
+          <p class="dim-desc">{{ t.characterization }}</p>
+          <ul class="bars dim-bars">
+            <li class="bar-row is-you">
+              <div class="bar-label">You</div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: {{ t.you_pct|round(1) }}%"></div>
+              </div>
+              <div class="bar-value">{{ t.you_pct|round|int }}%</div>
+            </li>
+            {% if t.cohort_pct is not none %}
+            <li class="bar-row">
+              <div class="bar-label">Cohort</div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: {{ t.cohort_pct|round(1) }}%"></div>
+              </div>
+              <div class="bar-value">{{ t.cohort_pct|round|int }}%</div>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="scroll-cue">Scroll</div>
+  </section>
+  {% endif %}
 
   <!-- ============== Slide 2: WHERE YOU STAND ============== -->
   {% if landscape %}
@@ -1162,7 +1428,7 @@
             <div class="bar-track">
               <div class="bar-fill" style="width: {{ bar.pct|round(1) }}%">
                 {% if bar.is_user_primary %}<span class="bar-tag">★ You</span>{% endif %}
-                {% if bar.is_shadow %}<span class="bar-tag">Shadow</span>{% endif %}
+                {% if bar.is_shadow %}<span class="bar-tag">Your opposite</span>{% endif %}
               </div>
             </div>
             <div class="bar-value">{{ bar.pct|round|int }}%</div>
@@ -1170,6 +1436,10 @@
           {% endfor %}
         </ul>
       </div>
+
+      {% if view.shadow and view.shadow.name %}
+      <p class="shadow-note"><strong>Your opposite</strong> — the {{ view.shadow.name|replace('The ', '') }}: the mode at the far end of your defining axis{% if view.shadow.axis %} ({{ view.shadow.axis }}){% endif %}. It's your near-mirror image, not your runner-up.</p>
+      {% endif %}
 
       <div class="stand-footer">*Based on {{ view.colophon.n_sessions }} analyzed sessions</div>
     </div>
@@ -1213,7 +1483,7 @@
         {% endif %}
         <li>We tagged your local Claude Code history for things like whether you wrote a plan, whether you ran the tests, whether you checked the output before moving on, and whether you broke the work into steps.</li>
         <li>Those signals were then compared to seven persona profiles built from the 172-engineer baseline.</li>
-        <li>Your sessions were scored against each of the seven personas — that's the distribution you saw on slide 2.</li>
+        <li>Your sessions were scored against each of the seven personas — that's the distribution shown earlier.</li>
         <li>Everything ran locally on your machine, and no transcripts left your laptop.</li>
       </ul>
     </div>
