@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This repository is the **bigspin** Claude Code plugin. It analyzes a user's local Claude Code session history (`~/.claude/projects/`) and renders a personal "practice mirror" report — archetype, signature moves, and how the user compares against a measured baseline of 4,846 real sessions.
+This repository is the **bigspin** toolkit — a set of skills plus the **bigspin** Claude Code plugin. It analyzes a user's local Claude Code session history (`~/.claude/projects/`) and renders a personal "practice mirror" report — archetype, signature moves, and how the user compares against a measured baseline of 4,846 real sessions.
 
 This file is the cross-tool entrypoint for agentic coding tools (Codex, Cursor, Copilot, Claude Code, …) so the skill is discoverable without relying on a single tool's plugin format.
 

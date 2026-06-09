@@ -6,7 +6,7 @@
     "name": "Bigspin",
     "url": "https://bigspin.ai"
   },
-  "homepage": "https://github.com/bigspinai/plugins",
+  "homepage": "https://github.com/bigspinai/toolkit",
   "license": "MIT",
   "keywords": ["analytics", "claude-code", "practice", "roi", "tokens"]
 }

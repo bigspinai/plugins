@@ -1,6 +1,6 @@
-# CLAUDE.md — bigspin plugin (synced mirror)
+# CLAUDE.md — bigspin toolkit (synced mirror)
 
-This is the published mirror of the bigspin Claude Code plugin. **The source of truth lives in a private monorepo** (`bigspinai/bigspin-app`, at `public-repos/plugins/`), and a GitHub Actions workflow (`sync-plugins.yml`) propagates main-branch changes here. Do not edit files in this repo directly — they will be overwritten on the next sync. Open issues for bug reports; pull requests will be closed.
+This is the published mirror of the bigspin toolkit — a set of skills plus the **bigspin** Claude Code plugin. **The source of truth lives in a private monorepo** (`bigspinai/bigspin-app`, at `public-repos/toolkit/`), and a GitHub Actions workflow (`sync-toolkit.yml`) propagates main-branch changes here. Do not edit files in this repo directly — they will be overwritten on the next sync. Open issues for bug reports; pull requests will be closed.
 
 ## Layout
 

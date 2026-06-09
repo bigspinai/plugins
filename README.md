@@ -1,6 +1,6 @@
-# bigspin
+# bigspin toolkit
 
-A Claude Code plugin that turns your local session history into personal reports. Everything runs on your machine — no API key required, and no data ever leaves your laptop.
+A toolkit of skills and a Claude Code plugin (**bigspin**) that turns your local session history into personal reports. Everything runs on your machine — no API key required, and no data ever leaves your laptop.
 
 Two reports ship today:
 
@@ -22,7 +22,7 @@ Both paths produce the same artifacts in the same place — pick whichever fits 
 Works best from the CLI; we don't recommend the Claude desktop app for this. Open Claude Code and run, one command at a time:
 
 ```
-/plugin marketplace add bigspinai/plugins
+/plugin marketplace add bigspinai/toolkit
 /plugin install bigspin@bigspinai
 /persona
 /token-roi
@@ -37,7 +37,7 @@ Clone the repo and ask any agentic coding tool (Claude Code, Codex, Cursor, Copi
 **For the practice mirror (`/persona`):**
 
 ```
-I've cloned https://github.com/bigspinai/plugins and am running from the repo root.
+I've cloned https://github.com/bigspinai/toolkit and am running from the repo root.
 
 Please follow `skills/persona/SKILL.md` end to end. It will analyze my local
 session history in ~/.claude/projects against the project's measured baseline
@@ -48,7 +48,7 @@ my browser when it's ready.
 **For the token-ROI report (`/token-roi`):**
 
 ```
-I've cloned https://github.com/bigspinai/plugins and am running from the repo root.
+I've cloned https://github.com/bigspinai/toolkit and am running from the repo root.
 
 Please follow `skills/token-roi/SKILL.md` end to end. It will analyze my local
 session history in ~/.claude/projects and produce the token-ROI report. SKILL.md
@@ -107,7 +107,7 @@ Full methodology lives in [`skills/persona/analysis/interpret.md`](skills/person
 
 ## Contributing
 
-This repo is a synced mirror — the source of truth lives in a private monorepo. **Do not file PRs here.** Open issues for bug reports, but pull requests against `bigspinai/plugins` will be closed in favor of upstream changes.
+This repo is a synced mirror — the source of truth lives in a private monorepo. **Do not file PRs here.** Open issues for bug reports, but pull requests against `bigspinai/toolkit` will be closed in favor of upstream changes.
 
 ## License
 
