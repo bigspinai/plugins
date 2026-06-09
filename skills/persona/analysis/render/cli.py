@@ -84,7 +84,8 @@ def _bar_cohort(pct: float, width: int = 30, on: bool = True) -> str:
     return "█" * full + "░" * (width - full)
 
 
-def render(view: dict[str, Any], ansi: bool = True) -> str:
+def render(view: dict[str, Any], ansi: bool = True,
+           report_path: str = "report.html") -> str:
     out: list[str] = []
     title = view["title"]
     tagline = view["tagline"]
@@ -205,7 +206,7 @@ def render(view: dict[str, Any], ansi: bool = True) -> str:
                 + (f" · {col['earliest']} – {col['latest']}"
                    if col["earliest"] and col["latest"] else ""))
         out.append(_ansi(info, DIM, MUTED, on=ansi))
-    out.append("  " + _ansi("Full report:  open report/report.html",
+    out.append("  " + _ansi(f"Full report:  open {report_path}",
                             DIM, INK_SOFT, on=ansi))
 
     return "\n".join(out) + "\n"

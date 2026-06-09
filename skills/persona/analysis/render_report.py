@@ -5,11 +5,12 @@ Reads:
   - report/report_content.json  (LLM-authored, schema-validated)
   - report/metrics.json         (pure data, all numbers come from here)
 
-Writes:
-  - report/report.html
-  - report/report.md
-  - report/hero_card.txt        (with ANSI color)
-  - report/hero_card.plain.txt  (no ANSI)
+Writes (into --out, prefixed by --slug; bases defined in lib/report_io.py):
+  - <slug>-report.html
+  - <slug>-report.md
+  - <slug>-hero.md
+  - <slug>-hero-card.txt        (with ANSI color)
+  - <slug>-hero-card.plain.txt  (no ANSI)
 
 The LLM authors prose. The renderer fetches numbers via ``*_ref`` paths
 into ``metrics.json``. The schema gates the contract; an unresolved ref
@@ -31,6 +32,11 @@ import jsonschema
 HERE = Path(__file__).resolve().parent
 DEFAULT_SCHEMA = HERE / "report_content.schema.json"
 ARCHETYPE_PROFILES_PATH = HERE.parent / "baselines" / "archetype_profiles.json"
+
+# Shared filename scheme lives in the plugin-root lib/ (also on PYTHONPATH via
+# scripts/new_run.sh; the sys.path insert keeps standalone/CI runs working).
+sys.path.insert(0, str(HERE.parents[2] / "lib"))
+import report_io  # noqa: E402
 
 log = logging.getLogger("render_report")
 
@@ -600,6 +606,9 @@ def main(argv: list[str] | None = None) -> int:
                         default=Path("report/metrics.json"))
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     parser.add_argument("--out", type=Path, default=Path("report"))
+    parser.add_argument("--slug", default="",
+                        help="Filename prefix, e.g. 'persona' -> persona-report.html. "
+                             "Empty (default) yields bare names (report.html).")
     parser.add_argument("--only",
                         choices=["html", "markdown", "hero", "cli", "all"],
                         default="all")
@@ -633,25 +642,28 @@ def main(argv: list[str] | None = None) -> int:
     written: list[Path] = []
     if args.only in ("html", "all"):
         from render import html as html_renderer
-        out = args.out / "report.html"
+        out = report_io.out_path(args.out, args.slug, report_io.REPORT_HTML)
         out.write_text(html_renderer.render(view), encoding="utf-8")
         written.append(out)
     if args.only in ("markdown", "all"):
         from render import markdown as md_renderer
-        out = args.out / "report.md"
+        out = report_io.out_path(args.out, args.slug, report_io.REPORT_MD)
         out.write_text(md_renderer.render(view), encoding="utf-8")
         written.append(out)
     if args.only in ("hero", "all"):
         from render import hero_md as hero_md_renderer
-        out = args.out / "hero.md"
+        out = report_io.out_path(args.out, args.slug, report_io.HERO_MD)
         out.write_text(hero_md_renderer.render(view), encoding="utf-8")
         written.append(out)
     if args.only in ("cli", "all"):
         from render import cli as cli_renderer
-        ansi = args.out / "hero_card.txt"
-        plain = args.out / "hero_card.plain.txt"
-        ansi.write_text(cli_renderer.render(view, ansi=True), encoding="utf-8")
-        plain.write_text(cli_renderer.render(view, ansi=False), encoding="utf-8")
+        report_path = str(report_io.out_path(args.out, args.slug, report_io.REPORT_HTML))
+        ansi = report_io.out_path(args.out, args.slug, report_io.HERO_CARD_TXT)
+        plain = report_io.out_path(args.out, args.slug, report_io.HERO_CARD_PLAIN_TXT)
+        ansi.write_text(cli_renderer.render(view, ansi=True, report_path=report_path),
+                        encoding="utf-8")
+        plain.write_text(cli_renderer.render(view, ansi=False, report_path=report_path),
+                         encoding="utf-8")
         written.append(ansi)
         written.append(plain)
 
@@ -667,8 +679,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  shadow:    {view['shadow']['name']}")
     print(f"  sessions:  {view['colophon']['n_sessions']}")
     print()
-    if (args.out / "report.html").exists():
-        print(f"  open {args.out / 'report.html'}")
+    html_out = report_io.out_path(args.out, args.slug, report_io.REPORT_HTML)
+    if html_out.exists():
+        print(f"  open {html_out}")
     return 0
 
 

@@ -4,9 +4,9 @@
 Reads:
   - roi_data.json   (emitted by preprocessing/compute_roi.py, schema-validated)
 
-Writes (to --out):
-  - report.html     self-contained HTML with three inline-SVG charts
-  - hero.md         a tight summary for inline chat paste
+Writes (to --out, prefixed by --slug; bases defined in lib/report_io.py):
+  - <slug>-report.html     self-contained HTML with three inline-SVG charts
+  - <slug>-hero.md         a tight summary for inline chat paste
 
 The data JSON is validated against roi_data.schema.json before rendering;
 a schema failure aborts with a clear diff so the orchestrator can fix and
@@ -52,6 +52,11 @@ def _b64_asset(rel_path: str) -> str:
 # Make charts.py importable whether invoked as a script or a module.
 sys.path.insert(0, str(HERE))
 import charts  # noqa: E402
+
+# Shared filename scheme from the plugin-root lib/ (also on PYTHONPATH via
+# scripts/new_run.sh; the sys.path insert keeps standalone/CI runs working).
+sys.path.insert(0, str(HERE.parents[2] / "lib"))
+import report_io  # noqa: E402
 
 
 def load_and_validate(data_path: Path) -> dict:
@@ -178,11 +183,14 @@ def render_hero(roi_data: dict) -> str:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="Render roi_data.json into report.html + hero.md.")
+        description="Render roi_data.json into <slug>-report.html + <slug>-hero.md.")
     parser.add_argument("--data", type=Path, required=True,
                         help="Path to roi_data.json.")
     parser.add_argument("--out", type=Path, required=True,
                         help="Output directory.")
+    parser.add_argument("--slug", default="",
+                        help="Filename prefix, e.g. 'token-roi' -> token-roi-report.html. "
+                             "Empty (default) yields bare names (report.html).")
     args = parser.parse_args(argv)
 
     if not args.data.exists():
@@ -192,10 +200,10 @@ def main(argv=None) -> int:
     roi_data = load_and_validate(args.data)
     args.out.mkdir(parents=True, exist_ok=True)
 
-    html_path = args.out / "report.html"
+    html_path = report_io.out_path(args.out, args.slug, report_io.REPORT_HTML)
     html_path.write_text(render_html(roi_data), encoding="utf-8")
 
-    hero_path = args.out / "hero.md"
+    hero_path = report_io.out_path(args.out, args.slug, report_io.HERO_MD)
     hero_path.write_text(render_hero(roi_data), encoding="utf-8")
 
     print("=" * 64)

@@ -1,33 +1,41 @@
 # Skill: Run the Claude Code Practice Mirror
 
-You're the orchestrator. The user has cloned this repo, opened Claude Code
-in it, and asked you to run the analysis. Walk through the steps below,
-keeping the user in the loop at the decision points. Everything stays
-local — no API key required, no data leaves this directory.
+You're the orchestrator. The user invoked `/persona` (installed plugin) or
+asked you to follow this skill from a local clone, and wants you to run the
+analysis. Walk through the steps below, keeping the user in the loop at the
+decision points. Everything stays local — no API key required, and no data
+leaves the machine.
 
-The full voice + content rules live in
-`analysis/interpret.md`. Read that **after** you have `metrics.json` +
-`findings.md` and before you write `report/report_content.json`. Don't
-skip it.
+All per-run files are written under `$OUT_DIR`
+(`~/.claude/bigspin/persona-<timestamp>/`), established by the shared run
+contract in Setup below — never in the repo or the current directory.
+
+The full voice + content rules live in `$PERSONA/analysis/interpret.md`. Read
+that **after** you have `$OUT_DIR/metrics.json` + `$OUT_DIR/findings.md` and
+before you write `$OUT_DIR/report_content.json`. Don't skip it.
 
 ## At a glance — dual-track architecture
 
 ```
+All script paths are under $PERSONA; all I/O paths are under $OUT_DIR.
+
 preprocessing/sessions_to_csv.py   → sessions.csv             (1 row/session)
 preprocessing/enrich.py            → sessions_enriched.csv    (+ deterministic signal cols)
 
 [STRUCTURED TRACK — for positioned numbers]
-tagging/tag_sessions.py            → tag_prompt.md, transcripts/, _manifest.json
-[you orchestrate subagents]        → tagging/annotations/<session_id>.json
+tagging/tag_sessions.py            → tag_prompt.md, transcripts/, transcripts/_manifest.json
+[you orchestrate subagents]        → annotations/<session_id>.json
 tagging/tag_sessions.py --assemble → tagged_sessions.csv
-analysis/compute_metrics.py        → report/metrics.json
+analysis/compute_metrics.py        → metrics.json
 
 [OPEN TRACK — for rich behavioral observation]
-[you orchestrate one open subagent] → report/findings.md
+[you orchestrate one open subagent] → findings.md
 
 [AUTHORING — synthesis between both tracks]
-[you author]                       → report/report_content.json
-analysis/render_report.py          → report/report.html, report.md, hero.md, hero_card.txt
+[you author]                       → report_content.json
+analysis/render_report.py          → persona-report.html, persona-report.md,
+                                      persona-hero.md, persona-hero-card.txt,
+                                      persona-hero-card.plain.txt
 ```
 
 The output is **three artifacts sharing copy verbatim**: an HTML report, a
@@ -84,21 +92,40 @@ holding model constant, API and subagent paths produce ~5pp drift on
 average. Switching models produces ~11pp drift. Model-pinning matters
 more than delivery-pinning.
 
-## Step 1 — orient and check prerequisites
+## Setup — resolve paths and start the run
 
-Run `python --version` to confirm Python ≥ 3.10. Check that `jinja2` and
-`jsonschema` are installed; if not, tell the user to run
-`pip install -r requirements.txt`. (Preprocessing has zero deps; metrics
-is stdlib; the renderer needs jinja2 and jsonschema. The legacy API path
-also needs `anthropic`.)
+Resolve the plugin root. Prefer `$BIGSPIN_PLUGIN_ROOT`; if unset, walk up
+from this file (two levels: `skills/persona/SKILL.md` → plugin root). Path
+shorthands used below:
+- `$PERSONA` = `$BIGSPIN_PLUGIN_ROOT/skills/persona` (read-only code,
+  fixtures, baselines, templates).
+- `$SCRIPTS` = `$BIGSPIN_PLUGIN_ROOT/scripts` (shared run contract + helpers).
 
-Then run the renderer smoke test:
+Start the run with the shared entrypoint:
 
 ```bash
-python tests/smoke_test.py
+eval "$(bash "$SCRIPTS/new_run.sh" persona)"
 ```
 
-Free, fast, < 1 second. Confirms the renderer can produce all four
+`new_run.sh` is the single source of truth for the run contract: it
+bootstraps the shared venv, creates the output directory, and exports `PY`
+(venv interpreter), `RUN_ID` (`persona-<timestamp>`), `OUT_DIR`
+(`~/.claude/bigspin/$RUN_ID`, already created), plus `BIGSPIN_PLUGIN_ROOT`
+and `PYTHONPATH`. **Every** file this skill writes — intermediate CSVs, the
+user's exported transcripts, annotations, and the final report — goes under
+`$OUT_DIR`, never in the repo or cwd. If it exits non-zero, surface stderr
+and stop (exit 2 = no uv/python3, exit 3 = venv/pip failure).
+
+## Step 1 — orient and check prerequisites
+
+Setup already bootstrapped the venv (`$PY`). Confirm the renderer works
+before touching the user's data:
+
+```bash
+"$PY" "$PERSONA/tests/smoke_test.py"
+```
+
+Free, fast, < 1 second. Confirms the renderer can produce all five
 artifacts from the schema + the Showrunner exemplar + the Multi-Mode Journeyman edge
 case. **If it fails, stop and surface the error to the user.**
 
@@ -123,14 +150,15 @@ ask if they want to override defaults:
 ## Step 2 — preprocess
 
 ```bash
-python preprocessing/sessions_to_csv.py --out sessions.csv --min-messages 5
+"$PY" "$PERSONA/preprocessing/sessions_to_csv.py" \
+    --out "$OUT_DIR/sessions.csv" --min-messages 5
 ```
 
-Or with a custom path:
+Or with a custom sessions root:
 
 ```bash
-python preprocessing/sessions_to_csv.py /path/to/sessions \
-    --out sessions.csv --min-messages 5
+"$PY" "$PERSONA/preprocessing/sessions_to_csv.py" /path/to/sessions \
+    --out "$OUT_DIR/sessions.csv" --min-messages 5
 ```
 
 Surface the script's summary back to the user — parent count, subagent
@@ -140,7 +168,8 @@ and ask if they want to filter (rare, usually fine).
 ## Step 3 — enrich (deterministic signals, no API call)
 
 ```bash
-python preprocessing/enrich.py sessions.csv --out sessions_enriched.csv
+"$PY" "$PERSONA/preprocessing/enrich.py" "$OUT_DIR/sessions.csv" \
+    --out "$OUT_DIR/sessions_enriched.csv"
 ```
 
 Surface the per-script summary — it lists the 14 column names added.
@@ -153,16 +182,17 @@ five sub-steps; the helpers all live in `tagging/tag_sessions.py`.
 ### 4a. Export the prompt + per-session transcripts
 
 ```bash
-python tagging/tag_sessions.py --export-prompt tagging/tag_prompt.md
-python tagging/tag_sessions.py sessions_enriched.csv \
-    --export-transcripts tagging/transcripts/ \
+"$PY" "$PERSONA/tagging/tag_sessions.py" --export-prompt "$OUT_DIR/tag_prompt.md"
+"$PY" "$PERSONA/tagging/tag_sessions.py" "$OUT_DIR/sessions_enriched.csv" \
+    --export-transcripts "$OUT_DIR/transcripts/" \
     --limit 20
 ```
 
 The first line writes the ~20 KB system prompt (built from
-`tagging/taxonomy.json`) to `tag_prompt.md`. The second writes one
-`<session_id>.txt` per selected session into `tagging/transcripts/`,
-plus a `_manifest.json` that the assembler reads later.
+`$PERSONA/tagging/taxonomy.json`) to `$OUT_DIR/tag_prompt.md`. The second
+writes one `<session_id>.txt` per selected session into
+`$OUT_DIR/transcripts/`, plus a `_manifest.json` that the assembler reads
+later.
 
 ### 4b. Disclose token usage and get explicit consent (required gate)
 
@@ -173,7 +203,7 @@ explicit consent before going further.
 Run the estimate (still free, no tokens spent):
 
 ```bash
-python tagging/tag_sessions.py --run-estimate tagging/transcripts/
+"$PY" "$PERSONA/tagging/tag_sessions.py" --run-estimate "$OUT_DIR/transcripts/"
 ```
 
 It prints the structured sample size (call it **N**) and an estimated
@@ -199,23 +229,24 @@ cost nothing.
 
 Spawn N subagents in parallel — typically **4 subagents × 5 transcripts
 each** for a 20-session run. Use the `Explore` subagent type or
-`general-purpose`; they need read access to `tagging/transcripts/` and
-write access to `tagging/annotations/`. (`compute_metrics.py` assumes no
-fixed session count, so other splits are fine.)
+`general-purpose`; they need read access to `$OUT_DIR/transcripts/` and
+write access to `$OUT_DIR/annotations/` (create it first:
+`mkdir -p "$OUT_DIR/annotations/"`). (`compute_metrics.py` assumes no fixed
+session count, so other splits are fine.)
 
 Each subagent's prompt:
 
 ```
 Your job is to tag Claude Code session transcripts against a fixed
-taxonomy. Read the system prompt at `tagging/tag_prompt.md` end to end —
+taxonomy. Read the system prompt at `$OUT_DIR/tag_prompt.md` end to end —
 it defines the output schema, the categorical fields, and per-signal
 rubrics with strength anchors.
 
 For each transcript file in this batch:
-  <list of paths to tagging/transcripts/<session_id>.txt>
+  <list of absolute paths to $OUT_DIR/transcripts/<session_id>.txt>
 
 Read the FULL transcript, then write the JSON annotation to
-`tagging/annotations/<session_id>.json`. The JSON must conform to the
+`$OUT_DIR/annotations/<session_id>.json`. The JSON must conform to the
 schema described in tag_prompt.md (the OUTPUT FORMAT section). No
 markdown fencing, no commentary — just the JSON object.
 
@@ -233,10 +264,10 @@ subagent time depending on transcript length.
 ### 4d. Assemble
 
 ```bash
-python tagging/tag_sessions.py \
-    --assemble tagging/annotations/ \
-    --manifest tagging/transcripts/_manifest.json \
-    --out tagged_sessions.csv
+"$PY" "$PERSONA/tagging/tag_sessions.py" \
+    --assemble "$OUT_DIR/annotations/" \
+    --manifest "$OUT_DIR/transcripts/_manifest.json" \
+    --out "$OUT_DIR/tagged_sessions.csv"
 ```
 
 This emits the canonical `tagged_sessions.csv` — same shape
@@ -247,7 +278,7 @@ to fill the gaps before continuing.
 ### 4e. Validate
 
 A spot-check is worth doing: read 2–3 random files from
-`tagging/annotations/` and confirm they conform to the schema (all
+`$OUT_DIR/annotations/` and confirm they conform to the schema (all
 required top-level fields present, signals have `evidence` strings,
 reality-contact signals have `trigger` + `surface_type`). The renderer
 won't catch malformed annotations until much later.
@@ -255,9 +286,9 @@ won't catch malformed annotations until much later.
 ## Step 5 — compute metrics
 
 ```bash
-python analysis/compute_metrics.py tagged_sessions.csv \
-    --raw sessions.csv \
-    --out report/metrics.json
+"$PY" "$PERSONA/analysis/compute_metrics.py" "$OUT_DIR/tagged_sessions.csv" \
+    --raw "$OUT_DIR/sessions.csv" \
+    --out "$OUT_DIR/metrics.json"
 ```
 
 Pure stdlib, fast. Same as before. Output is the JSON file the renderer
@@ -269,7 +300,7 @@ This is the **new** track. Spawn **one** general-purpose subagent (or the
 `persona-tagger` agent in `open` mode). Hand it ~12 of the cleaned
 transcript files **already exported in Step 4a** — pick a cross-project
 subset by maximizing distinct `project` values in
-`tagging/transcripts/_manifest.json`. Reusing those stripped transcripts
+`$OUT_DIR/transcripts/_manifest.json`. Reusing those stripped transcripts
 (rather than re-reading raw `~/.claude/projects/*.jsonl`) is the main
 token saving: the open pass produces qualitative `findings.md` that is
 never positioned against the baseline, so reading the cleaned export
@@ -283,10 +314,10 @@ payloads are stripped; the conversation is intact). Read enough of each
 to form a behavioral picture; you don't need to read every line.
 
 Sessions:
-  <list of paths to tagging/transcripts/<session_id>.txt>
+  <list of absolute paths to $OUT_DIR/transcripts/<session_id>.txt>
   (a cross-project subset of the exported transcripts)
 
-Return findings as markdown to `report/findings.md` with these sections:
+Return findings as markdown to `$OUT_DIR/findings.md` with these sections:
 
   ## Character
   One sentence describing how this user collaborates with Claude. Vivid,
@@ -314,17 +345,17 @@ No verbatim transcript quotes — paraphrase. No percentages — those
 belong on the structured side.
 ```
 
-The output `report/findings.md` is what carries the rich behavioral
+The output `$OUT_DIR/findings.md` is what carries the rich behavioral
 observation into Step 7. This is the part the structured tagger can't do
 because the schema is a ceiling on what it can find.
 
 ## Step 7 — author report_content.json
 
-**Now read `analysis/interpret.md` end to end.** It has the voice rules,
+**Now read `$PERSONA/analysis/interpret.md` end to end.** It has the voice rules,
 structural contract, Y-vocabulary table for picking the title verb, and
 the new section on synthesizing across structured + open tracks.
 
-Then author `report/report_content.json`:
+Then author `$OUT_DIR/report_content.json`:
 
 - **Title, fingerprint badge, traits, comparison bars, archetype label,
   shadow** → from `metrics.json` via `*_ref` paths. (Same as before.)
@@ -335,7 +366,7 @@ Then author `report/report_content.json`:
   archetype) and the open thesis (the distinctive pattern) in one
   breath.
 
-The schema is at `analysis/report_content.schema.json`. The renderer
+The schema is at `$PERSONA/analysis/report_content.schema.json`. The renderer
 validates and exits non-zero on failure.
 
 **You write strings. The renderer fetches numbers via `*_ref` paths.**
@@ -359,35 +390,47 @@ Pre-flight checklist (also in interpret.md):
 ## Step 8 — render
 
 ```bash
-python analysis/render_report.py
+"$PY" "$PERSONA/analysis/render_report.py" \
+    --content "$OUT_DIR/report_content.json" \
+    --metrics "$OUT_DIR/metrics.json" \
+    --out "$OUT_DIR" \
+    --slug persona
 ```
 
-Validates the content JSON, resolves all `*_ref` paths, writes:
+Validates the content JSON, resolves all `*_ref` paths, writes (all under
+`$OUT_DIR`):
 
-- `report/report.html`           — full report
-- `report/report.md`             — markdown version
-- `report/hero.md`               — chat-paste summary (the inline deliverable)
-- `report/hero_card.txt`         — CLI hero card with ANSI
-- `report/hero_card.plain.txt`   — same, no ANSI
+- `persona-report.html`         — full report
+- `persona-report.md`           — markdown version
+- `persona-hero.md`             — chat-paste summary (the inline deliverable)
+- `persona-hero-card.txt`       — CLI hero card with ANSI
+- `persona-hero-card.plain.txt` — same, no ANSI
 
 If validation fails or a `*_ref` doesn't resolve, the renderer prints a
 diff and exits non-zero. Fix the content JSON and re-run.
 
 ## Step 9 — close
 
-Paste the contents of `report/hero.md` inline in the chat. That is the
-deliverable — a tight markdown summary the user can read in place
-without opening anything. Then a single CTA:
+Open the report in the browser:
 
-> Open `report/report.html` for the full read.
+```bash
+bash "$SCRIPTS/open_report.sh" "$OUT_DIR/persona-report.html"
+```
+
+Then paste the contents of `$OUT_DIR/persona-hero.md` inline in the chat.
+That is the deliverable — a tight markdown summary the user can read in
+place without opening anything. Then a single CTA:
+
+> Open `$OUT_DIR/persona-report.html` for the full read.
 
 Stop there. No file inventory, no `cat`'ing the ANSI hero card, no
 "want me to dive into…" follow-up question. The user can ask if they
 want more.
 
 If the user later asks "is this private?" — yes, fully. With the
-subagent path, no data leaves this directory. They can verify by
-reading `tagging/tag_sessions.py` and `analysis/compute_metrics.py`.
+subagent path, no data leaves the machine; all output stays under
+`$OUT_DIR`. They can verify by reading `$PERSONA/tagging/tag_sessions.py`
+and `$PERSONA/analysis/compute_metrics.py`.
 
 ## Failure modes to watch for
 
@@ -416,13 +459,13 @@ reading `tagging/tag_sessions.py` and `analysis/compute_metrics.py`.
 The API-based tagger still works:
 
 ```bash
-python tagging/tag_sessions.py sessions_enriched.csv \
-    --out tagged_sessions.csv \
+"$PY" "$PERSONA/tagging/tag_sessions.py" "$OUT_DIR/sessions_enriched.csv" \
+    --out "$OUT_DIR/tagged_sessions.csv" \
     --limit 50 \
     --model claude-opus-4-7 \
     --dry-run    # cost estimate first
-python tagging/tag_sessions.py sessions_enriched.csv \
-    --out tagged_sessions.csv \
+"$PY" "$PERSONA/tagging/tag_sessions.py" "$OUT_DIR/sessions_enriched.csv" \
+    --out "$OUT_DIR/tagged_sessions.csv" \
     --limit 50 \
     --model claude-opus-4-7 \
     --yes

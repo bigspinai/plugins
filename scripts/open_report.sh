@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Open a file (typically the persona report.html) in the user's default
-# browser. Works on macOS, Linux, and Windows (WSL/Git Bash).
+# Open a file (typically a report's HTML, e.g. persona-report.html) in the
+# user's default browser. Works on macOS, Linux, and Windows (WSL/Git Bash).
 #
 # Usage:
 #   open_report.sh <path-to-file>

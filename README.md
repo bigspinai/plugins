@@ -41,8 +41,8 @@ I've cloned https://github.com/bigspinai/plugins and am running from the repo ro
 
 Please follow `skills/persona/SKILL.md` end to end. It will analyze my local
 session history in ~/.claude/projects against the project's measured baseline
-corpus and produce the report. SKILL.md handles opening report.html in my
-browser when it's ready.
+corpus and produce the report. SKILL.md handles opening persona-report.html in
+my browser when it's ready.
 ```
 
 **For the token-ROI report (`/token-roi`):**
@@ -52,7 +52,7 @@ I've cloned https://github.com/bigspinai/plugins and am running from the repo ro
 
 Please follow `skills/token-roi/SKILL.md` end to end. It will analyze my local
 session history in ~/.claude/projects and produce the token-ROI report. SKILL.md
-handles opening report.html in my browser when it's ready.
+handles opening token-roi-report.html in my browser when it's ready.
 ```
 
 Tip: this is a smoother experience with Auto mode on, so you don't have to approve each step — but that's your call.
@@ -61,18 +61,18 @@ Tip: this is a smoother experience with Auto mode on, so you don't have to appro
 
 All artifacts land under `~/.claude/bigspin/<run-id>/` on your machine.
 
-**`/persona`** → `~/.claude/bigspin/<timestamp>/`
+**`/persona`** → `~/.claude/bigspin/persona-<timestamp>/`
 
-- `report.html` — the full slide-style report (Bigspin-branded, mobile-vertical, screenshot-friendly). Opens automatically.
-- `report.md` — the same report as portable markdown.
-- `hero.md` — a tight ~10-line summary printed inline in the chat. The thing you read first.
-- `hero_card.txt` + `hero_card.plain.txt` — CLI hero card, with and without ANSI color.
+- `persona-report.html` — the full slide-style report (Bigspin-branded, mobile-vertical, screenshot-friendly). Opens automatically.
+- `persona-report.md` — the same report as portable markdown.
+- `persona-hero.md` — a tight ~10-line summary printed inline in the chat. The thing you read first.
+- `persona-hero-card.txt` + `persona-hero-card.plain.txt` — CLI hero card, with and without ANSI color.
 
-**`/token-roi`** → `~/.claude/bigspin/roi-<timestamp>/`
+**`/token-roi`** → `~/.claude/bigspin/token-roi-<timestamp>/`
 
-- `report.html` — three inline-SVG charts: weekly trend (indexed, log scale), per-session outcome distributions, and tokens-per-unit-of-work cost ratios. Opens automatically.
+- `token-roi-report.html` — three inline-SVG charts: weekly trend (indexed, log scale), per-session outcome distributions, and tokens-per-unit-of-work cost ratios. Opens automatically.
 - `roi.csv` — anonymized per-week aggregates.
-- `hero.md` — a tight inline summary.
+- `token-roi-hero.md` — a tight inline summary.
 
 `/token-roi` accepts two flags: `--days N` (lookback window, default 90) and `--no-git` (skip the local-git committed-line attribution).
 

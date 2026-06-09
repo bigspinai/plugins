@@ -1,6 +1,6 @@
 {
   "name": "bigspin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Render personal Claude Code reports from your local session history — a practice/archetype mirror (/persona) and a token-vs-outcome ROI report (/token-roi).",
   "author": {
     "name": "Bigspin",

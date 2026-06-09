@@ -36,9 +36,9 @@ from this file (two levels: `skills/token-roi/SKILL.md` → plugin root).
 
 Path shorthands used below:
 - `$TR` = `$BIGSPIN_PLUGIN_ROOT/skills/token-roi`
-- `$SCRIPTS` = `$BIGSPIN_PLUGIN_ROOT/skills/persona/scripts` (the shared
-  `bootstrap.sh`, `run_id.sh`, `open_report.sh` live under the persona
-  skill — reuse them, don't copy).
+- `$SCRIPTS` = `$BIGSPIN_PLUGIN_ROOT/scripts` (the shared run contract and
+  helpers — `new_run.sh`, `bootstrap.sh`, `run_id.sh`, `open_report.sh` —
+  live at the plugin root, not under any one skill).
 
 Arguments (both optional, pass through from `/token-roi`):
 - `--days N` — lookback window in days (default 90).
@@ -48,18 +48,20 @@ If the user passes anything else, tell them the supported flags and stop.
 
 ## Steps
 
-### 1. Bootstrap Python deps (idempotent)
+### 1. Start the run (shared contract: bootstrap + output dir)
 
 ```bash
-PY="$(bash "$SCRIPTS/bootstrap.sh" "$TR/requirements.txt")"
+eval "$(bash "$SCRIPTS/new_run.sh" token-roi)"
 ```
 
-Captures the venv interpreter path on stdout (e.g.
-`~/.claude/bigspin/.venv/bin/python`). `$TR/requirements.txt` is
-byte-identical to persona's, so this shares the same venv — it will **not**
-rebuild when the user has already run `/persona`. If `bootstrap.sh` exits
-non-zero, surface stderr and stop (same failure modes as `/persona`: exit 2
-= no uv/python3, exit 3 = venv/pip failure).
+`new_run.sh` is the single source of truth for the run contract: it
+bootstraps the shared venv (reused with `/persona`), creates the output
+directory, and exports `PY` (venv interpreter), `RUN_ID`
+(`token-roi-<timestamp>`), `OUT_DIR` (`~/.claude/bigspin/$RUN_ID`, already
+created), plus `BIGSPIN_PLUGIN_ROOT` and `PYTHONPATH`. Output always lands
+under `$OUT_DIR` regardless of where the skill was launched — never in the
+repo or the current directory. If it exits non-zero, surface stderr and stop
+(exit 2 = no uv/python3, exit 3 = venv/pip failure).
 
 ### 2. Renderer smoke test
 
@@ -71,18 +73,7 @@ Validates the renderer against the checked-in fixture before touching real
 data. If it fails, the renderer or schema has drifted — surface stderr and
 stop.
 
-### 3. Pick an output directory
-
-```bash
-RUN_ID="roi-$(bash "$SCRIPTS/run_id.sh")"
-OUT_DIR="${HOME}/.claude/bigspin/${RUN_ID}"
-mkdir -p "${OUT_DIR}"
-```
-
-The `roi-` prefix keeps these runs visually distinct from `/persona` runs
-in `~/.claude/bigspin/`.
-
-### 4. Compute metrics
+### 3. Compute metrics
 
 ```bash
 "${PY}" "$TR/preprocessing/compute_roi.py" \
@@ -101,33 +92,34 @@ summary lines (session count, date range, medians) inline.
 If there are no sessions in the window, the script says so — relay that and
 stop; there's nothing to render.
 
-### 5. Render the report
+### 4. Render the report
 
 ```bash
 "${PY}" "$TR/analysis/render_report.py" \
     --data "${OUT_DIR}/roi_data.json" \
-    --out "${OUT_DIR}"
+    --out "${OUT_DIR}" \
+    --slug token-roi
 ```
 
 Validates `roi_data.json` against `analysis/roi_data.schema.json`, builds
 the three inline-SVG charts (weekly trend, outcome-bucket distributions,
-tokens-per-unit-of-work cost ratios), and writes `report.html` + `hero.md`
-to `${OUT_DIR}`. On any schema/validation failure it exits non-zero with a
-diff — print stderr verbatim and stop.
+tokens-per-unit-of-work cost ratios), and writes `token-roi-report.html` +
+`token-roi-hero.md` to `${OUT_DIR}`. On any schema/validation failure it
+exits non-zero with a diff — print stderr verbatim and stop.
 
-### 6. Deliver
+### 5. Deliver
 
 ```bash
-bash "$SCRIPTS/open_report.sh" "${OUT_DIR}/report.html"
+bash "$SCRIPTS/open_report.sh" "${OUT_DIR}/token-roi-report.html"
 ```
 
-Then paste the contents of `${OUT_DIR}/hero.md` inline in the chat so the
-user gets the headline numbers without leaving the terminal.
+Then paste the contents of `${OUT_DIR}/token-roi-hero.md` inline in the chat
+so the user gets the headline numbers without leaving the terminal.
 
 Close with one line pointing at the report:
 
 ```
-Token-ROI report opened: ~/.claude/bigspin/<RUN_ID>/report.html
+Token-ROI report opened: ~/.claude/bigspin/<RUN_ID>/token-roi-report.html
 ```
 
 ## Failure modes

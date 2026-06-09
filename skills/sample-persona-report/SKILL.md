@@ -33,8 +33,11 @@ something has gone wrong — stop and surface the issue to the user.
 
 Resolve the plugin root. Prefer `$BIGSPIN_PLUGIN_ROOT`; if unset, walk
 up from this file (two levels: `skills/sample-persona-report/SKILL.md`
-→ plugin root). All paths below are relative to `$PERSONA` =
-`$BIGSPIN_PLUGIN_ROOT/skills/persona`.
+→ plugin root). Path shorthands:
+- `$PERSONA` = `$BIGSPIN_PLUGIN_ROOT/skills/persona` (the renderer and
+  fixtures live here — this skill reuses them, it has no code of its own).
+- `$SCRIPTS` = `$BIGSPIN_PLUGIN_ROOT/scripts` (shared run contract +
+  helpers: `new_run.sh`, `open_report.sh`).
 
 Pick the fixture pair based on the optional argument:
 
@@ -48,35 +51,28 @@ stop — do not guess.
 
 ## Steps
 
-### 1. Bootstrap Python deps (idempotent)
+### 1. Start the run (shared contract: bootstrap + output dir)
 
 ```bash
-PY="$(bash "$PERSONA/scripts/bootstrap.sh" "$PERSONA/requirements.txt")"
+eval "$(bash "$SCRIPTS/new_run.sh" sample-persona)"
 ```
 
-Captures the venv interpreter path on stdout (something like
-`~/.claude/bigspin/.venv/bin/python`). If `bootstrap.sh` exits non-zero,
-surface stderr and stop — same failure modes as `/persona` (see the
-bootstrap script's header comment).
+`new_run.sh` is the single source of truth for the run contract: it
+bootstraps the shared venv, creates the output directory, and exports `PY`
+(venv interpreter), `RUN_ID` (`sample-persona-<timestamp>`), `OUT_DIR`
+(`~/.claude/bigspin/$RUN_ID`, already created), plus `BIGSPIN_PLUGIN_ROOT`
+and `PYTHONPATH`. The `sample-persona-` prefix keeps these grep-able and
+distinct from real `/persona` runs. Output always lands under `$OUT_DIR`,
+never in the repo or cwd. If it exits non-zero, surface stderr and stop.
 
-### 2. Pick an output directory
-
-```bash
-RUN_ID="sample-$(bash "$PERSONA/scripts/run_id.sh")"
-OUT_DIR="${HOME}/.claude/bigspin/${RUN_ID}"
-mkdir -p "${OUT_DIR}"
-```
-
-The `sample-` prefix makes these directories grep-able and visually
-distinct from real `/persona` runs in `~/.claude/bigspin/`.
-
-### 3. Render
+### 2. Render
 
 ```bash
 "${PY}" "$PERSONA/analysis/render_report.py" \
     --content "<chosen content JSON>" \
     --metrics "<chosen metrics JSON>" \
-    --out "${OUT_DIR}"
+    --out "${OUT_DIR}" \
+    --slug sample-persona
 ```
 
 The renderer validates the content JSON against
@@ -89,27 +85,27 @@ stop.
 Expected artifacts under `${OUT_DIR}` (same set
 `$PERSONA/tests/smoke_test.py` validates):
 
-- `report.html`           — full HTML report
-- `report.md`             — markdown version
-- `hero.md`               — chat-paste summary
-- `hero_card.txt`         — CLI hero card with ANSI
-- `hero_card.plain.txt`   — same, no ANSI
+- `sample-persona-report.html`        — full HTML report
+- `sample-persona-report.md`          — markdown version
+- `sample-persona-hero.md`            — chat-paste summary
+- `sample-persona-hero-card.txt`      — CLI hero card with ANSI
+- `sample-persona-hero-card.plain.txt` — same, no ANSI
 
-### 4. Open
+### 3. Open
 
 ```bash
-bash "$PERSONA/scripts/open_report.sh" "${OUT_DIR}/report.html"
+bash "$SCRIPTS/open_report.sh" "${OUT_DIR}/sample-persona-report.html"
 ```
 
 Cross-platform browser-open (macOS `open`, Linux `xdg-open`/`wslview`,
 Windows `start`).
 
-### 5. Close
+### 4. Close
 
 Print exactly one line:
 
 ```
-Sample persona report (<archetype>) opened: ~/.claude/bigspin/<RUN_ID>/report.html
+Sample persona report (<archetype>) opened: ~/.claude/bigspin/<RUN_ID>/sample-persona-report.html
 ```
 
 No file inventory, no hero-card paste, no "want me to dive into…"

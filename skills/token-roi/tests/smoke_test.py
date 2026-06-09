@@ -29,9 +29,13 @@ RENDERER = ROOT / "analysis" / "render_report.py"
 SCHEMA = ROOT / "analysis" / "roi_data.schema.json"
 FIXTURE = HERE / "fixtures" / "roi_data.sample.json"
 
+# Render with the real slug so the smoke test exercises the same filenames
+# the skill produces (and guards the lib/report_io scheme against drift).
+SLUG = "token-roi"
+
 EXPECTED_ARTIFACTS = {
-    "report.html": 3000,
-    "hero.md": 150,
+    f"{SLUG}-report.html": 3000,
+    f"{SLUG}-hero.md": 150,
 }
 
 REQUIRED_HEADINGS = [
@@ -79,6 +83,7 @@ def run_render() -> list:
                 sys.executable, str(RENDERER),
                 "--data", str(FIXTURE),
                 "--out", str(tmp_path),
+                "--slug", SLUG,
             ],
             capture_output=True,
             text=True,
@@ -99,7 +104,7 @@ def run_render() -> list:
                     f"{fname} suspiciously small ({size} bytes, "
                     f"expected >= {min_size})")
 
-        html_path = tmp_path / "report.html"
+        html_path = tmp_path / f"{SLUG}-report.html"
         if html_path.exists():
             html = html_path.read_text(encoding="utf-8")
             for heading in REQUIRED_HEADINGS:

@@ -1,7 +1,0 @@
-# bigspin plugin skill runtime dependencies (subagent-only path).
-#
-# Pinned floors only; uv/pip pick a compatible recent version.
-# Kept identical across the persona and token-roi skills so they share one
-# bootstrapped venv (no rebuild when switching between them).
-jinja2>=3.1
-jsonschema>=4.0

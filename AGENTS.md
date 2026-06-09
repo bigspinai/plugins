@@ -9,11 +9,11 @@ This file is the cross-tool entrypoint for agentic coding tools (Codex, Cursor, 
 Follow [`skills/persona/SKILL.md`](skills/persona/SKILL.md) end to end. It's a 9-step orchestration playbook. Briefly:
 
 1. **Plugin root** = this repo's root directory (the directory containing this file). If you're invoked outside the Claude Code plugin install path, set `BIGSPIN_PLUGIN_ROOT="$PWD"` before following the SKILL.md setup section.
-2. **Bootstrap** a Python venv via `skills/persona/scripts/bootstrap.sh`. Idempotent; first run installs `jinja2` + `jsonschema` into `~/.claude/bigspin/.venv`.
+2. **Start the run** with the shared contract `scripts/new_run.sh persona` — it resolves the plugin root, bootstraps a Python venv at `~/.claude/bigspin/.venv` (installs `jinja2` + `jsonschema`, idempotent), creates the per-run output dir `~/.claude/bigspin/persona-<timestamp>/`, and exports `PY` / `OUT_DIR` / `RUN_ID` / `BIGSPIN_PLUGIN_ROOT` / `PYTHONPATH`. Every skill uses this same entrypoint, so output location and naming never drift.
 3. **Smoke test** the renderer (`skills/persona/tests/smoke_test.py`) before any tagging work.
-4. **Pipeline**: preprocess → enrich → spawn 4× `persona-tagger` subagents in parallel for structured tagging → assemble + compute metrics → spawn 1× `persona-tagger` in open mode (reading ~12 of the exported transcripts) for behavioral findings → author `report_content.json` → render HTML + Markdown + hero card.
-5. **Outputs** land in `~/.claude/bigspin/<timestamp>/` on the user's machine. Nothing leaves the machine.
-6. **Deliver**: print `hero.md` inline, then open `report.html` in the user's browser via `skills/persona/scripts/open_report.sh`.
+4. **Pipeline**: preprocess → enrich → spawn 4× `persona-tagger` subagents in parallel for structured tagging → assemble + compute metrics → spawn 1× `persona-tagger` in open mode (reading ~12 of the exported transcripts) for behavioral findings → author `report_content.json` → render HTML + Markdown + hero card. All I/O is under `$OUT_DIR`.
+5. **Outputs** land under `~/.claude/bigspin/persona-<timestamp>/` on the user's machine — never in the repo or the current directory. Nothing leaves the machine.
+6. **Deliver**: print `persona-hero.md` inline, then open `persona-report.html` in the user's browser via `scripts/open_report.sh`.
 
 ## Restrictions
 

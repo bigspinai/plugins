@@ -49,14 +49,18 @@ CASES: list[tuple[str, Path, Path]] = [
     ),
 ]
 
+# Render with the real slug so the smoke test exercises the same filenames
+# the skill produces (and guards the lib/report_io scheme against drift).
+SLUG = "persona"
+
 # Files the renderer must produce, with a minimum size that catches
 # silently-empty outputs without being so high we trip on small variants.
 EXPECTED_ARTIFACTS: dict[str, int] = {
-    "report.html": 4000,
-    "report.md": 800,
-    "hero.md": 200,
-    "hero_card.txt": 500,
-    "hero_card.plain.txt": 500,
+    f"{SLUG}-report.html": 4000,
+    f"{SLUG}-report.md": 800,
+    f"{SLUG}-hero.md": 200,
+    f"{SLUG}-hero-card.txt": 500,
+    f"{SLUG}-hero-card.plain.txt": 500,
 }
 
 
@@ -84,6 +88,7 @@ def run_case(label: str, content: Path, metrics: Path) -> list[str]:
                 "--content", str(content),
                 "--metrics", str(metrics),
                 "--out", str(tmp_path),
+                "--slug", SLUG,
             ],
             capture_output=True,
             text=True,

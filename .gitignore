@@ -1,0 +1,23 @@
+# Per-run output now lands in ~/.claude/bigspin/<slug>-<timestamp>/ (see the
+# run contract in scripts/new_run.sh). Nothing should be written into this
+# repo. These entries are defense-in-depth against an old/edge run that
+# writes scratch in-tree — they must NOT match tracked source.
+
+# Legacy persona scratch (older runs wrote these relative to skills/persona/).
+/skills/persona/sessions.csv
+/skills/persona/sessions_enriched.csv
+/skills/persona/tagged_sessions.csv
+/skills/persona/tagging/tag_prompt.md
+/skills/persona/tagging/transcripts/
+/skills/persona/tagging/annotations/
+
+# Legacy rendered artifacts under the exemplar dir — keep the tracked
+# report_content.json exemplar, ignore anything a run would generate.
+/skills/persona/report/*.html
+/skills/persona/report/*.md
+/skills/persona/report/metrics.json
+/skills/persona/report/findings.md
+
+# Python bytecode.
+__pycache__/
+*.pyc
