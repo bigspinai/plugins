@@ -26,6 +26,7 @@ This is the published mirror of the bigspin toolkit — a set of skills plus the
 ├── commands/              # slash-command entry points
 │   ├── persona.md         # /persona
 │   ├── token-roi.md       # /token-roi
+│   ├── skill-usage.md     # /skill-usage
 │   └── sample-persona-report.md
 └── skills/
     ├── persona/           # the 9-step practice-mirror pipeline
@@ -37,6 +38,7 @@ This is the published mirror of the bigspin toolkit — a set of skills plus the
     │   ├── report/        # Manager exemplar (used by smoke test)
     │   └── tests/         # smoke_test.py + fixtures
     ├── token-roi/         # token-vs-outcome ROI report (own analysis/, tests/)
+    ├── skill-usage/       # which skills you read/invoke most + update flags (own analysis/, tests/)
     └── sample-persona-report/  # demo render from checked-in fixtures (reuses persona/)
 ```
 

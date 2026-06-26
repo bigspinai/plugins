@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>Your Claude Code — skill usage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'PP Neue Machina';
+    src: url('{{ "assets/fonts/PPNeueMachinaInktrap-Regular.woff2"|b64_asset }}') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --paper: #F4F3F0;
+    --card: #FFFFFF;
+    --ink: #070E08;
+    --ink-soft: #1F2E24;
+    --text-2: #4A554F;
+    --muted: #7A8581;
+    --rule: rgba(7, 14, 8, 0.12);
+    --accent: #3F784E;
+    --accent-soft: #93F099;
+
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'PP Neue Machina', 'DM Sans', -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+    height: 100%;
+  }
+  em { font-style: normal; }
+  body {
+    scroll-snap-type: y proximity;
+    overflow-y: scroll;
+    height: 100vh;
+  }
+  /* Subtle grain — blends to paper texture on light slides, gentle film grain on dark ones. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.16 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  }
+
+  .slide {
+    min-height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 72px 32px 64px;
+    position: relative;
+  }
+  .slide-inner { max-width: 880px; margin: 0 auto; width: 100%; }
+
+  .eyebrow {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+  /* Light-slide eyebrows use a dark fill on the light background. */
+  .chart-slide .eyebrow { background: #1F3124; color: var(--paper); }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 28px;
+    right: 32px;
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    opacity: 0.7;
+  }
+  .scroll-cue::after {
+    content: " ↓";
+    display: inline-block;
+    margin-left: 6px;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* Bigspin brand — corner logomark on chart slides, larger primary on title/outro. */
+  .brand-mark, .brand-primary {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    display: block;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .brand-mark { width: 22px; opacity: 0.55; }
+  .brand-primary { width: 132px; opacity: 0.92; }
+  .brand-mark svg, .brand-primary svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 640px) {
+    .brand-mark, .brand-primary { top: 20px; left: 20px; }
+    .brand-primary { width: 104px; }
+    .slide { padding: 56px 18px 56px; }
+    .scroll-cue { right: 18px; bottom: 20px; }
+    .eyebrow { margin-bottom: 18px; }
+    .title-stats { margin-top: 36px; gap: 22px 24px; }
+    .svg-holder { margin-top: 22px; }
+    .svg-holder svg { min-width: 600px; }
+    .chart-slide .explainer { margin-top: 12px; }
+    .install-grid { gap: 32px; }
+    .install-copy { margin-top: 16px; }
+    .install-points { margin-top: 24px; }
+    .repo-card { padding: 22px; }
+    .repo-name { font-size: 22px; margin-top: 20px; }
+    .repo-desc, .repo-link { margin-top: 20px; }
+    .outro .caveat { margin-top: 36px; }
+  }
+
+  /* ============== Slide 1: Title ============== */
+  .title { background: var(--ink); color: var(--paper); }
+  .title h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(40px, 7vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--paper);
+    max-width: 900px;
+  }
+  .title h1 em { color: var(--accent-soft); }
+  .title .tagline {
+    font-family: var(--sans);
+    font-size: clamp(17px, 1.8vw, 24px);
+    line-height: 1.45;
+    color: var(--paper);
+    opacity: 0.78;
+    margin-top: 28px;
+    max-width: 720px;
+  }
+  .title-stats {
+    margin-top: 52px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 26px 32px;
+    max-width: 900px;
+  }
+  .title-stat .num {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    color: var(--accent-soft);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .title-stat .lbl {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--paper);
+    opacity: 0.7;
+    margin-top: 12px;
+    line-height: 1.35;
+  }
+
+  /* ============== Chart slides ============== */
+  .chart-slide { background: var(--paper); color: var(--ink); }
+  .chart-slide h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 4.2vw, 50px);
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    color: var(--ink);
+    max-width: 760px;
+  }
+  .chart-slide .explainer {
+    font-family: var(--sans);
+    font-size: clamp(14px, 1.3vw, 17px);
+    line-height: 1.5;
+    color: var(--text-2);
+    margin-top: 14px;
+    max-width: 72ch;
+  }
+  .svg-holder {
+    margin: 30px auto 0;
+    width: 100%;
+    max-width: 840px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .svg-holder svg { display: block; width: 100%; height: auto; }
+
+  /* ============== Candidates slide ============== */
+  .cand-slide { background: var(--paper); color: var(--ink); }
+  .cand-slide .slide-inner { max-width: 940px; }
+  .cand-grid {
+    margin-top: 30px;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) {
+    .cand-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .cand-group {
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background: var(--card);
+    padding: 20px 22px;
+  }
+  .cand-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .cand-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .cand-count {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(63, 120, 78, 0.10);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .cand-blurb {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-2);
+    margin-top: 8px;
+  }
+  .cand-items {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .cand-items li {
+    font-family: var(--display);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 4px 9px;
+  }
+  .cand-empty {
+    margin-top: 28px;
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.4vw, 18px);
+    color: var(--text-2);
+    max-width: 60ch;
+  }
+
+  /* ============== Outro ============== */
+  .outro { background: var(--ink); color: var(--paper); }
+  .outro .slide-inner { max-width: 1080px; }
+  .install-grid { display: grid; gap: 44px; align-items: start; }
+  @media (min-width: 860px) {
+    .install-grid { grid-template-columns: 1fr 1fr; gap: 64px; }
+  }
+  .install-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 3.6vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+  }
+  .install-copy {
+    font-family: var(--sans);
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 1.6;
+    color: rgba(244, 243, 240, 0.80);
+    margin-top: 20px;
+    max-width: 52ch;
+  }
+  .install-points {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(244, 243, 240, 0.75);
+  }
+  .install-points li { display: flex; align-items: baseline; gap: 12px; }
+  .install-points .marker { color: var(--accent-soft); }
+  .repo-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 16px;
+    border: 1px solid rgba(244, 243, 240, 0.15);
+    background: rgba(244, 243, 240, 0.04);
+    padding: 32px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .repo-card:hover {
+    border-color: rgba(244, 243, 240, 0.40);
+    background: rgba(244, 243, 240, 0.06);
+  }
+  .repo-head { display: flex; align-items: center; gap: 12px; }
+  .repo-icon {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(244, 243, 240, 0.10);
+    color: var(--paper);
+    flex-shrink: 0;
+  }
+  .repo-icon svg { display: block; width: 22px; height: 22px; }
+  .repo-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-soft);
+  }
+  .repo-name {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    margin-top: 24px;
+  }
+  .repo-desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(244, 243, 240, 0.80);
+    margin-top: 24px;
+  }
+  .repo-desc code {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--accent-soft);
+    background: rgba(147, 240, 153, 0.10);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .repo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--paper);
+  }
+  .repo-link .arrow { transition: transform 0.15s; }
+  .repo-card:hover .repo-link .arrow { transform: translateX(2px); }
+  .outro .caveat {
+    font-family: var(--sans);
+    font-size: clamp(12px, 1.1vw, 14px);
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: 56px;
+    max-width: 74ch;
+  }
+
+  @media print {
+    body { scroll-snap-type: none; overflow: visible; height: auto; }
+    .slide { min-height: auto; page-break-inside: avoid; }
+    .scroll-cue { display: none; }
+    body::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== Slide 1: Title ============== -->
+<section class="slide title">
+  <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">Bigspin · skill-usage</span>
+    <h1>Your Claude Code — <em>skill usage</em></h1>
+    <p class="tagline">{{ summary_line }}</p>
+    <div class="title-stats">
+      {% for s in stat_cards %}
+      <div class="title-stat">
+        <div class="num" data-count-up>{{ s.value }}</div>
+        <div class="lbl">{{ s.label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<!-- ============== Slide 2: Ranking ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">01 · Ranking</span>
+    <h2>Most &amp; least used skills</h2>
+    <p class="explainer">Every skill ranked by total usage — SKILL.md reads (green) plus Skill-tool invocations (orange). The most-used skills sit at the top; skills that exist in your repo but were never read or invoked are listed, muted, at the bottom.</p>
+    <div class="svg-holder">{{ ranking_svg | safe }}</div>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<!-- ============== Slide 3: Trend ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">02 · Over time</span>
+    <h2>Skill usage over time</h2>
+    <p class="explainer">Weekly skill-usage events — total, reads, and invocations — bucketed by week (Wednesday start). Pink weeks had too few events to read much into.</p>
+    <div class="svg-holder">{{ weekly_trend_svg | safe }}</div>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<!-- ============== Slide 4: Split ============== -->
+<section class="slide chart-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">03 · Reads vs invocations</span>
+    <h2>How skills actually get used</h2>
+    <p class="explainer">A skill is "used" two ways: its SKILL.md gets read (often by a subagent), or it's invoked via the Skill tool. This is the overall split, how much comes from subagents, and the read-vs-invoke mix for your top skills.</p>
+    <div class="svg-holder">{{ split_svg | safe }}</div>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<!-- ============== Slide 5: Candidates ============== -->
+<section class="slide cand-slide">
+  <div class="brand-mark">{% include '_logo_mark.svg' %}</div>
+  <div class="slide-inner">
+    <span class="eyebrow">04 · Worth a look</span>
+    <h2>Skill files to review</h2>
+    <p class="explainer">Deterministic flags from usage + file age — candidates for review, not automated actions. "Stale" means the SKILL.md hasn't changed in over {{ meta.stale_days }} days.</p>
+    {% if candidate_groups %}
+    <div class="cand-grid">
+      {% for g in candidate_groups %}
+      <div class="cand-group">
+        <div class="cand-head">
+          <span class="cand-title">{{ g.title }}</span>
+          <span class="cand-count">{{ g.count }}</span>
+        </div>
+        <p class="cand-blurb">{{ g.blurb }}</p>
+        <ul class="cand-items">
+          {% for c in g.skills %}<li>{{ c.base_name }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="cand-empty">No update candidates flagged — every skill in your inventory is used and reasonably fresh.</p>
+    {% endif %}
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<!-- ============== Slide 6: Outro ============== -->
+<section class="slide outro">
+  <div class="brand-primary">{% include '_logo_primary.svg' %}</div>
+  <div class="slide-inner">
+    <div class="install-grid">
+      <div>
+        <h2 class="install-title">Want to see your skill usage?</h2>
+        <p class="install-copy">Open a new Claude Code session and run <code>/skill-usage</code>. It reads your local session history, ranks which skills you actually read and invoke, and flags the skill files worth a refresh. Everything runs on your machine — no API key, no upload, no telemetry.</p>
+        <ul class="install-points">
+          <li><span class="marker" aria-hidden="true">›</span>No data sharing, 100% local on your device</li>
+        </ul>
+      </div>
+      <a class="repo-card" href="https://github.com/bigspinai/toolkit" target="_blank" rel="noopener">
+        <div class="repo-head">
+          <span class="repo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.13c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.47.11-3.07 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39s1.98.13 2.9.39c2.21-1.49 3.18-1.18 3.18-1.18.62 1.6.23 2.78.11 3.07.73.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.66.8.55C20.21 21.38 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+          </span>
+          <span class="repo-eyebrow">bigspin toolkit on GitHub</span>
+        </div>
+        <p class="repo-name">bigspinai/toolkit</p>
+        <p class="repo-desc">Toolkit source, SKILL.md, and the full README with setup steps, requirements, and the <code>/skill-usage</code> slash command.</p>
+        <span class="repo-link">View on GitHub <span class="arrow" aria-hidden="true">→</span></span>
+      </a>
+    </div>
+    <p class="caveat">Usage is measured from two transcript signals: Skill-tool invocations and SKILL.md file reads (including subagent reads). Skills loaded automatically by the harness — without an explicit read or invocation — aren't counted, so this is a lower bound on how often a skill's guidance actually reached a session.</p>
+  </div>
+</section>
+
+<script>
+  // ===== Count-up animation on numbers entering viewport =====
+  (function () {
+    const counters = document.querySelectorAll('[data-count-up]');
+    if (!counters.length || !('IntersectionObserver' in window)) return;
+    const targets = new Map();
+    counters.forEach(el => {
+      const raw = el.textContent.trim();
+      const n = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+      // Leave non-numeric values (e.g. "—") exactly as authored.
+      if (Number.isNaN(n)) return;
+      targets.set(el, n);
+      el.textContent = '0';
+    });
+    function animateCount(el) {
+      const target = targets.get(el);
+      if (target === undefined) return;
+      const duration = 1100;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    targets.forEach((_, el) => obs.observe(el));
+  })();
+
+  // ===== Slide snap navigation =====
+  (function () {
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    if (slides.length < 2) return;
+
+    const ANIM_LOCK_MS = 500;
+    const INERTIA_WINDOW_MS = 1500;
+    const INERTIA_RATIO = 0.5;
+    const GESTURE_RESET_MS = 250;
+    let lastJumpTime = -Infinity;
+    let lastEventTime = 0;
+    let recentPeakDelta = 0;
+
+    function currentIndex() {
+      let best = 0, bestDist = Infinity;
+      for (let i = 0; i < slides.length; i++) {
+        const rect = slides[i].getBoundingClientRect();
+        const dist = Math.abs(rect.top);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      }
+      return best;
+    }
+
+    function jumpToSlide(idx) {
+      if (idx < 0 || idx >= slides.length) return;
+      const now = performance.now();
+      if (now - lastJumpTime < ANIM_LOCK_MS) return;
+      lastJumpTime = now;
+      slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.addEventListener('wheel', (e) => {
+      if (e.deltaY === 0) return;
+
+      const idx = currentIndex();
+      const slide = slides[idx];
+      const rect = slide.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      const slideOverflows = slide.offsetHeight > viewH + 4;
+      if (slideOverflows) {
+        const dir = e.deltaY > 0 ? 1 : -1;
+        if (dir > 0 && rect.bottom > viewH + 4) return; // room to scroll down
+        if (dir < 0 && rect.top < -4) return;            // room to scroll up
+      }
+
+      e.preventDefault();
+      const now = performance.now();
+      const absDelta = Math.abs(e.deltaY);
+
+      if (now - lastEventTime > GESTURE_RESET_MS) recentPeakDelta = 0;
+      lastEventTime = now;
+      recentPeakDelta = Math.max(recentPeakDelta, absDelta);
+
+      const sinceJump = now - lastJumpTime;
+      if (sinceJump < ANIM_LOCK_MS) return;
+      if (sinceJump < INERTIA_WINDOW_MS
+          && absDelta < recentPeakDelta * INERTIA_RATIO) {
+        return;
+      }
+
+      jumpToSlide(currentIndex() + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      const c = e.code;
+      const idx = currentIndex();
+      if (c === 'ArrowDown' || c === 'PageDown' || c === 'Space' || c === 'ArrowRight') {
+        e.preventDefault(); jumpToSlide(idx + 1);
+      } else if (c === 'ArrowUp' || c === 'PageUp' || c === 'ArrowLeft') {
+        e.preventDefault(); jumpToSlide(idx - 1);
+      } else if (c === 'Home') {
+        e.preventDefault(); jumpToSlide(0);
+      } else if (c === 'End') {
+        e.preventDefault(); jumpToSlide(slides.length - 1);
+      }
+    });
+  })();
+</script>
+</body>
+</html>

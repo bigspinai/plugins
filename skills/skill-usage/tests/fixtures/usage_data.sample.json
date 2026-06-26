@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "projects_dir": "/home/dev/.claude/projects",
+    "days": 3650,
+    "window_start": "2026-05-01",
+    "window_end": "2026-06-25",
+    "n_events": 183,
+    "n_invokes": 34,
+    "n_reads": 149,
+    "n_skills_used": 42,
+    "n_skills_inventory": 54,
+    "low_n_threshold": 3,
+    "read_hot": 8,
+    "stale_days": 60,
+    "git_enabled": true,
+    "repo_roots": ["/home/dev/repos/bigspin-app"]
+  },
+  "summary": {
+    "date_range": { "earliest": "2026-05-01", "latest": "2026-06-25" },
+    "top_skill": "persona",
+    "top_skill_total": 33,
+    "most_read": "persona",
+    "most_invoked": "claude-api",
+    "zero_usage_count": 12
+  },
+  "ranking": [
+    { "base_name": "persona", "raw_names": ["bigspin:persona", "persona"], "invokes": 0, "reads": 33, "total": 33, "in_inventory": true, "last_modified": "2026-05-08" },
+    { "base_name": "bigspin-restrictions", "raw_names": ["bigspin-restrictions"], "invokes": 3, "reads": 11, "total": 14, "in_inventory": true, "last_modified": "2026-03-28" },
+    { "base_name": "sample-persona-report", "raw_names": ["sample-persona-report"], "invokes": 0, "reads": 12, "total": 12, "in_inventory": true, "last_modified": "2026-05-08" },
+    { "base_name": "review-code", "raw_names": ["review-code"], "invokes": 1, "reads": 10, "total": 11, "in_inventory": true, "last_modified": "2026-03-17" },
+    { "base_name": "pr-loop", "raw_names": ["pr-loop"], "invokes": 6, "reads": 5, "total": 11, "in_inventory": true, "last_modified": "2026-04-02" },
+    { "base_name": "bigspin-claude-code-actions", "raw_names": ["bigspin-claude-code-actions"], "invokes": 0, "reads": 11, "total": 11, "in_inventory": true, "last_modified": "2026-06-22" },
+    { "base_name": "bigspin-gtm", "raw_names": ["bigspin-gtm"], "invokes": 0, "reads": 9, "total": 9, "in_inventory": true, "last_modified": "2026-05-08" },
+    { "base_name": "token-roi", "raw_names": ["token-roi"], "invokes": 0, "reads": 8, "total": 8, "in_inventory": true, "last_modified": "2026-05-07" },
+    { "base_name": "claude-api", "raw_names": ["claude-api"], "invokes": 8, "reads": 0, "total": 8, "in_inventory": false, "last_modified": null },
+    { "base_name": "dspy-service", "raw_names": ["dspy-service"], "invokes": 1, "reads": 5, "total": 6, "in_inventory": true, "last_modified": "2026-05-07" },
+    { "base_name": "bigspin-test-patterns", "raw_names": ["bigspin-test-patterns"], "invokes": 2, "reads": 2, "total": 4, "in_inventory": true, "last_modified": "2026-05-08" },
+    { "base_name": "bigspin-service-layer", "raw_names": ["bigspin-service-layer"], "invokes": 2, "reads": 1, "total": 3, "in_inventory": true, "last_modified": "2026-02-18" },
+    { "base_name": "context-hub", "raw_names": ["context-hub"], "invokes": 2, "reads": 0, "total": 2, "in_inventory": true, "last_modified": "2026-03-17" },
+    { "base_name": "bigspin-api-private", "raw_names": ["bigspin-api-private"], "invokes": 1, "reads": 1, "total": 2, "in_inventory": true, "last_modified": "2026-06-05" },
+    { "base_name": "bigspin-superadmin", "raw_names": ["bigspin-superadmin"], "invokes": 0, "reads": 0, "total": 0, "in_inventory": true, "last_modified": "2026-02-10" },
+    { "base_name": "bigspin-events", "raw_names": ["bigspin-events"], "invokes": 0, "reads": 0, "total": 0, "in_inventory": true, "last_modified": "2026-02-10" },
+    { "base_name": "bigspin-webhooks", "raw_names": ["bigspin-webhooks"], "invokes": 0, "reads": 0, "total": 0, "in_inventory": true, "last_modified": "2026-04-02" },
+    { "base_name": "web-design-guidelines", "raw_names": ["web-design-guidelines"], "invokes": 0, "reads": 0, "total": 0, "in_inventory": true, "last_modified": "2026-01-29" }
+  ],
+  "trend": [
+    { "week": "2026-04-29", "n": 4, "confident": true, "invokes": 1, "reads": 3, "total": 4 },
+    { "week": "2026-05-06", "n": 21, "confident": true, "invokes": 4, "reads": 17, "total": 21 },
+    { "week": "2026-05-13", "n": 12, "confident": true, "invokes": 3, "reads": 9, "total": 12 },
+    { "week": "2026-05-20", "n": 2, "confident": false, "invokes": 0, "reads": 2, "total": 2 },
+    { "week": "2026-05-27", "n": 10, "confident": true, "invokes": 2, "reads": 8, "total": 10 },
+    { "week": "2026-06-03", "n": 31, "confident": true, "invokes": 7, "reads": 24, "total": 31 },
+    { "week": "2026-06-10", "n": 28, "confident": true, "invokes": 6, "reads": 22, "total": 28 },
+    { "week": "2026-06-17", "n": 48, "confident": true, "invokes": 7, "reads": 41, "total": 48 },
+    { "week": "2026-06-24", "n": 27, "confident": true, "invokes": 4, "reads": 23, "total": 27 }
+  ],
+  "split": {
+    "total_invokes": 34,
+    "total_reads": 149,
+    "sidechain_reads": 96,
+    "per_skill": [
+      { "base_name": "persona", "invokes": 0, "reads": 33 },
+      { "base_name": "bigspin-restrictions", "invokes": 3, "reads": 11 },
+      { "base_name": "sample-persona-report", "invokes": 0, "reads": 12 },
+      { "base_name": "review-code", "invokes": 1, "reads": 10 },
+      { "base_name": "pr-loop", "invokes": 6, "reads": 5 },
+      { "base_name": "claude-api", "invokes": 8, "reads": 0 }
+    ]
+  },
+  "inventory": [
+    { "inventory_name": "persona", "base_name": "persona", "path": "/home/dev/repos/bigspin-app/public-repos/toolkit/skills/persona/SKILL.md", "description": "Generate a personal Claude Code practice report.", "last_modified": "2026-05-08", "last_modified_source": "git", "n_locations": 2, "roots_seen": ["public-repos"], "used": true },
+    { "inventory_name": "bigspin-restrictions", "base_name": "bigspin-restrictions", "path": "/home/dev/repos/bigspin-app/.agents/skills/bigspin-restrictions/SKILL.md", "description": "Critical restrictions and things agents must NEVER do.", "last_modified": "2026-03-28", "last_modified_source": "git", "n_locations": 1, "roots_seen": [".agents/skills"], "used": true },
+    { "inventory_name": "bigspin-superadmin", "base_name": "bigspin-superadmin", "path": "/home/dev/repos/bigspin-app/.agents/skills/bigspin-superadmin/SKILL.md", "description": "Superadmin functionality patterns.", "last_modified": "2026-02-10", "last_modified_source": "git", "n_locations": 1, "roots_seen": [".agents/skills"], "used": false },
+    { "inventory_name": "web-design-guidelines", "base_name": "web-design-guidelines", "path": "/home/dev/repos/bigspin-app/public-repos/toolkit/skills/web-design-guidelines/SKILL.md", "description": "Review UI code for Web Interface Guidelines compliance.", "last_modified": "2026-01-29", "last_modified_source": "git", "n_locations": 1, "roots_seen": ["public-repos"], "used": false }
+  ],
+  "candidates": [
+    { "base_name": "bigspin-superadmin", "flag": "retire-or-refresh", "reason": "In the skill inventory but never read or invoked, and the file is stale." },
+    { "base_name": "bigspin-events", "flag": "retire-or-refresh", "reason": "In the skill inventory but never read or invoked, and the file is stale." },
+    { "base_name": "web-design-guidelines", "flag": "retire-or-refresh", "reason": "In the skill inventory but never read or invoked, and the file is stale." },
+    { "base_name": "review-code", "flag": "refine", "reason": "Read 10 times but the file is stale — high-traffic, likely drifted from how it's used." },
+    { "base_name": "claude-api", "flag": "invocation-only", "reason": "Invoked 8 time(s) via the Skill tool but its SKILL.md is never opened — agents act on the description alone." },
+    { "base_name": "context-hub", "flag": "invocation-only", "reason": "Invoked 2 time(s) via the Skill tool but its SKILL.md is never opened — agents act on the description alone." },
+    { "base_name": "persona", "flag": "read-only", "reason": "Opened as reference 33 time(s) but never invoked as a skill." },
+    { "base_name": "token-roi", "flag": "read-only", "reason": "Opened as reference 8 time(s) but never invoked as a skill." }
+  ]
+}

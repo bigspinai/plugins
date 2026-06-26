@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bigspin.ai/schemas/skill-usage/usage_data.schema.json",
+  "title": "skill-usage usage_data.json",
+  "description": "Contract for the data JSON emitted by compute_usage.py and consumed by render_report.py / charts.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "summary", "ranking", "trend", "split", "inventory", "candidates"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["projects_dir", "days", "n_events", "n_invokes", "n_reads", "n_skills_used", "n_skills_inventory", "git_enabled"],
+      "properties": {
+        "projects_dir": { "type": "string" },
+        "days": { "type": "integer", "minimum": 1 },
+        "window_start": { "type": ["string", "null"] },
+        "window_end": { "type": ["string", "null"] },
+        "n_events": { "type": "integer", "minimum": 0 },
+        "n_invokes": { "type": "integer", "minimum": 0 },
+        "n_reads": { "type": "integer", "minimum": 0 },
+        "n_skills_used": { "type": "integer", "minimum": 0 },
+        "n_skills_inventory": { "type": "integer", "minimum": 0 },
+        "low_n_threshold": { "type": "integer", "minimum": 1 },
+        "read_hot": { "type": "integer", "minimum": 1 },
+        "stale_days": { "type": "integer", "minimum": 0 },
+        "git_enabled": { "type": "boolean" },
+        "repo_roots": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date_range", "top_skill", "top_skill_total", "zero_usage_count"],
+      "properties": {
+        "date_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["earliest", "latest"],
+          "properties": {
+            "earliest": { "type": ["string", "null"] },
+            "latest": { "type": ["string", "null"] }
+          }
+        },
+        "top_skill": { "type": ["string", "null"] },
+        "top_skill_total": { "type": "integer", "minimum": 0 },
+        "most_read": { "type": ["string", "null"] },
+        "most_invoked": { "type": ["string", "null"] },
+        "zero_usage_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ranking": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["base_name", "raw_names", "invokes", "reads", "total", "in_inventory"],
+        "properties": {
+          "base_name": { "type": "string" },
+          "raw_names": { "type": "array", "items": { "type": "string" } },
+          "invokes": { "type": "integer", "minimum": 0 },
+          "reads": { "type": "integer", "minimum": 0 },
+          "total": { "type": "integer", "minimum": 0 },
+          "in_inventory": { "type": "boolean" },
+          "last_modified": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "trend": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["week", "n", "confident"],
+        "properties": {
+          "week": { "type": "string" },
+          "n": { "type": "integer", "minimum": 0 },
+          "confident": { "type": "boolean" },
+          "invokes": { "type": ["integer", "null"], "minimum": 0 },
+          "reads": { "type": ["integer", "null"], "minimum": 0 },
+          "total": { "type": ["integer", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_invokes", "total_reads", "sidechain_reads", "per_skill"],
+      "properties": {
+        "total_invokes": { "type": "integer", "minimum": 0 },
+        "total_reads": { "type": "integer", "minimum": 0 },
+        "sidechain_reads": { "type": "integer", "minimum": 0 },
+        "per_skill": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["base_name", "invokes", "reads"],
+            "properties": {
+              "base_name": { "type": "string" },
+              "invokes": { "type": "integer", "minimum": 0 },
+              "reads": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["inventory_name", "base_name", "path", "description", "used"],
+        "properties": {
+          "inventory_name": { "type": "string" },
+          "base_name": { "type": "string" },
+          "path": { "type": "string" },
+          "description": { "type": "string" },
+          "last_modified": { "type": ["string", "null"] },
+          "last_modified_source": { "type": "string" },
+          "n_locations": { "type": "integer", "minimum": 1 },
+          "roots_seen": { "type": "array", "items": { "type": "string" } },
+          "used": { "type": "boolean" }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["base_name", "flag", "reason"],
+        "properties": {
+          "base_name": { "type": "string" },
+          "flag": {
+            "type": "string",
+            "enum": ["retire-or-refresh", "refine", "invocation-only", "read-only", "never-triggered"]
+          },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}
